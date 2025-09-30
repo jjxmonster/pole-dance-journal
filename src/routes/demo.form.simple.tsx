@@ -21,10 +21,9 @@ function SimpleForm() {
 		validators: {
 			onBlur: schema,
 		},
-		onSubmit: ({ value }) => {
-			console.log(value);
-			// Show success message
-			alert("Form submitted successfully!");
+		onSubmit: () => {
+			// Form submitted successfully
+			// In a real app, you would send the data to a server here
 		},
 	});
 

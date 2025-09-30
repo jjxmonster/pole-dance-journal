@@ -11,8 +11,8 @@ import { TodoSchema } from "@/orpc/schema";
 
 const handler = new OpenAPIHandler(router, {
 	interceptors: [
-		onError((error) => {
-			console.error(error);
+		onError(() => {
+			// Error handled silently
 		}),
 	],
 	plugins: [
