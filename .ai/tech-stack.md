@@ -7,13 +7,13 @@ Frontend
 - Shadcn/ui provides a library of accessible React components on which we base the UI
 - Tanstack React Query for client data fetching
 - oRPC as typesafe API
+- Drizzle ORM
 
-Backend - Supabase as a Comprehensive Backend Solution:
+Database & Auth
 
-- Provides a PostgreSQL database
-- Provides SDKs in multiple languages, serving as a Backend-as-a-Service
-- It is an open source solution that can be hosted locally or on your own server
-- It has built-in user authentication
+- Supabase PostreSQL
+- Supabase Auth
+- Supabase Storage
 
 AI - Communication with LLMs with Vercel's AI SDK
 

@@ -1,0 +1,151 @@
+# TanStack Start Architecture Guide
+
+This document explains how we structure and organize TanStack Start routes, server functions, data fetching, and frontend architecture patterns in this project.
+
+## File-Based Routing System
+
+### Route Definition Patterns
+
+Routes are defined in the `src/routes/` directory using TanStack Start's file-based routing system. Each route file exports a `Route` object created with `createFileRoute` or `createRootRouteWithContext`.
+
+#### Basic Route Structure
+
+```typescript
+// src/routes/index.tsx
+import { createFileRoute } from "@tanstack/react-router";
+
+export const Route = createFileRoute("/")({
+  component: Home,
+});
+
+function Home() {
+  return <div>Home page content</div>;
+}
+```
+
+#### Root Route with Context
+
+```typescript
+// src/routes/__root.tsx
+import { createRootRouteWithContext } from "@tanstack/react-router";
+import type { QueryClient } from "@tanstack/react-query";
+
+export const Route = createRootRouteWithContext<{
+  queryClient: QueryClient;
+}>()({
+  head: () => ({
+    meta: [...],
+    links: [...],
+  }),
+  component: RootComponent,
+});
+```
+
+### Naming Conventions
+
+- **Root route**: `__root.tsx` - The top-level layout component
+- **Index routes**: `index.tsx` - Default route for a directory (e.g., `/`)
+- **Static routes**: `about.tsx` - Static path segments (e.g., `/about`)
+- **Dynamic routes**: `$id.tsx` - Dynamic parameters (e.g., `/move/123`)
+- **Nested routes**: Use folder structure:
+  - `move/$id/index.tsx` - `/move/:id`
+  - `move/$id/edit.tsx` - `/move/:id/edit`
+
+### Nested Folder Structure Examples
+
+```
+src/routes/
+├── __root.tsx              # Root layout
+├── index.tsx               # Home page (/)
+├── browse.tsx              # Browse page (/browse)
+├── move/                   # Move-related routes
+│   └── $id/                # Dynamic move ID
+│       ├── index.tsx       # Move detail (/move/:id)
+├── sign-in.tsx             # Auth routes
+└── sign-up.tsx
+```
+
+## Loaders and Data Preloading
+
+### Basic Loader Pattern
+
+Loaders preload data on the server before the route component renders:
+
+```typescript
+// src/routes/move/$id/index.tsx
+export const Route = createFileRoute("/move/$id/")({
+	loader: ({ context: { queryClient }, params: { id } }) => {
+		// Preload data using TanStack Query
+		queryClient.ensureQueryData(getMoveByIdQuery(id));
+	},
+	component: moveDetail,
+});
+```
+
+### Async Loader with Error Handling
+
+```typescript
+// src/routes/move/$id/edit.tsx
+export const Route = createFileRoute("/move/$id/edit")({
+	loader: async ({ context: { queryClient }, params: { id } }) => {
+		// Ensure data is loaded before component renders
+		await queryClient.ensureQueryData(getmoveByIdQuery(id));
+	},
+	component: Editmove,
+});
+```
+
+### Loader Benefits
+
+1. **Server-side data fetching**: Data is loaded on the server, improving perceived performance
+2. **Cache priming**: Populates TanStack Query cache before component renders
+3. **Error boundaries**: Failed loaders can be caught by error boundaries
+4. **Parallel loading**: Multiple queries can be loaded in parallel
+
+### Authentication Middleware
+
+#### Middleware Definition
+
+```typescript
+// src/fn/middleware.ts
+import { createMiddleware } from "@tanstack/react-start";
+
+export const authenticatedMiddleware = createMiddleware({
+	type: "function",
+}).server(async ({ next }) => {
+	const request = getWebRequest();
+	const session = await auth.api.getSession({ headers: request.headers });
+
+	if (!session) {
+		throw new Error("No session");
+	}
+
+	return next({
+		context: { userId: session.user.id },
+	});
+});
+```
+
+#### Using Authentication Middleware
+
+```typescript
+// Server function WITHOUT authentication
+export const getPopularmovesFn = createServerFn().handler(async () => {
+	return await findPopularmovesWithUrls(20);
+});
+
+// Server function WITH authentication
+export const createmoveFn = createServerFn({
+	method: "POST",
+})
+	.validator(/* validation schema */)
+	.middleware([authenticatedMiddleware]) // 👈 Authentication required
+	.handler(async ({ data, context }) => {
+		// context.userId is available from middleware
+		const moveData = {
+			...data,
+			userId: context.userId, // 👈 User ID from auth context
+		};
+		return await createmove(moveData);
+	});
+```
