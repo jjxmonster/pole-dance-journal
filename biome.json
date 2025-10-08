@@ -34,7 +34,7 @@
   },
   "overrides": [
     {
-      "includes": ["src/routeTree.gen.ts"],
+      "includes": ["src/routeTree.gen.ts", "supabase/migrations/**"],
       "formatter": {
         "enabled": false
       },
