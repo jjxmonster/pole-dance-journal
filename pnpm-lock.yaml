@@ -82,13 +82,16 @@ dependencies:
     version: 2.1.1
   drizzle-orm:
     specifier: ^0.44.6
-    version: 0.44.6
+    version: 0.44.6(postgres@3.4.7)
   highlight.js:
     specifier: ^11.11.1
     version: 11.11.1
   lucide-react:
     specifier: ^0.475.0
     version: 0.475.0(react@19.2.0)
+  postgres:
+    specifier: ^3.4.7
+    version: 3.4.7
   react:
     specifier: ^19.0.0
     version: 19.2.0
@@ -3067,7 +3070,7 @@ packages:
       - supports-color
     dev: true
 
-  /drizzle-orm@0.44.6:
+  /drizzle-orm@0.44.6(postgres@3.4.7):
     resolution: {integrity: sha512-uy6uarrrEOc9K1u5/uhBFJbdF5VJ5xQ/Yzbecw3eAYOunv5FDeYkR2m8iitocdHBOHbvorviKOW5GVw0U1j4LQ==}
     peerDependencies:
       '@aws-sdk/client-rds-data': '>=3'
@@ -3158,6 +3161,8 @@ packages:
         optional: true
       sqlite3:
         optional: true
+    dependencies:
+      postgres: 3.4.7
     dev: false
 
   /dunder-proto@1.0.1:
@@ -4787,6 +4792,11 @@ packages:
       nanoid: 3.3.11
       picocolors: 1.1.1
       source-map-js: 1.2.1
+
+  /postgres@3.4.7:
+    resolution: {integrity: sha512-Jtc2612XINuBjIl/QTWsV5UvE8UHuNblcO3vVADSrKsrc6RqGX6lOW1cEo3CM2v0XG4Nat8nI+YM7/f26VxXLw==}
+    engines: {node: '>=12'}
+    dev: false
 
   /prettier@3.6.2:
     resolution: {integrity: sha512-I7AIg5boAr5R0FFtJ6rCfD+LFsWHp81dolrFD8S79U9tb8Az2nGrJncnMSnys+bpQJfRUzqs9hnA81OAA3hCuQ==}
