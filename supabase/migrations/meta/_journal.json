@@ -1,0 +1,13 @@
+{
+  "version": "5",
+  "dialect": "pg",
+  "entries": [
+    {
+      "idx": 0,
+      "version": "7",
+      "when": 1759954530595,
+      "tag": "0000_chilly_northstar",
+      "breakpoints": true
+    }
+  ]
+}

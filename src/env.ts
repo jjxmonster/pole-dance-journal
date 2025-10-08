@@ -3,8 +3,7 @@ import { z } from "zod";
 
 export const env = createEnv({
 	server: {
-		SERVER_URL: z.string().url().optional(),
-		SUPABASE_URL: z.string().url(),
+		POSTGRES_URL: z.string().url(),
 		SUPABASE_KEY: z.string(),
 	},
 	clientPrefix: "VITE_",
