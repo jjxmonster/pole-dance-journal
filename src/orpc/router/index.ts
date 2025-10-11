@@ -1,6 +1,7 @@
-import { addTodo, listTodos } from "./todos";
+import { listMoves } from "./moves";
 
 export default {
-	listTodos,
-	addTodo,
+	moves: {
+		list: listMoves,
+	},
 };
