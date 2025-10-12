@@ -10,7 +10,8 @@
     "test": "vitest run",
     "format": "biome format",
     "lint": "biome lint",
-    "check": "biome check"
+    "check": "biome check",
+    "db:seed": "tsx src/db/seed.ts"
   },
   "dependencies": {
     "@ai-sdk/anthropic": "^2.0.1",
@@ -70,6 +71,7 @@
     "husky": "^9.1.7",
     "jsdom": "^26.0.0",
     "lint-staged": "^16.2.3",
+    "tsx": "^4.20.6",
     "typescript": "^5.7.2",
     "ultracite": "5.4.5",
     "vite": "^7.1.7",
