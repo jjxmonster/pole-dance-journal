@@ -43,7 +43,9 @@ export function Hero() {
 							variants={fadeInUp}
 						>
 							Track Your{" "}
-							<span className="font-borel text-primary">Pole Dance</span>{" "}
+							<span className="font-borel text-primary leading-1">
+								Pole Dance
+							</span>{" "}
 							Progress
 						</motion.h1>
 						<motion.p
