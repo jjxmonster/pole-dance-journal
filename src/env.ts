@@ -8,6 +8,9 @@ export const env = createEnv({
 	},
 	clientPrefix: "VITE_",
 	client: {},
-	runtimeEnv: process.env,
+	runtimeEnv: {
+		POSTGRES_URL: process.env.POSTGRES_URL,
+		SUPABASE_KEY: process.env.SUPABASE_KEY,
+	},
 	emptyStringAsUndefined: true,
 });
