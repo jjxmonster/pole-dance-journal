@@ -22,7 +22,6 @@ When introducing changes to the project, always follow the directory structure b
 ---
 
 - `./src/routes` - routes
-- `./src/routes/{pageName}/__components` - specific components for this route
 - `./src/routes/__root.tsx` - Root layout
 - `./src/orpc/client.ts`: Typed oRPC client used in the frontend.
 - `./src/orpc/router/index.ts`: Router composition/registration for oRPC modules.
@@ -31,6 +30,7 @@ When introducing changes to the project, always follow the directory structure b
 - `./src/query-options` - Functions that return React Query Options using queryOptions() (queryFn SHOULD use Server Functions from /fn directory)
 - `./src/data-access` - Data Access Layer
 - `./src/components` - Reusable React components
+- `./src/components/{pageName}` - Route specific components
 - `./src/components/ui` - Shadcn components
 - `.src/utils` - shared utility helpers
 

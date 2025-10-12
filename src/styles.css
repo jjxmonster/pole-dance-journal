@@ -1,5 +1,6 @@
-@import "tailwindcss";
+@import url("https://fonts.googleapis.com/css2?family=Borel&family=Mona+Sans:wght@200..900&display=swap");
 
+@import "tailwindcss";
 @import "tw-animate-css";
 
 @custom-variant dark (&:is(.dark *));
@@ -41,11 +42,12 @@ code {
 	--sidebar-accent-foreground: oklch(0.4906 0.1224 22.6828);
 	--sidebar-border: oklch(0.6711 0.0821 42.6423);
 	--sidebar-ring: oklch(0.9736 0.0519 104.9643);
-	--font-sans: ui-sans-serif, system-ui, sans-serif;
+	--font-sans: "Mona Sans", ui-sans-serif, system-ui, sans-serif;
 	--font-serif: ui-serif, Georgia, Cambria, "Times New Roman", Times, serif;
 	--font-mono:
 		ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono",
 		"Courier New", monospace;
+	--font-borel: "Borel", cursive;
 	--radius: 0.5rem;
 	--shadow-x: 0;
 	--shadow-y: 0;
@@ -98,11 +100,12 @@ code {
 	--sidebar-accent-foreground: oklch(0.1749 0.0245 19.8292);
 	--sidebar-border: oklch(0.2755 0.0422 20.1326);
 	--sidebar-ring: oklch(0.9736 0.0519 104.9643);
-	--font-sans: ui-sans-serif, system-ui, sans-serif;
+	--font-sans: "Mona Sans", ui-sans-serif, system-ui, sans-serif;
 	--font-serif: ui-serif, Georgia, Cambria, "Times New Roman", Times, serif;
 	--font-mono:
 		ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono",
 		"Courier New", monospace;
+	--font-borel: "Borel", cursive;
 	--radius: 0.5rem;
 	--shadow-x: 0;
 	--shadow-y: 0;
@@ -157,6 +160,7 @@ code {
 	--font-sans: var(--font-sans);
 	--font-mono: var(--font-mono);
 	--font-serif: var(--font-serif);
+	--font-borel: var(--font-borel);
 
 	--radius-sm: calc(var(--radius) - 4px);
 	--radius-md: calc(var(--radius) - 2px);
@@ -181,5 +185,6 @@ code {
 }
 
 body {
+	font-family: var(--font-sans);
 	letter-spacing: var(--tracking-normal);
 }

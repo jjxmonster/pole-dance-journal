@@ -6,6 +6,8 @@ import {
 	Scripts,
 } from "@tanstack/react-router";
 import { TanStackRouterDevtoolsPanel } from "@tanstack/react-router-devtools";
+import { Footer } from "../components/footer";
+import { Nav } from "../components/nav";
 import TanStackQueryDevtools from "../integrations/tanstack-query/devtools";
 import StoreDevtools from "../lib/demo-store-devtools";
 import appCss from "../styles.css?url";
@@ -46,7 +48,11 @@ function RootDocument({ children }: { children: React.ReactNode }) {
 				<HeadContent />
 			</head>
 			<body>
-				{children}
+				<div className="min-h-screen bg-background">
+					<Nav />
+					<main>{children}</main>
+					<Footer />
+				</div>
 				<TanstackDevtools
 					config={{
 						position: "bottom-left",
