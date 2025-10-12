@@ -1,0 +1,101 @@
+import { BookOpen, ListChecks, StickyNote } from "lucide-react";
+import { motion } from "motion/react";
+import { Badge } from "../ui/badge";
+import {
+	Card,
+	CardContent,
+	CardDescription,
+	CardHeader,
+	CardTitle,
+} from "../ui/card";
+
+const ANIMATION_STAGGER_DELAY = 0.1;
+
+const fadeInUp = {
+	initial: { opacity: 0, y: 60 },
+	animate: { opacity: 1, y: 0 },
+	transition: { duration: 0.6, ease: "easeOut" },
+};
+
+const staggerContainer = {
+	animate: {
+		transition: {
+			staggerChildren: ANIMATION_STAGGER_DELAY,
+		},
+	},
+};
+
+const features = [
+	{
+		icon: BookOpen,
+		title: "Browse Moves Catalog",
+		description:
+			"Discover a comprehensive catalog of pole moves with detailed descriptions, difficulty levels, and step-by-step instructions.",
+	},
+	{
+		icon: ListChecks,
+		title: "Track Your Status",
+		description:
+			"Mark moves as Want to learn, Almost there, or Done. Keep track of your learning journey and see your progress at a glance.",
+	},
+	{
+		icon: StickyNote,
+		title: "Private Notes",
+		description:
+			"Add personal notes to each move. Your thoughts, tips, and observations stay completely private.",
+	},
+];
+
+export function Features() {
+	return (
+		<section className="bg-muted/50 px-4 py-20 sm:px-6 lg:px-8">
+			<div className="mx-auto max-w-7xl">
+				<motion.div
+					className="mb-16 text-center"
+					initial={{ opacity: 0, y: 40 }}
+					transition={{ duration: 0.6 }}
+					viewport={{ once: true }}
+					whileInView={{ opacity: 1, y: 0 }}
+				>
+					<Badge className="mb-4" variant="outline">
+						Key Features
+					</Badge>
+					<h2 className="mb-4 font-bold text-4xl text-foreground tracking-tight sm:text-5xl">
+						Everything you need in one place
+					</h2>
+					<p className="mx-auto max-w-2xl text-lg text-muted-foreground">
+						A simple, delightful way to find moves, track your status, and keep
+						personal notes as you master each technique.
+					</p>
+				</motion.div>
+
+				<motion.div
+					className="grid gap-8 md:grid-cols-2 lg:grid-cols-3"
+					initial="initial"
+					variants={staggerContainer}
+					viewport={{ once: true }}
+					whileInView="animate"
+				>
+					{features.map((feature) => (
+						<motion.div key={feature.title} variants={fadeInUp}>
+							<Card className="group relative h-full overflow-hidden border-border/50 transition-all hover:border-primary/50 hover:shadow-lg">
+								<div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-transparent opacity-0 transition-opacity group-hover:opacity-100" />
+								<CardHeader>
+									<div className="mb-4 flex h-12 w-12 items-center justify-center rounded-lg bg-primary/10 text-primary transition-colors group-hover:bg-primary group-hover:text-primary-foreground">
+										<feature.icon className="h-6 w-6" />
+									</div>
+									<CardTitle className="text-xl">{feature.title}</CardTitle>
+								</CardHeader>
+								<CardContent>
+									<CardDescription className="text-base">
+										{feature.description}
+									</CardDescription>
+								</CardContent>
+							</Card>
+						</motion.div>
+					))}
+				</motion.div>
+			</div>
+		</section>
+	);
+}
