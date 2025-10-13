@@ -3,10 +3,11 @@ import { createFileRoute } from "@tanstack/react-router";
 import { z } from "zod";
 import { CatalogEmptyState } from "../components/catalog/catalog-empty-state";
 import { CatalogError } from "../components/catalog/catalog-error";
+import { CatalogFiltersSummary } from "../components/catalog/catalog-filters-summary";
 import { CatalogHeader } from "../components/catalog/catalog-header";
-import { CatalogLoading } from "../components/catalog/catalog-loading";
 import { CatalogPagination } from "../components/catalog/catalog-pagination";
 import { CatalogResultsSummary } from "../components/catalog/catalog-results-summary";
+import { CatalogSkeletonGrid } from "../components/catalog/catalog-skeleton";
 import { LevelFilterBadges } from "../components/catalog/level-filter-badges";
 import { MoveCard } from "../components/catalog/move-card";
 import { SearchBar } from "../components/catalog/search-bar";
@@ -71,7 +72,19 @@ function CatalogView() {
 		updateFilters({ query: "", level: "All", page: 1 });
 	};
 
+	const handleRemoveFilter = (filterKey: "query" | "level") => {
+		if (filterKey === "query") {
+			updateFilters({ query: "", page: 1 });
+		} else if (filterKey === "level") {
+			updateFilters({ level: "All", page: 1 });
+		}
+	};
+
 	const hasActiveFilters = filters.query !== "" || filters.level !== "All";
+	const activeFilters = {
+		query: filters.query || undefined,
+		level: filters.level !== "All" ? filters.level : undefined,
+	};
 
 	return (
 		<div className="container mx-auto max-w-7xl px-4 py-8">
@@ -89,9 +102,14 @@ function CatalogView() {
 				/>
 			</div>
 
+			<CatalogFiltersSummary
+				activeFilters={activeFilters}
+				onRemoveFilter={handleRemoveFilter}
+			/>
+
 			{error && <CatalogError />}
 
-			{isLoading && <CatalogLoading />}
+			{isLoading && <CatalogSkeletonGrid />}
 
 			{!isLoading && data && (
 				<>
