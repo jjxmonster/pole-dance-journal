@@ -2,6 +2,17 @@ import { createFileRoute } from "@tanstack/react-router";
 
 export const Route = createFileRoute("/moves/$slug")({
 	component: MoveDetailView,
+	head: ({ params }) => ({
+		meta: [
+			{
+				title: `${params.slug.replace(/-/g, " ").replace(/\b\w/g, (l) => l.toUpperCase())} - Spinella`,
+			},
+			{
+				name: "description",
+				content: `Learn how to perform the ${params.slug.replace(/-/g, " ")} pole dance move. Step-by-step instructions, tips, and techniques.`,
+			},
+		],
+	}),
 });
 
 function MoveDetailView() {

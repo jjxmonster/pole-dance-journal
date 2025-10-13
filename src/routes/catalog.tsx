@@ -30,6 +30,35 @@ const catalogSearchSchema = z.object({
 export const Route = createFileRoute("/catalog")({
 	validateSearch: catalogSearchSchema,
 	component: CatalogView,
+	head: () => ({
+		meta: [
+			{
+				title: "Browse Moves - Spinella",
+			},
+			{
+				name: "description",
+				content:
+					"Explore our comprehensive catalog of pole dance moves. Filter by difficulty level, search by name, and discover new techniques to master.",
+			},
+			{
+				property: "og:title",
+				content: "Browse Pole Dance Moves - Spinella",
+			},
+			{
+				property: "og:description",
+				content:
+					"Explore our comprehensive catalog of pole dance moves. Filter by difficulty level and discover new techniques.",
+			},
+			{
+				name: "twitter:card",
+				content: "summary",
+			},
+			{
+				name: "twitter:title",
+				content: "Browse Pole Dance Moves - Spinella",
+			},
+		],
+	}),
 });
 
 function CatalogView() {

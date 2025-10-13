@@ -27,7 +27,38 @@ export const Route = createRootRouteWithContext<MyRouterContext>()({
 				content: "width=device-width, initial-scale=1",
 			},
 			{
-				title: "TanStack Start Starter",
+				title: "Spinella - Your Pole Dance Journey Tracker",
+			},
+			{
+				name: "description",
+				content:
+					"Track your pole dance progress, discover new moves, and achieve your fitness goals with Spinella. Your comprehensive pole dance companion.",
+			},
+			{
+				property: "og:title",
+				content: "Spinella - Your Pole Dance Journey Tracker",
+			},
+			{
+				property: "og:description",
+				content:
+					"Track your pole dance progress, discover new moves, and achieve your fitness goals with Spinella.",
+			},
+			{
+				property: "og:type",
+				content: "website",
+			},
+			{
+				name: "twitter:card",
+				content: "summary_large_image",
+			},
+			{
+				name: "twitter:title",
+				content: "Spinella - Your Pole Dance Journey Tracker",
+			},
+			{
+				name: "twitter:description",
+				content:
+					"Track your pole dance progress, discover new moves, and achieve your fitness goals.",
 			},
 		],
 		links: [
