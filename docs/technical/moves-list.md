@@ -126,12 +126,12 @@ const totalPages = Math.ceil(page1.total / PAGE_SIZE);
 import { orpc } from '@/orpc/client';
 
 function MovesList() {
-  const { data, isLoading, error } = orpc.moves.list.useQuery({
+  const { data, isLoading, error } = useQuery(orpc.moves.list.queryOptions({
     input: {
       limit: 20,
       offset: 0,
     }
-  });
+  }));
 
   if (isLoading) return <div>Loading moves...</div>;
   if (error) return <div>Error loading moves</div>;
@@ -155,12 +155,14 @@ function MovesList() {
 
 ```typescript
 function BeginnerMovesList() {
-	const { data, isLoading } = orpc.moves.list.useQuery({
-		input: {
-			level: "Beginner",
-			limit: 50,
-		},
-	});
+	const { data, isLoading, error } = useQuery(
+		orpc.moves.list.queryOptions({
+			input: {
+				level: "Beginner",
+				limit: 50,
+			},
+		})
+	);
 
 	// Component implementation...
 }
@@ -185,13 +187,13 @@ function MovesSearch() {
     return () => clearTimeout(timer);
   }, [searchQuery]);
 
-  const { data, isLoading } = orpc.moves.list.useQuery({
+  const { data, isLoading, error } = useQuery(orpc.moves.list.queryOptions({
     input: {
       query: debouncedQuery || undefined,
       limit: 20,
     },
     enabled: debouncedQuery.length > 0,
-  });
+  }));
 
   return (
     <div>
@@ -221,7 +223,7 @@ function InfiniteMovesList() {
     fetchNextPage,
     hasNextPage,
     isFetchingNextPage,
-  } = orpc.moves.list.useInfiniteQuery({
+  } = useInfiniteQuery(orpc.moves.list.infiniteOptions({
     input: ({ pageParam = 0 }) => ({
       limit: 20,
       offset: pageParam,
@@ -230,7 +232,7 @@ function InfiniteMovesList() {
       const loadedCount = allPages.length * 20;
       return loadedCount < lastPage.total ? loadedCount : undefined;
     },
-  });
+  }))
 
   return (
     <div>
@@ -321,10 +323,12 @@ const moves = await client.moves.list({ limit: 100 });
 
 ```typescript
 // Configure stale time to reduce unnecessary requests
-const { data } = orpc.moves.list.useQuery({
-	input: { limit: 20 },
-	staleTime: 5 * 60 * 1000, // 5 minutes
-});
+const { data } = useQuery(
+	orpc.moves.list.queryOptions({
+		input: { limit: 20 },
+		staleTime: 5 * 60 * 1000, // 5 minutes
+	})
+);
 ```
 
 ## Implementation Details
