@@ -36,3 +36,25 @@ export const MovesListOutputSchema = z.object({
 	moves: z.array(MoveListItemSchema),
 	total: z.number().int().nonnegative(),
 });
+
+export const MoveGetBySlugInputSchema = z.object({
+	slug: z.string().trim().min(1, "Slug is required"),
+});
+
+export const MoveStepSchema = z.object({
+	orderIndex: z.number().int().positive(),
+	title: z.string(),
+	description: z.string(),
+});
+
+export const MoveDetailSchema = z.object({
+	id: z.string().uuid(),
+	name: z.string(),
+	description: z.string(),
+	level: z.enum(moveLevelEnum.enumValues),
+	slug: z.string(),
+	imageUrl: z.string().nullable(),
+	steps: z.array(MoveStepSchema),
+});
+
+export const MoveGetBySlugOutputSchema = MoveDetailSchema;
