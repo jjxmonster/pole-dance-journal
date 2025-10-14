@@ -1,5 +1,6 @@
 import { z } from "zod";
-import { moveLevelEnum } from "../db/schema";
+import { moveLevelEnum, moveStatusEnum } from "../db/schema";
+import { NOTE_MAX_LENGTH } from "../utils/constants";
 
 export const TodoSchema = z.object({
 	id: z.number().int().min(1),
@@ -35,4 +36,37 @@ export const MoveListItemSchema = z.object({
 export const MovesListOutputSchema = z.object({
 	moves: z.array(MoveListItemSchema),
 	total: z.number().int().nonnegative(),
+});
+
+export const MoveGetBySlugInputSchema = z.object({
+	slug: z.string().trim().min(1, "Slug is required"),
+});
+
+export const MoveStepSchema = z.object({
+	orderIndex: z.number().int().positive(),
+	title: z.string(),
+	description: z.string(),
+});
+
+export const MoveDetailSchema = z.object({
+	id: z.string().uuid(),
+	name: z.string(),
+	description: z.string(),
+	level: z.enum(moveLevelEnum.enumValues),
+	slug: z.string(),
+	imageUrl: z.string().nullable(),
+	steps: z.array(MoveStepSchema),
+});
+
+export const MoveGetBySlugOutputSchema = MoveDetailSchema;
+
+export const UserMoveStatusSetInputSchema = z.object({
+	moveId: z.string().uuid(),
+	status: z.enum(moveStatusEnum.enumValues),
+	note: z.string().max(NOTE_MAX_LENGTH).optional(),
+});
+
+export const UserMoveStatusSetOutputSchema = z.object({
+	success: z.literal(true),
+	updatedAt: z.date(),
 });

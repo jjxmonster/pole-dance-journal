@@ -1,7 +1,5 @@
-import type { moveLevelEnum } from "../../db/schema";
+import type { MoveLevel } from "../../types/move";
 import { Badge } from "../ui/badge";
-
-type MoveLevel = (typeof moveLevelEnum.enumValues)[number];
 
 type LevelFilterBadgesProps = {
 	activeLevel: MoveLevel | "All";

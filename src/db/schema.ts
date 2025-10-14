@@ -1,4 +1,4 @@
-import { sql } from "drizzle-orm";
+import { relations, sql } from "drizzle-orm";
 import {
 	boolean,
 	check,
@@ -126,3 +126,14 @@ export const userMoveStatuses = pgTable(
 		),
 	})
 );
+
+export const movesRelations = relations(moves, ({ many }) => ({
+	steps: many(steps),
+}));
+
+export const stepsRelations = relations(steps, ({ one }) => ({
+	move: one(moves, {
+		fields: [steps.moveId],
+		references: [moves.id],
+	}),
+}));

@@ -1,5 +1,6 @@
 import {
 	and,
+	asc,
 	count,
 	desc,
 	eq,
@@ -7,10 +8,11 @@ import {
 	isNotNull,
 	isNull,
 	or,
+	sql,
 } from "drizzle-orm";
 import type { z } from "zod";
 import { db } from "../db";
-import { moves } from "../db/schema";
+import { moves, steps } from "../db/schema";
 import type { MovesListInputSchema } from "../orpc/schema";
 
 type ListPublishedMovesInput = z.infer<typeof MovesListInputSchema>;
@@ -57,4 +59,34 @@ export async function listPublishedMoves(input: ListPublishedMovesInput) {
 		moves: movesResult,
 		total: totalResult[0]?.count ?? 0,
 	};
+}
+
+export async function getMoveBySlug(slug: string) {
+	const move = await db.query.moves.findFirst({
+		where: and(
+			eq(sql`lower(${moves.slug})`, slug.toLowerCase()),
+			isNotNull(moves.publishedAt),
+			isNull(moves.deletedAt)
+		),
+		columns: {
+			id: true,
+			name: true,
+			description: true,
+			level: true,
+			slug: true,
+			imageUrl: true,
+		},
+		with: {
+			steps: {
+				columns: {
+					orderIndex: true,
+					title: true,
+					description: true,
+				},
+				orderBy: [asc(steps.orderIndex)],
+			},
+		},
+	});
+
+	return move ?? null;
 }
