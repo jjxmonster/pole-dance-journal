@@ -1,4 +1,4 @@
-import { os } from "@orpc/server";
+import { ORPCError, os } from "@orpc/server";
 import { SAMPLE_USER } from "@/utils/constants";
 import {
 	checkMoveExists,
@@ -15,7 +15,9 @@ export const set = os
 	.handler(async ({ input }) => {
 		const moveExists = await checkMoveExists(input.moveId);
 		if (!moveExists) {
-			throw new Error("NOT_FOUND");
+			throw new ORPCError("NOT_FOUND", {
+				message: `Move with ID ${input.moveId} not found`,
+			});
 		}
 
 		try {
@@ -31,6 +33,8 @@ export const set = os
 				updatedAt: result.updatedAt,
 			};
 		} catch (_) {
-			throw new Error("INTERNAL_SERVER_ERROR");
+			throw new ORPCError("INTERNAL_SERVER_ERROR", {
+				message: "Failed to update user move status",
+			});
 		}
 	});

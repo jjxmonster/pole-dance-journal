@@ -1,4 +1,4 @@
-import { os } from "@orpc/server";
+import { ORPCError, os } from "@orpc/server";
 import { getMoveBySlug, listPublishedMoves } from "../../data-access/moves";
 import {
 	MoveGetBySlugInputSchema,
@@ -17,8 +17,13 @@ export const listMoves = os
 
 export const getBySlug = os
 	.input(MoveGetBySlugInputSchema)
-	.output(MoveGetBySlugOutputSchema.nullable())
+	.output(MoveGetBySlugOutputSchema)
 	.handler(async ({ input }) => {
 		const move = await getMoveBySlug(input.slug);
+		if (!move) {
+			throw new ORPCError("NOT_FOUND", {
+				message: `Move with slug "${input.slug}" not found`,
+			});
+		}
 		return move;
 	});
