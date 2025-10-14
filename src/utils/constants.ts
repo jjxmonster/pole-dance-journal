@@ -19,3 +19,5 @@ export const STATUS_OPTIONS: StatusOption[] = [
 
 export const NOTE_MAX_LENGTH = 2000;
 export const NOTE_WARNING_THRESHOLD = 1900;
+
+export const SAMPLE_USER = "6c97cd4c-bc47-45c6-b19c-7853b8eaacb2";
