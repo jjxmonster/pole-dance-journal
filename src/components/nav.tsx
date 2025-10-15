@@ -2,7 +2,12 @@ import { Link } from "@tanstack/react-router";
 import { motion } from "motion/react";
 import { Button } from "./ui/button";
 
-export function Nav() {
+type NavProps = {
+	isAuthenticated?: boolean;
+	onSignOut?: () => void;
+};
+
+export function Nav({ isAuthenticated = false, onSignOut }: NavProps) {
 	return (
 		<nav className="border-border/40 border-b bg-background/95 backdrop-blur">
 			<div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-4 sm:px-6 lg:px-8">
@@ -33,22 +38,35 @@ export function Nav() {
 					>
 						Moves
 					</Link>
-					<a
-						className="text-muted-foreground text-sm hover:text-foreground"
-						href="#features"
-					>
-						Features
-					</a>
-					<a
-						className="text-muted-foreground text-sm hover:text-foreground"
-						href="#pricing"
-					>
-						Pricing
-					</a>
-					<Button size="sm" variant="ghost">
-						Log In
-					</Button>
-					<Button size="sm">Sign Up</Button>
+
+					{isAuthenticated ? (
+						<Button onClick={onSignOut} size="sm" variant="ghost">
+							Sign out
+						</Button>
+					) : (
+						<>
+							<a
+								className="text-muted-foreground text-sm hover:text-foreground"
+								href="#features"
+							>
+								Features
+							</a>
+							<a
+								className="text-muted-foreground text-sm hover:text-foreground"
+								href="#pricing"
+							>
+								Pricing
+							</a>
+							<Link to="/auth/sign-in">
+								<Button size="sm" variant="ghost">
+									Sign in
+								</Button>
+							</Link>
+							<Link to="/auth/sign-up">
+								<Button size="sm">Sign up</Button>
+							</Link>
+						</>
+					)}
 				</motion.div>
 			</div>
 		</nav>
