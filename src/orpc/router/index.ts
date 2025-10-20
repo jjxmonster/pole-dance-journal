@@ -1,3 +1,14 @@
+import {
+	deleteAccount,
+	forgotPassword,
+	getSession,
+	login,
+	logout,
+	oauthCallback,
+	oauthStart,
+	register,
+	resetPassword,
+} from "./auth";
 import { getBySlug, listMoves } from "./moves";
 import { set } from "./user-move-statuses";
 
@@ -8,5 +19,16 @@ export default {
 	},
 	userMoveStatuses: {
 		set,
+	},
+	auth: {
+		register,
+		login,
+		logout,
+		getSession,
+		forgotPassword,
+		resetPassword,
+		oauthStart,
+		oauthCallback,
+		deleteAccount,
 	},
 };

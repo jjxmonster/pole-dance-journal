@@ -1,62 +1,40 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
 import { AuthFormWrapper } from "@/components/auth/auth-form-wrapper";
 import { SignInForm } from "@/components/auth/sign-in-form";
+import { orpc } from "@/orpc/client";
 
 export const Route = createFileRoute("/auth/sign-in")({
 	component: SignInPage,
-	beforeLoad: () => {
-		// This would be replaced with actual session check
-		// const { userId } = context.auth || {};
-		// if (userId) {
-		//   return navigate({ to: "/catalog" });
-		// }
-	},
+	head: () => ({
+		meta: [
+			{
+				name: "description",
+				content: "Sign in to your account",
+			},
+		],
+	}),
 });
 
 function SignInPage() {
+	const navigate = useNavigate();
 	const [isLoading, setIsLoading] = useState(false);
 	const [error, setError] = useState<string | null>(null);
 
-	const handleSubmit = async (_values: { email: string; password: string }) => {
+	const handleSubmit = async (values: { email: string; password: string }) => {
 		setIsLoading(true);
 		setError(null);
 
 		try {
-			// This would be replaced with actual auth implementation
-			// await orpc.mutation("auth.login", values);
-
-			// Mock successful login for UI demo
-			// biome-ignore lint/style/noMagicNumbers: mock
-			await new Promise((resolve) => setTimeout(resolve, 1000));
-
-			// Redirect would happen here
-			// navigate({ to: "/catalog" });
+			await orpc.auth.login.call(values);
+			const redirectTo = new URLSearchParams(window.location.search).get(
+				"redirectTo"
+			);
+			await navigate({ to: redirectTo || "/catalog" });
 		} catch (err) {
-			setError("Invalid email or password.");
-			throw err;
-		} finally {
-			setIsLoading(false);
-		}
-	};
-
-	const handleGoogleSignIn = async () => {
-		setIsLoading(true);
-		setError(null);
-
-		try {
-			// This would be replaced with actual OAuth implementation
-			// const { url } = await orpc.mutation("auth.oauthStart", {
-			//   provider: "google",
-			//   redirectTo: window.location.origin + "/auth/oauth-callback",
-			// });
-			// window.location.href = url;
-
-			// Mock for UI demo
-			// biome-ignore lint/style/noMagicNumbers: mock
-			await new Promise((resolve) => setTimeout(resolve, 1000));
-		} catch {
-			setError("Unable to start Google sign-in. Please try again.");
+			const errorMessage =
+				err instanceof Error ? err.message : "Invalid email or password.";
+			setError(errorMessage);
 		} finally {
 			setIsLoading(false);
 		}
@@ -68,11 +46,7 @@ function SignInPage() {
 			error={error}
 			title="Sign in"
 		>
-			<SignInForm
-				isLoading={isLoading}
-				onGoogleSignIn={handleGoogleSignIn}
-				onSubmit={handleSubmit}
-			/>
+			<SignInForm isLoading={isLoading} onSubmit={handleSubmit} />
 		</AuthFormWrapper>
 	);
 }

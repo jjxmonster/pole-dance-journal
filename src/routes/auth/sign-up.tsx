@@ -5,13 +5,6 @@ import { SignUpForm } from "@/components/auth/sign-up-form";
 
 export const Route = createFileRoute("/auth/sign-up")({
 	component: SignUpPage,
-	beforeLoad: () => {
-		// This would be replaced with actual session check
-		// const { userId } = context.auth || {};
-		// if (userId) {
-		//   return navigate({ to: "/catalog" });
-		// }
-	},
 });
 
 function SignUpPage() {
