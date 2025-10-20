@@ -1,11 +1,18 @@
-import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { createFileRoute, redirect, useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
 import { AuthFormWrapper } from "@/components/auth/auth-form-wrapper";
 import { SignInForm } from "@/components/auth/sign-in-form";
-import { orpc } from "@/orpc/client";
+import { useAuth } from "@/hooks/use-auth";
+import { client, orpc } from "@/orpc/client";
 
 export const Route = createFileRoute("/auth/sign-in")({
 	component: SignInPage,
+	beforeLoad: async () => {
+		const session = await orpc.auth.getSession.call();
+		if (session.userId) {
+			throw redirect({ to: "/catalog" });
+		}
+	},
 	head: () => ({
 		meta: [
 			{
@@ -18,6 +25,7 @@ export const Route = createFileRoute("/auth/sign-in")({
 
 function SignInPage() {
 	const navigate = useNavigate();
+	const { setAuth } = useAuth();
 	const [isLoading, setIsLoading] = useState(false);
 	const [error, setError] = useState<string | null>(null);
 
@@ -27,6 +35,13 @@ function SignInPage() {
 
 		try {
 			await orpc.auth.login.call(values);
+			const session = await client.auth.getSession();
+			setAuth({
+				userId: session.userId,
+				email: session.email,
+				isAdmin: session.isAdmin,
+				expiresAt: session.expiresAt,
+			});
 			const redirectTo = new URLSearchParams(window.location.search).get(
 				"redirectTo"
 			);

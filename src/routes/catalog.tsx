@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, redirect } from "@tanstack/react-router";
 import { z } from "zod";
 import { CatalogEmptyState } from "../components/catalog/catalog-empty-state";
 import { CatalogError } from "../components/catalog/catalog-error";
@@ -30,6 +30,12 @@ const catalogSearchSchema = z.object({
 export const Route = createFileRoute("/catalog")({
 	validateSearch: catalogSearchSchema,
 	component: CatalogView,
+	beforeLoad: async () => {
+		const session = await orpc.auth.getSession.call();
+		if (!session.userId) {
+			throw redirect({ to: "/auth/sign-in" });
+		}
+	},
 	head: () => ({
 		meta: [
 			{

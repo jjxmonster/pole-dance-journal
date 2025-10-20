@@ -2,16 +2,10 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
 import { AuthFormWrapper } from "@/components/auth/auth-form-wrapper";
 import { ForgotPasswordForm } from "@/components/auth/forgot-password-form";
+import { orpc } from "@/orpc/client";
 
 export const Route = createFileRoute("/auth/forgot-password")({
 	component: ForgotPasswordPage,
-	beforeLoad: () => {
-		// This would be replaced with actual session check
-		// const { userId } = context.auth || {};
-		// if (userId) {
-		//   return navigate({ to: "/catalog" });
-		// }
-	},
 });
 
 function ForgotPasswordPage() {
@@ -19,26 +13,16 @@ function ForgotPasswordPage() {
 	const [error, setError] = useState<string | null>(null);
 	const [success, setSuccess] = useState<string | null>(null);
 
-	const handleSubmit = async (_values: { email: string }) => {
+	const handleSubmit = async (values: { email: string }) => {
 		setIsLoading(true);
 		setError(null);
 		setSuccess(null);
 
 		try {
-			// This would be replaced with actual auth implementation
-			// await orpc.mutation("auth.forgotPassword", values);
-
-			// Mock successful request for UI demo
-			// biome-ignore lint/style/noMagicNumbers: mock
-			await new Promise((resolve) => setTimeout(resolve, 1000));
-
-			// Always show success message to avoid account enumeration
+			await orpc.auth.forgotPassword.call(values);
 			setSuccess("If an account exists, we sent a reset link to your email.");
-		} catch (err) {
-			// We don't show specific errors for security reasons
+		} catch {
 			setSuccess("If an account exists, we sent a reset link to your email.");
-			// But we still throw for potential logging/handling
-			throw err;
 		} finally {
 			setIsLoading(false);
 		}

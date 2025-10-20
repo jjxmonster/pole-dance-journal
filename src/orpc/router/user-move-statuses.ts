@@ -1,4 +1,5 @@
 import { ORPCError, os } from "@orpc/server";
+import { getSupabaseServerClient } from "@/integrations/supabase/server";
 import {
 	checkMoveExists,
 	upsertUserMoveStatus,
@@ -7,23 +8,22 @@ import {
 	UserMoveStatusSetInputSchema,
 	UserMoveStatusSetOutputSchema,
 } from "../schema";
-import type { SupabaseClient } from "../types";
 
 export const set = os
 	.input(UserMoveStatusSetInputSchema)
 	.output(UserMoveStatusSetOutputSchema)
-	.handler(async ({ input, context }) => {
-		const supabase = (context as Record<string, SupabaseClient>).supabase;
+	.handler(async ({ input }) => {
+		const supabase = getSupabaseServerClient();
 
-		const response = await supabase.auth.getSession();
+		const data = await supabase.auth.getUser();
 
-		if (!response.data.session?.user) {
+		if (!data.data.user) {
 			throw new ORPCError("UNAUTHORIZED", {
 				message: "You must be signed in to update move status.",
 			});
 		}
 
-		const userId = response.data.session.user.id;
+		const userId = data.data.user.id;
 
 		const moveExists = await checkMoveExists(input.moveId);
 		if (!moveExists) {

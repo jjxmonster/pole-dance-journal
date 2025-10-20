@@ -7,16 +7,12 @@ import {
 import { useEffect, useState } from "react";
 import { AuthFormWrapper } from "@/components/auth/auth-form-wrapper";
 import { ResetPasswordForm } from "@/components/auth/reset-password-form";
+import { orpc } from "@/orpc/client";
+
+const REDIRECT_DELAY_MS = 2000;
 
 export const Route = createFileRoute("/auth/reset-password")({
 	component: ResetPasswordPage,
-	beforeLoad: () => {
-		// This would be replaced with actual session check
-		// const { userId } = context.auth || {};
-		// if (userId) {
-		//   return navigate({ to: "/catalog" });
-		// }
-	},
 });
 
 function ResetPasswordPage() {
@@ -27,9 +23,8 @@ function ResetPasswordPage() {
 	const [success, setSuccess] = useState<string | null>(null);
 	const [accessToken, setAccessToken] = useState<string | null>(null);
 
-	// Extract the token from URL query parameters
 	useEffect(() => {
-		const code = "200";
+		const code = (search as Record<string, unknown>)?.code;
 		if (typeof code === "string" && code.length > 0) {
 			setAccessToken(code);
 		} else {
@@ -37,7 +32,7 @@ function ResetPasswordPage() {
 		}
 	}, [search]);
 
-	const handleSubmit = async (_values: {
+	const handleSubmit = async (values: {
 		newPassword: string;
 		accessToken: string;
 	}) => {
@@ -46,23 +41,18 @@ function ResetPasswordPage() {
 		setSuccess(null);
 
 		try {
-			// This would be replaced with actual auth implementation
-			// await orpc.mutation("auth.resetPassword", values);
-
-			// Mock successful reset for UI demo
-			// biome-ignore lint/style/noMagicNumbers: mock
-			await new Promise((resolve) => setTimeout(resolve, 1000));
-
+			await orpc.auth.resetPassword.call(values);
 			setSuccess("Password has been reset successfully.");
 
-			// Redirect to sign-in after a short delay
 			setTimeout(() => {
 				navigate({ to: "/auth/sign-in" });
-				// biome-ignore lint/style/noMagicNumbers: mock
-			}, 2000);
+			}, REDIRECT_DELAY_MS);
 		} catch (err) {
-			setError("Reset link is invalid or expired.");
-			throw err;
+			const errorMessage =
+				err instanceof Error
+					? err.message
+					: "Reset link is invalid or expired.";
+			setError(errorMessage);
 		} finally {
 			setIsLoading(false);
 		}

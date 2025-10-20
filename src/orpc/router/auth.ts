@@ -1,6 +1,6 @@
 import { ORPCError, os } from "@orpc/server";
+import { getSupabaseServerClient } from "@/integrations/supabase/server";
 import {
-	AuthDeleteAccountInputSchema,
 	AuthForgotPasswordInputSchema,
 	AuthLoginInputSchema,
 	AuthOAuthCallbackInputSchema,
@@ -11,8 +11,6 @@ import {
 	AuthSuccessSchema,
 } from "@/orpc/schema";
 import type { SupabaseClient } from "@/orpc/types";
-
-const MILLISECONDS_PER_SECOND = 1000;
 
 export const register = os
 	.input(AuthRegisterInputSchema)
@@ -108,13 +106,12 @@ export const logout = os
 
 export const getSession = os
 	.output(AuthSessionOutputSchema)
-	.handler(async ({ context }) => {
-		const supabase = (context as Record<string, SupabaseClient>).supabase;
-
+	.handler(async () => {
+		const supabase = getSupabaseServerClient();
 		try {
-			const response = await supabase.auth.getSession();
+			const data = await supabase.auth.getUser();
 
-			if (!response.data.session?.user) {
+			if (!data.data.user) {
 				return {
 					userId: null,
 					email: null,
@@ -124,14 +121,10 @@ export const getSession = os
 			}
 
 			return {
-				userId: response.data.session.user.id,
-				email: response.data.session.user.email ?? null,
+				userId: data.data.user.id,
+				email: data.data.user.email ?? null,
 				isAdmin: false,
-				expiresAt: response.data.session.expires_at
-					? Math.floor(
-							response.data.session.expires_at * MILLISECONDS_PER_SECOND
-						)
-					: null,
+				expiresAt: null,
 			};
 		} catch {
 			return {
@@ -256,34 +249,6 @@ export const oauthCallback = os
 
 			throw new ORPCError("INTERNAL_SERVER_ERROR", {
 				message: "Failed to complete Google sign-in. Please try again.",
-			});
-		}
-	});
-
-export const deleteAccount = os
-	.input(AuthDeleteAccountInputSchema)
-	.output(AuthSuccessSchema)
-	.handler(async ({ context }) => {
-		const supabase = (context as Record<string, SupabaseClient>).supabase;
-
-		try {
-			const response = await supabase.auth.getSession();
-
-			if (!response.data.session?.user) {
-				throw new ORPCError("UNAUTHORIZED", {
-					message: "You must be signed in to delete your account.",
-				});
-			}
-
-			return { success: true };
-		} catch (error) {
-			if (error instanceof ORPCError) {
-				throw error;
-			}
-
-			throw new ORPCError("INTERNAL_SERVER_ERROR", {
-				message:
-					"Failed to delete account. Please try again or contact support.",
 			});
 		}
 	});

@@ -1,13 +1,24 @@
-import { Link } from "@tanstack/react-router";
+import { Link, useNavigate } from "@tanstack/react-router";
 import { motion } from "motion/react";
+import { useAuth } from "@/hooks/use-auth";
+import { orpc } from "@/orpc/client";
 import { Button } from "./ui/button";
 
-type NavProps = {
-	isAuthenticated?: boolean;
-	onSignOut?: () => void;
-};
+export function Nav() {
+	const navigate = useNavigate();
+	const { isAuthenticated, clearAuth } = useAuth();
 
-export function Nav({ isAuthenticated = false, onSignOut }: NavProps) {
+	const handleSignOut = async () => {
+		try {
+			await orpc.auth.logout.call();
+		} catch {
+			// Logout failed, but we still clear auth and navigate
+		} finally {
+			clearAuth();
+			await navigate({ to: "/" });
+		}
+	};
+
 	return (
 		<nav className="border-border/40 border-b bg-background/95 backdrop-blur">
 			<div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-4 sm:px-6 lg:px-8">
@@ -40,7 +51,7 @@ export function Nav({ isAuthenticated = false, onSignOut }: NavProps) {
 					</Link>
 
 					{isAuthenticated ? (
-						<Button onClick={onSignOut} size="sm" variant="ghost">
+						<Button onClick={handleSignOut} size="sm" variant="ghost">
 							Sign out
 						</Button>
 					) : (

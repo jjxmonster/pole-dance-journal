@@ -1,5 +1,4 @@
 import {
-	deleteAccount,
 	forgotPassword,
 	getSession,
 	login,
@@ -29,6 +28,5 @@ export default {
 		resetPassword,
 		oauthStart,
 		oauthCallback,
-		deleteAccount,
 	},
 };
