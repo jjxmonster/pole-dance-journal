@@ -9,7 +9,7 @@ import {
 	resetPassword,
 } from "./auth";
 import { getBySlug, listMoves } from "./moves";
-import { set } from "./user-move-statuses";
+import { get, set } from "./user-move-statuses";
 
 export default {
 	moves: {
@@ -17,6 +17,7 @@ export default {
 		getBySlug,
 	},
 	userMoveStatuses: {
+		get,
 		set,
 	},
 	auth: {

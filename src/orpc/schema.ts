@@ -74,6 +74,18 @@ export const UserMoveStatusSetOutputSchema = z.object({
 	updatedAt: z.date(),
 });
 
+export const UserMoveStatusGetInputSchema = z.object({
+	moveId: z.string().uuid(),
+});
+
+export const UserMoveStatusGetOutputSchema = z
+	.object({
+		status: z.enum(moveStatusEnum.enumValues),
+		note: z.string().nullable(),
+		updatedAt: z.date(),
+	})
+	.nullable();
+
 export const AuthEmailSchema = z.string().trim().email("Invalid email address");
 
 export const PasswordSchema = z

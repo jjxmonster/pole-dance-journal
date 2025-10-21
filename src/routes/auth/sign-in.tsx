@@ -36,6 +36,7 @@ function SignInPage() {
 		try {
 			await orpc.auth.login.call(values);
 			const session = await client.auth.getSession();
+
 			setAuth({
 				userId: session.userId,
 				email: session.email,
