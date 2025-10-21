@@ -3,7 +3,7 @@ import { Breadcrumbs } from "../components/moves/breadcrumbs";
 import { MoveDescription } from "../components/moves/move-description";
 import { MoveImage } from "../components/moves/move-image";
 import { NoteEditor } from "../components/moves/note-editor";
-import { StatusDropdown } from "../components/moves/status-dropdown";
+import { StatusButtons } from "../components/moves/status-buttons";
 import { StepsList } from "../components/moves/steps-list";
 import { Badge } from "../components/ui/badge";
 import { useAuth } from "../hooks/use-auth";
@@ -90,26 +90,11 @@ function MoveDetailPage() {
 			<Breadcrumbs moveName={move.name} />
 
 			<div className="space-y-8">
-				<header className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
-					<div>
-						<h1 className="mb-4 font-bold text-4xl text-foreground">
-							{move.name}
-						</h1>
-						<Badge variant="default">{move.level}</Badge>
-					</div>
-
-					{isAuthenticated && (
-						<div className="flex items-center gap-2">
-							<span className="text-muted-foreground text-sm">
-								Twój status:
-							</span>
-							<StatusDropdown
-								disabled={isStatusLoading}
-								onChange={updateStatus}
-								value={status}
-							/>
-						</div>
-					)}
+				<header>
+					<h1 className="mb-4 font-bold text-4xl text-foreground">
+						{move.name}
+					</h1>
+					<Badge variant="default">{move.level}</Badge>
 				</header>
 
 				<MoveImage
@@ -117,16 +102,24 @@ function MoveDetailPage() {
 					imageUrl={move.imageUrl}
 				/>
 
-				<MoveDescription description={move.description} />
+				<div className="grid grid-cols-1 gap-8 md:grid-cols-3">
+					<div className="md:col-span-2">
+						<MoveDescription description={move.description} />
+						<StepsList steps={move.steps} />
+					</div>
 
-				<StepsList steps={move.steps} />
+					{isAuthenticated && (
+						<div className="space-y-6 md:col-span-1">
+							<StatusButtons
+								disabled={isStatusLoading}
+								onChange={updateStatus}
+								value={status}
+							/>
 
-				{isAuthenticated && (
-					<NoteEditor
-						initialNote={null}
-						moveId={move.id} // We'll get this from the API in a future implementation
-					/>
-				)}
+							<NoteEditor initialNote={null} moveId={move.id} />
+						</div>
+					)}
+				</div>
 			</div>
 		</div>
 	);

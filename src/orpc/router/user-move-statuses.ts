@@ -35,10 +35,7 @@ export const get = os
 		}
 
 		try {
-			const result = await getUserMoveStatus({
-				userId,
-				moveId: input.moveId,
-			});
+			const result = await getUserMoveStatus(userId, input.moveId);
 
 			return result;
 		} catch (_) {

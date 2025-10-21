@@ -12,6 +12,22 @@ export async function checkMoveExists(moveId: string): Promise<boolean> {
 	return result.length > 0;
 }
 
+export async function getUserMoveStatus(userId: string, moveId: string) {
+	const result = await db
+		.select({
+			status: userMoveStatuses.status,
+			note: userMoveStatuses.note,
+			updatedAt: userMoveStatuses.updatedAt,
+		})
+		.from(userMoveStatuses)
+		.where(
+			eq(userMoveStatuses.userId, userId) && eq(userMoveStatuses.moveId, moveId)
+		)
+		.limit(1);
+
+	return result.length > 0 ? result[0] : null;
+}
+
 export async function upsertUserMoveStatus({
 	userId,
 	moveId,

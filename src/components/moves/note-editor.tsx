@@ -39,9 +39,9 @@ function CharacterCounter({ count, max }: CharacterCounterProps) {
 function SaveIndicator({ status }: SaveIndicatorProps) {
 	const statusMessages = {
 		idle: "",
-		saving: "Zapisywanie...",
-		saved: "Zapisano",
-		error: "Błąd zapisu",
+		saving: "Saving...",
+		saved: "Saved",
+		error: "Save error",
 	};
 
 	const statusStyles = {
@@ -91,9 +91,9 @@ export function NoteEditor({ moveId, initialNote }: NoteEditorProps) {
 	};
 
 	return (
-		<div className="space-y-2">
+		<div className="mt-6 space-y-2">
 			<div className="flex items-center justify-between">
-				<h3 className="font-medium text-lg">Twoje notatki</h3>
+				<h3 className="font-medium text-lg">My Notes</h3>
 				<div className="flex items-center gap-2">
 					<SaveIndicator status={saveStatus} />
 					<CharacterCounter count={characterCount} max={NOTE_MAX_LENGTH} />
@@ -101,18 +101,18 @@ export function NoteEditor({ moveId, initialNote }: NoteEditorProps) {
 			</div>
 
 			<Textarea
-				aria-label="Prywatne notatki do figury"
+				aria-label="Private notes for this move"
 				className={`duration-${TRANSITION_DURATION_MS} transition-all ${expanded ? "min-h-[150px]" : "h-[60px]"}`}
 				maxLength={NOTE_MAX_LENGTH}
 				onBlur={handleBlur}
 				onChange={handleChange}
 				onFocus={handleFocus}
-				placeholder="Dodaj swoje prywatne notatki..."
+				placeholder="Add your private notes..."
 				value={note}
 			/>
 
 			<div aria-live="polite" className="text-muted-foreground text-xs">
-				Notatki są prywatne i widoczne tylko dla Ciebie.
+				Notes are private and visible only to you.
 			</div>
 		</div>
 	);
