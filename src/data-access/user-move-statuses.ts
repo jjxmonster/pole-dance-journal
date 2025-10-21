@@ -1,4 +1,4 @@
-import { eq } from "drizzle-orm";
+import { and, eq } from "drizzle-orm";
 import { db } from "../db";
 import { moves, userMoveStatuses } from "../db/schema";
 
@@ -21,7 +21,10 @@ export async function getUserMoveStatus(userId: string, moveId: string) {
 		})
 		.from(userMoveStatuses)
 		.where(
-			eq(userMoveStatuses.userId, userId) && eq(userMoveStatuses.moveId, moveId)
+			and(
+				eq(userMoveStatuses.userId, userId),
+				eq(userMoveStatuses.moveId, moveId)
+			)
 		)
 		.limit(1);
 
