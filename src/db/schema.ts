@@ -2,6 +2,7 @@ import { relations, sql } from "drizzle-orm";
 import {
 	boolean,
 	check,
+	foreignKey,
 	integer,
 	pgEnum,
 	pgTable,
@@ -127,13 +128,58 @@ export const userMoveStatuses = pgTable(
 	})
 );
 
+export const moveNotes = pgTable(
+	"move_notes",
+	{
+		id: uuid("id").defaultRandom().primaryKey(),
+		userId: uuid("user_id").notNull(),
+		moveId: uuid("move_id")
+			.notNull()
+			.references(() => moves.id, { onDelete: "cascade" }),
+		content: text("content").notNull(),
+		createdAt: timestamp("created_at", { withTimezone: true })
+			.defaultNow()
+			.notNull(),
+	},
+	(table) => ({
+		contentLengthCheck: check(
+			"content_length_check",
+			sql`char_length(${table.content}) <= 2000`
+		),
+		userMoveFK: foreignKey({
+			columns: [table.userId, table.moveId],
+			foreignColumns: [userMoveStatuses.userId, userMoveStatuses.moveId],
+			name: "move_notes_user_move_fk",
+		}),
+	})
+);
+
 export const movesRelations = relations(moves, ({ many }) => ({
 	steps: many(steps),
+	userMoveStatuses: many(userMoveStatuses),
 }));
 
 export const stepsRelations = relations(steps, ({ one }) => ({
 	move: one(moves, {
 		fields: [steps.moveId],
 		references: [moves.id],
+	}),
+}));
+
+export const userMoveStatusesRelations = relations(
+	userMoveStatuses,
+	({ one, many }) => ({
+		move: one(moves, {
+			fields: [userMoveStatuses.moveId],
+			references: [moves.id],
+		}),
+		notes: many(moveNotes),
+	})
+);
+
+export const moveNotesRelations = relations(moveNotes, ({ one }) => ({
+	userMoveStatus: one(userMoveStatuses, {
+		fields: [moveNotes.userId, moveNotes.moveId],
+		references: [userMoveStatuses.userId, userMoveStatuses.moveId],
 	}),
 }));

@@ -2,8 +2,12 @@ import { createFileRoute, notFound } from "@tanstack/react-router";
 import { Breadcrumbs } from "../components/moves/breadcrumbs";
 import { MoveDescription } from "../components/moves/move-description";
 import { MoveImage } from "../components/moves/move-image";
+import { NoteEditor } from "../components/moves/note-editor";
+import { StatusButtons } from "../components/moves/status-buttons";
 import { StepsList } from "../components/moves/steps-list";
 import { Badge } from "../components/ui/badge";
+import { useAuth } from "../hooks/use-auth";
+import { useMoveStatus } from "../hooks/use-move-status";
 import { orpc } from "../orpc/client";
 
 export const Route = createFileRoute("/moves/$slug")({
@@ -74,12 +78,23 @@ export const Route = createFileRoute("/moves/$slug")({
 
 function MoveDetailPage() {
 	const { move } = Route.useLoaderData();
+	const { isAuthenticated } = useAuth();
+	const {
+		status,
+		updateStatus,
+		isLoading: isStatusLoading,
+	} = useMoveStatus(move.id);
 
 	return (
 		<div className="container mx-auto max-w-5xl px-4 py-8">
 			<Breadcrumbs moveName={move.name} />
 
 			<div className="space-y-8">
+				<MoveImage
+					alt={`${move.name} pole dance move illustration`}
+					imageUrl={move.imageUrl}
+				/>
+
 				<header>
 					<h1 className="mb-4 font-bold text-4xl text-foreground">
 						{move.name}
@@ -87,14 +102,24 @@ function MoveDetailPage() {
 					<Badge variant="default">{move.level}</Badge>
 				</header>
 
-				<MoveImage
-					alt={`${move.name} pole dance move illustration`}
-					imageUrl={move.imageUrl}
-				/>
+				<div className="grid grid-cols-1 gap-8 md:grid-cols-3">
+					<div className="space-y-4 md:col-span-2">
+						<MoveDescription description={move.description} />
+						<StepsList steps={move.steps} />
+					</div>
 
-				<MoveDescription description={move.description} />
+					{isAuthenticated && (
+						<div className="space-y-6 md:col-span-1">
+							<StatusButtons
+								disabled={isStatusLoading}
+								onChange={updateStatus}
+								value={status}
+							/>
 
-				<StepsList steps={move.steps} />
+							<NoteEditor moveId={move.id} />
+						</div>
+					)}
+				</div>
 			</div>
 		</div>
 	);

@@ -6,10 +6,14 @@ import {
 	Scripts,
 } from "@tanstack/react-router";
 import { TanStackRouterDevtoolsPanel } from "@tanstack/react-router-devtools";
+import { useEffect } from "react";
 import { Footer } from "../components/footer";
 import { Nav } from "../components/nav";
+import { NotFound } from "../components/not-found";
+import { useAuth } from "../hooks/use-auth";
 import TanStackQueryDevtools from "../integrations/tanstack-query/devtools";
 import StoreDevtools from "../lib/demo-store-devtools";
+import { client } from "../orpc/client";
 import appCss from "../styles.css?url";
 
 type MyRouterContext = {
@@ -69,10 +73,36 @@ export const Route = createRootRouteWithContext<MyRouterContext>()({
 		],
 	}),
 
+	notFoundComponent: NotFound,
 	shellComponent: RootDocument,
 });
 
 function RootDocument({ children }: { children: React.ReactNode }) {
+	const { setAuth } = useAuth();
+
+	useEffect(() => {
+		const syncSession = async () => {
+			try {
+				const session = await client.auth.getSession();
+				setAuth({
+					userId: session.userId,
+					email: session.email,
+					isAdmin: session.isAdmin,
+					expiresAt: session.expiresAt,
+				});
+			} catch {
+				setAuth({
+					userId: null,
+					email: null,
+					isAdmin: false,
+					expiresAt: null,
+				});
+			}
+		};
+
+		syncSession();
+	}, [setAuth]);
+
 	return (
 		<html lang="en">
 			<head>

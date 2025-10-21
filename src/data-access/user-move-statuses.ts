@@ -1,4 +1,4 @@
-import { eq } from "drizzle-orm";
+import { and, eq } from "drizzle-orm";
 import { db } from "../db";
 import { moves, userMoveStatuses } from "../db/schema";
 
@@ -10,6 +10,25 @@ export async function checkMoveExists(moveId: string): Promise<boolean> {
 		.limit(1);
 
 	return result.length > 0;
+}
+
+export async function getUserMoveStatus(userId: string, moveId: string) {
+	const result = await db
+		.select({
+			status: userMoveStatuses.status,
+			note: userMoveStatuses.note,
+			updatedAt: userMoveStatuses.updatedAt,
+		})
+		.from(userMoveStatuses)
+		.where(
+			and(
+				eq(userMoveStatuses.userId, userId),
+				eq(userMoveStatuses.moveId, moveId)
+			)
+		)
+		.limit(1);
+
+	return result.length > 0 ? result[0] : null;
 }
 
 export async function upsertUserMoveStatus({

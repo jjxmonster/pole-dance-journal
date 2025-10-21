@@ -8,7 +8,8 @@ const MS_PER_SECOND = 1000;
 const MINUTES_TO_MS = SECONDS_PER_MINUTE * MS_PER_SECOND;
 const STALE_TIME_MINUTES = 5;
 export const STALE_TIME_MS = STALE_TIME_MINUTES * MINUTES_TO_MS;
-
+export const MIN_PASSWORD_LENGTH = 8;
+export const MAX_PASSWORD_LENGTH = 72;
 export const PLURAL_THRESHOLD = 5;
 
 export const STATUS_OPTIONS: StatusOption[] = [

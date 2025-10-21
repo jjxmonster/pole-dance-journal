@@ -1,8 +1,24 @@
-import { Link } from "@tanstack/react-router";
+import { Link, useNavigate } from "@tanstack/react-router";
 import { motion } from "motion/react";
+import { useAuth } from "@/hooks/use-auth";
+import { orpc } from "@/orpc/client";
 import { Button } from "./ui/button";
 
 export function Nav() {
+	const navigate = useNavigate();
+	const { isAuthenticated, clearAuth } = useAuth();
+
+	const handleSignOut = async () => {
+		try {
+			await orpc.auth.logout.call();
+		} catch {
+			// Logout failed, but we still clear auth and navigate
+		} finally {
+			clearAuth();
+			await navigate({ to: "/" });
+		}
+	};
+
 	return (
 		<nav className="border-border/40 border-b bg-background/95 backdrop-blur">
 			<div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-4 sm:px-6 lg:px-8">
@@ -33,22 +49,35 @@ export function Nav() {
 					>
 						Moves
 					</Link>
-					<a
-						className="text-muted-foreground text-sm hover:text-foreground"
-						href="#features"
-					>
-						Features
-					</a>
-					<a
-						className="text-muted-foreground text-sm hover:text-foreground"
-						href="#pricing"
-					>
-						Pricing
-					</a>
-					<Button size="sm" variant="ghost">
-						Log In
-					</Button>
-					<Button size="sm">Sign Up</Button>
+
+					{isAuthenticated ? (
+						<Button onClick={handleSignOut} size="sm" variant="ghost">
+							Sign out
+						</Button>
+					) : (
+						<>
+							<a
+								className="text-muted-foreground text-sm hover:text-foreground"
+								href="#features"
+							>
+								Features
+							</a>
+							<a
+								className="text-muted-foreground text-sm hover:text-foreground"
+								href="#pricing"
+							>
+								Pricing
+							</a>
+							<Link to="/auth/sign-in">
+								<Button size="sm" variant="ghost">
+									Sign in
+								</Button>
+							</Link>
+							<Link to="/auth/sign-up">
+								<Button size="sm">Sign up</Button>
+							</Link>
+						</>
+					)}
 				</motion.div>
 			</div>
 		</nav>

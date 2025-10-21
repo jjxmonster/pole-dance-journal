@@ -12,6 +12,11 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as CatalogRouteImport } from './routes/catalog'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as MovesSlugRouteImport } from './routes/moves.$slug'
+import { Route as AuthSignUpRouteImport } from './routes/auth/sign-up'
+import { Route as AuthSignInRouteImport } from './routes/auth/sign-in'
+import { Route as AuthResetPasswordRouteImport } from './routes/auth/reset-password'
+import { Route as AuthOauthCallbackRouteImport } from './routes/auth/oauth-callback'
+import { Route as AuthForgotPasswordRouteImport } from './routes/auth/forgot-password'
 import { Route as ApiSplatRouteImport } from './routes/api.$'
 import { Route as ApiRpcSplatRouteImport } from './routes/api.rpc.$'
 
@@ -30,6 +35,31 @@ const MovesSlugRoute = MovesSlugRouteImport.update({
   path: '/moves/$slug',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AuthSignUpRoute = AuthSignUpRouteImport.update({
+  id: '/auth/sign-up',
+  path: '/auth/sign-up',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthSignInRoute = AuthSignInRouteImport.update({
+  id: '/auth/sign-in',
+  path: '/auth/sign-in',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthResetPasswordRoute = AuthResetPasswordRouteImport.update({
+  id: '/auth/reset-password',
+  path: '/auth/reset-password',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthOauthCallbackRoute = AuthOauthCallbackRouteImport.update({
+  id: '/auth/oauth-callback',
+  path: '/auth/oauth-callback',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthForgotPasswordRoute = AuthForgotPasswordRouteImport.update({
+  id: '/auth/forgot-password',
+  path: '/auth/forgot-password',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiSplatRoute = ApiSplatRouteImport.update({
   id: '/api/$',
   path: '/api/$',
@@ -45,6 +75,11 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/catalog': typeof CatalogRoute
   '/api/$': typeof ApiSplatRoute
+  '/auth/forgot-password': typeof AuthForgotPasswordRoute
+  '/auth/oauth-callback': typeof AuthOauthCallbackRoute
+  '/auth/reset-password': typeof AuthResetPasswordRoute
+  '/auth/sign-in': typeof AuthSignInRoute
+  '/auth/sign-up': typeof AuthSignUpRoute
   '/moves/$slug': typeof MovesSlugRoute
   '/api/rpc/$': typeof ApiRpcSplatRoute
 }
@@ -52,6 +87,11 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/catalog': typeof CatalogRoute
   '/api/$': typeof ApiSplatRoute
+  '/auth/forgot-password': typeof AuthForgotPasswordRoute
+  '/auth/oauth-callback': typeof AuthOauthCallbackRoute
+  '/auth/reset-password': typeof AuthResetPasswordRoute
+  '/auth/sign-in': typeof AuthSignInRoute
+  '/auth/sign-up': typeof AuthSignUpRoute
   '/moves/$slug': typeof MovesSlugRoute
   '/api/rpc/$': typeof ApiRpcSplatRoute
 }
@@ -60,21 +100,62 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/catalog': typeof CatalogRoute
   '/api/$': typeof ApiSplatRoute
+  '/auth/forgot-password': typeof AuthForgotPasswordRoute
+  '/auth/oauth-callback': typeof AuthOauthCallbackRoute
+  '/auth/reset-password': typeof AuthResetPasswordRoute
+  '/auth/sign-in': typeof AuthSignInRoute
+  '/auth/sign-up': typeof AuthSignUpRoute
   '/moves/$slug': typeof MovesSlugRoute
   '/api/rpc/$': typeof ApiRpcSplatRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/catalog' | '/api/$' | '/moves/$slug' | '/api/rpc/$'
+  fullPaths:
+    | '/'
+    | '/catalog'
+    | '/api/$'
+    | '/auth/forgot-password'
+    | '/auth/oauth-callback'
+    | '/auth/reset-password'
+    | '/auth/sign-in'
+    | '/auth/sign-up'
+    | '/moves/$slug'
+    | '/api/rpc/$'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/catalog' | '/api/$' | '/moves/$slug' | '/api/rpc/$'
-  id: '__root__' | '/' | '/catalog' | '/api/$' | '/moves/$slug' | '/api/rpc/$'
+  to:
+    | '/'
+    | '/catalog'
+    | '/api/$'
+    | '/auth/forgot-password'
+    | '/auth/oauth-callback'
+    | '/auth/reset-password'
+    | '/auth/sign-in'
+    | '/auth/sign-up'
+    | '/moves/$slug'
+    | '/api/rpc/$'
+  id:
+    | '__root__'
+    | '/'
+    | '/catalog'
+    | '/api/$'
+    | '/auth/forgot-password'
+    | '/auth/oauth-callback'
+    | '/auth/reset-password'
+    | '/auth/sign-in'
+    | '/auth/sign-up'
+    | '/moves/$slug'
+    | '/api/rpc/$'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   CatalogRoute: typeof CatalogRoute
   ApiSplatRoute: typeof ApiSplatRoute
+  AuthForgotPasswordRoute: typeof AuthForgotPasswordRoute
+  AuthOauthCallbackRoute: typeof AuthOauthCallbackRoute
+  AuthResetPasswordRoute: typeof AuthResetPasswordRoute
+  AuthSignInRoute: typeof AuthSignInRoute
+  AuthSignUpRoute: typeof AuthSignUpRoute
   MovesSlugRoute: typeof MovesSlugRoute
   ApiRpcSplatRoute: typeof ApiRpcSplatRoute
 }
@@ -102,6 +183,41 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof MovesSlugRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/auth/sign-up': {
+      id: '/auth/sign-up'
+      path: '/auth/sign-up'
+      fullPath: '/auth/sign-up'
+      preLoaderRoute: typeof AuthSignUpRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/auth/sign-in': {
+      id: '/auth/sign-in'
+      path: '/auth/sign-in'
+      fullPath: '/auth/sign-in'
+      preLoaderRoute: typeof AuthSignInRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/auth/reset-password': {
+      id: '/auth/reset-password'
+      path: '/auth/reset-password'
+      fullPath: '/auth/reset-password'
+      preLoaderRoute: typeof AuthResetPasswordRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/auth/oauth-callback': {
+      id: '/auth/oauth-callback'
+      path: '/auth/oauth-callback'
+      fullPath: '/auth/oauth-callback'
+      preLoaderRoute: typeof AuthOauthCallbackRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/auth/forgot-password': {
+      id: '/auth/forgot-password'
+      path: '/auth/forgot-password'
+      fullPath: '/auth/forgot-password'
+      preLoaderRoute: typeof AuthForgotPasswordRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/$': {
       id: '/api/$'
       path: '/api/$'
@@ -123,6 +239,11 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   CatalogRoute: CatalogRoute,
   ApiSplatRoute: ApiSplatRoute,
+  AuthForgotPasswordRoute: AuthForgotPasswordRoute,
+  AuthOauthCallbackRoute: AuthOauthCallbackRoute,
+  AuthResetPasswordRoute: AuthResetPasswordRoute,
+  AuthSignInRoute: AuthSignInRoute,
+  AuthSignUpRoute: AuthSignUpRoute,
   MovesSlugRoute: MovesSlugRoute,
   ApiRpcSplatRoute: ApiRpcSplatRoute,
 }
