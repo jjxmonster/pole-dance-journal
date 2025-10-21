@@ -116,7 +116,7 @@ function MoveDetailPage() {
 								value={status}
 							/>
 
-							<NoteEditor initialNote={null} moveId={move.id} />
+							<NoteEditor moveId={move.id} />
 						</div>
 					)}
 				</div>

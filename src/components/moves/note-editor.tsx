@@ -1,12 +1,14 @@
+import { TrashIcon } from "lucide-react";
 import { useState } from "react";
-import { useNoteAutosave } from "@/hooks/use-note-autosave";
-import type { SaveStatus } from "@/types/move";
+import { useNotes } from "@/hooks/use-move-notes";
+import type { MoveNote } from "@/types/move";
 import { NOTE_MAX_LENGTH, NOTE_WARNING_THRESHOLD } from "@/utils/constants";
+import { Button } from "../ui/button";
+import { Card } from "../ui/card";
 import { Textarea } from "../ui/textarea";
 
 type NoteEditorProps = {
 	moveId: string;
-	initialNote: string | null;
 };
 
 type CharacterCounterProps = {
@@ -14,8 +16,10 @@ type CharacterCounterProps = {
 	max: number;
 };
 
-type SaveIndicatorProps = {
-	status: SaveStatus;
+type NoteItemProps = {
+	note: MoveNote;
+	onDelete: (id: string) => void;
+	isDeleting: boolean;
 };
 
 function CharacterCounter({ count, max }: CharacterCounterProps) {
@@ -36,48 +40,48 @@ function CharacterCounter({ count, max }: CharacterCounterProps) {
 	);
 }
 
-function SaveIndicator({ status }: SaveIndicatorProps) {
-	const statusMessages = {
-		idle: "",
-		saving: "Saving...",
-		saved: "Saved",
-		error: "Save error",
-	};
-
-	const statusStyles = {
-		idle: "",
-		saving: "text-muted-foreground",
-		saved: "text-green-600",
-		error: "text-destructive",
-	};
-
-	if (status === "idle") {
-		return null;
-	}
+function NoteItem({ note, onDelete, isDeleting }: NoteItemProps) {
+	const formattedDate = new Intl.DateTimeFormat("pl-PL", {
+		dateStyle: "medium",
+		timeStyle: "short",
+	}).format(new Date(note.createdAt));
 
 	return (
-		<span aria-live="polite" className={`text-xs ${statusStyles[status]}`}>
-			{statusMessages[status]}
-		</span>
+		<Card className="space-y-2 p-4">
+			<div className="whitespace-pre-wrap">{note.content}</div>
+			<div className="flex items-center justify-between">
+				<span className="text-muted-foreground text-xs">{formattedDate}</span>
+				<Button
+					aria-label="Delete note"
+					disabled={isDeleting}
+					onClick={() => onDelete(note.id)}
+					size="sm"
+					variant="destructive"
+				>
+					<TrashIcon className="h-3 w-3" />
+				</Button>
+			</div>
+		</Card>
 	);
 }
 
-export function NoteEditor({ moveId, initialNote }: NoteEditorProps) {
-	// Constants for animation durations
-	const TRANSITION_DURATION_MS = 200;
+export function NoteEditor({ moveId }: NoteEditorProps) {
+	const {
+		notes,
+		content,
+		setContent,
+		addNote,
+		deleteNote,
+		isLoading,
+		isAddingNote,
+		isDeletingNote,
+		characterCount,
+	} = useNotes(moveId);
 
-	const [expanded, setExpanded] = useState(!!initialNote);
-
-	const { note, setNote, saveStatus, characterCount } = useNoteAutosave({
-		moveId,
-		initialNote,
-	});
+	const [expanded, setExpanded] = useState(false);
 
 	const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-		const newValue = e.target.value;
-		if (newValue.length <= NOTE_MAX_LENGTH) {
-			setNote(newValue);
-		}
+		setContent(e.target.value);
 	};
 
 	const handleFocus = () => {
@@ -85,35 +89,71 @@ export function NoteEditor({ moveId, initialNote }: NoteEditorProps) {
 	};
 
 	const handleBlur = () => {
-		if (note.trim() === "") {
+		if (content.trim() === "") {
 			setExpanded(false);
 		}
 	};
 
+	const handleSubmit = (e: React.FormEvent) => {
+		e.preventDefault();
+		addNote();
+	};
+
 	return (
-		<div className="mt-6 space-y-2">
-			<div className="flex items-center justify-between">
-				<h3 className="font-medium text-lg">Moje Notatki</h3>
-				<div className="flex items-center gap-2">
-					<SaveIndicator status={saveStatus} />
-					<CharacterCounter count={characterCount} max={NOTE_MAX_LENGTH} />
+		<div className="mt-6 space-y-6">
+			<div>
+				<h3 className="mb-4 font-medium text-lg">Moje Notatki</h3>
+
+				<form className="space-y-4" onSubmit={handleSubmit}>
+					<div>
+						<Textarea
+							aria-label="Add a new note"
+							className={`transition-all duration-200 ${expanded ? "min-h-[150px]" : "h-[60px]"}`}
+							maxLength={NOTE_MAX_LENGTH}
+							onBlur={handleBlur}
+							onChange={handleChange}
+							onFocus={handleFocus}
+							placeholder="Dodaj nową notatkę..."
+							value={content}
+						/>
+						<div className="mt-2 flex items-center justify-between">
+							<div className="text-muted-foreground text-xs">
+								Notatki są prywatne i widoczne tylko dla Ciebie.
+							</div>
+							<CharacterCounter count={characterCount} max={NOTE_MAX_LENGTH} />
+						</div>
+					</div>
+
+					<div className="flex justify-end">
+						<Button
+							disabled={content.trim() === "" || isAddingNote}
+							type="submit"
+						>
+							{isAddingNote ? "Dodawanie..." : "Dodaj Notatkę"}
+						</Button>
+					</div>
+				</form>
+			</div>
+
+			{notes.length > 0 && (
+				<div className="space-y-4">
+					<h4 className="font-medium">Historia notatek</h4>
+					{isLoading ? (
+						<div className="text-muted-foreground">Ładowanie notatek...</div>
+					) : (
+						<div className="space-y-4">
+							{notes.map((note) => (
+								<NoteItem
+									isDeleting={isDeletingNote}
+									key={note.id}
+									note={note}
+									onDelete={deleteNote}
+								/>
+							))}
+						</div>
+					)}
 				</div>
-			</div>
-
-			<Textarea
-				aria-label="Private notes for this move"
-				className={`duration-${TRANSITION_DURATION_MS} transition-all ${expanded ? "min-h-[150px]" : "h-[60px]"}`}
-				maxLength={NOTE_MAX_LENGTH}
-				onBlur={handleBlur}
-				onChange={handleChange}
-				onFocus={handleFocus}
-				placeholder="Dodaj swoje prywatne notatki..."
-				value={note}
-			/>
-
-			<div aria-live="polite" className="text-muted-foreground text-xs">
-				Notatki są prywatne i widoczne tylko dla Ciebie.
-			</div>
+			)}
 		</div>
 	);
 }
