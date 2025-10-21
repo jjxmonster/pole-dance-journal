@@ -90,6 +90,11 @@ function MoveDetailPage() {
 			<Breadcrumbs moveName={move.name} />
 
 			<div className="space-y-8">
+				<MoveImage
+					alt={`${move.name} pole dance move illustration`}
+					imageUrl={move.imageUrl}
+				/>
+
 				<header>
 					<h1 className="mb-4 font-bold text-4xl text-foreground">
 						{move.name}
@@ -97,13 +102,8 @@ function MoveDetailPage() {
 					<Badge variant="default">{move.level}</Badge>
 				</header>
 
-				<MoveImage
-					alt={`${move.name} pole dance move illustration`}
-					imageUrl={move.imageUrl}
-				/>
-
 				<div className="grid grid-cols-1 gap-8 md:grid-cols-3">
-					<div className="md:col-span-2">
+					<div className="space-y-4 md:col-span-2">
 						<MoveDescription description={move.description} />
 						<StepsList steps={move.steps} />
 					</div>

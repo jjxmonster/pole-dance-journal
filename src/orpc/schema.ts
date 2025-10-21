@@ -86,6 +86,34 @@ export const UserMoveStatusGetOutputSchema = z
 	})
 	.nullable();
 
+// New schemas for move notes
+export const MoveNoteSchema = z.object({
+	id: z.string().uuid(),
+	content: z.string(),
+	createdAt: z.date(),
+});
+
+export const MoveNotesGetInputSchema = z.object({
+	moveId: z.string().uuid(),
+});
+
+export const MoveNotesGetOutputSchema = z.array(MoveNoteSchema);
+
+export const MoveNoteAddInputSchema = z.object({
+	moveId: z.string().uuid(),
+	content: z.string().min(1).max(NOTE_MAX_LENGTH),
+});
+
+export const MoveNoteAddOutputSchema = MoveNoteSchema;
+
+export const MoveNoteDeleteInputSchema = z.object({
+	noteId: z.string().uuid(),
+});
+
+export const MoveNoteDeleteOutputSchema = z.object({
+	success: z.boolean(),
+});
+
 export const AuthEmailSchema = z.string().trim().email("Invalid email address");
 
 export const PasswordSchema = z

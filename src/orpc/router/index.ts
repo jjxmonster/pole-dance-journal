@@ -8,6 +8,7 @@ import {
 	register,
 	resetPassword,
 } from "./auth";
+import { addNote, deleteNote, getNotes } from "./move-notes";
 import { getBySlug, listMoves } from "./moves";
 import { get, set } from "./user-move-statuses";
 
@@ -19,6 +20,11 @@ export default {
 	userMoveStatuses: {
 		get,
 		set,
+	},
+	moveNotes: {
+		getNotes,
+		addNote,
+		deleteNote,
 	},
 	auth: {
 		register,

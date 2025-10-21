@@ -93,7 +93,7 @@ export function NoteEditor({ moveId, initialNote }: NoteEditorProps) {
 	return (
 		<div className="mt-6 space-y-2">
 			<div className="flex items-center justify-between">
-				<h3 className="font-medium text-lg">My Notes</h3>
+				<h3 className="font-medium text-lg">Moje Notatki</h3>
 				<div className="flex items-center gap-2">
 					<SaveIndicator status={saveStatus} />
 					<CharacterCounter count={characterCount} max={NOTE_MAX_LENGTH} />
@@ -107,12 +107,12 @@ export function NoteEditor({ moveId, initialNote }: NoteEditorProps) {
 				onBlur={handleBlur}
 				onChange={handleChange}
 				onFocus={handleFocus}
-				placeholder="Add your private notes..."
+				placeholder="Dodaj swoje prywatne notatki..."
 				value={note}
 			/>
 
 			<div aria-live="polite" className="text-muted-foreground text-xs">
-				Notes are private and visible only to you.
+				Notatki są prywatne i widoczne tylko dla Ciebie.
 			</div>
 		</div>
 	);
