@@ -43,17 +43,24 @@ export function Nav() {
 					initial={{ opacity: 0, x: 20 }}
 					transition={{ duration: 0.5, delay: 0.1 }}
 				>
-					<Link
-						className="text-muted-foreground text-sm hover:text-foreground"
-						to="/catalog"
-					>
-						Moves
-					</Link>
-
 					{isAuthenticated ? (
-						<Button onClick={handleSignOut} size="sm" variant="ghost">
-							Sign out
-						</Button>
+						<>
+							<Link
+								className="text-muted-foreground text-sm hover:text-foreground"
+								to="/catalog"
+							>
+								Katalog
+							</Link>
+							<Link
+								className="text-muted-foreground text-sm hover:text-foreground"
+								to="/my-moves"
+							>
+								Moje Ruchy
+							</Link>
+							<Button onClick={handleSignOut} size="sm" variant="ghost">
+								Wyloguj
+							</Button>
+						</>
 					) : (
 						<>
 							<a

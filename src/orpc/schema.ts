@@ -63,6 +63,25 @@ export const MoveDetailSchema = z.object({
 
 export const MoveGetBySlugOutputSchema = MoveDetailSchema;
 
+export const MovesGetForUserInputSchema = z.object({
+	level: z.enum(moveLevelEnum.enumValues).optional(),
+});
+
+export const MyMoveItemSchema = z.object({
+	id: z.string().uuid(),
+	name: z.string(),
+	level: z.enum(moveLevelEnum.enumValues),
+	slug: z.string(),
+	imageUrl: z.string().nullable(),
+	status: z.enum(moveStatusEnum.enumValues),
+	note: z.string().nullable(),
+	isDeleted: z.boolean(),
+});
+
+export const MovesGetForUserOutputSchema = z.object({
+	moves: z.array(MyMoveItemSchema),
+});
+
 export const UserMoveStatusSetInputSchema = z.object({
 	moveId: z.string().uuid(),
 	status: z.enum(moveStatusEnum.enumValues),

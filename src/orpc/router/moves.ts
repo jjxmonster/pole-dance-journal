@@ -1,8 +1,15 @@
 import { ORPCError, os } from "@orpc/server";
-import { getMoveBySlug, listPublishedMoves } from "../../data-access/moves";
+import { getSupabaseServerClient } from "@/integrations/supabase/server";
+import {
+	getMoveBySlug,
+	getMovesForUser,
+	listPublishedMoves,
+} from "../../data-access/moves";
 import {
 	MoveGetBySlugInputSchema,
 	MoveGetBySlugOutputSchema,
+	MovesGetForUserInputSchema,
+	MovesGetForUserOutputSchema,
 	MovesListInputSchema,
 	MovesListOutputSchema,
 } from "../schema";
@@ -26,4 +33,29 @@ export const getBySlug = os
 			});
 		}
 		return move;
+	});
+
+export const getForUser = os
+	.input(MovesGetForUserInputSchema)
+	.output(MovesGetForUserOutputSchema)
+	.handler(async ({ input }) => {
+		const supabase = getSupabaseServerClient();
+		const data = await supabase.auth.getUser();
+
+		if (!data.data.user) {
+			throw new ORPCError("UNAUTHORIZED", {
+				message: "You must be signed in to view your moves.",
+			});
+		}
+
+		const userId = data.data.user.id;
+
+		try {
+			const moves = await getMovesForUser(userId, input.level);
+			return { moves };
+		} catch {
+			throw new ORPCError("INTERNAL_SERVER_ERROR", {
+				message: "Failed to get user moves",
+			});
+		}
 	});
