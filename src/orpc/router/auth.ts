@@ -1,4 +1,6 @@
 import { ORPCError, os } from "@orpc/server";
+import { db } from "@/db";
+import { profiles } from "@/db/schema";
 import { getSupabaseServerClient } from "@/integrations/supabase/server";
 import {
 	AuthForgotPasswordInputSchema,
@@ -19,7 +21,7 @@ export const register = os
 		const supabase = (context as Record<string, SupabaseClient>).supabase;
 
 		try {
-			const { error } = await supabase.auth.signUp({
+			const { error, data } = await supabase.auth.signUp({
 				email: input.email,
 				password: input.password,
 			});
@@ -35,6 +37,13 @@ export const register = os
 					message: "Failed to register. Please check your email and password.",
 				});
 			}
+
+			await db.insert(profiles).values({
+				userId: data.user.id,
+				isAdmin: false,
+				createdAt: new Date(),
+				updatedAt: new Date(),
+			});
 
 			return { success: true };
 		} catch (error) {

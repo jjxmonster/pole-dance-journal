@@ -4,7 +4,7 @@ import { z } from "zod";
 export const env = createEnv({
 	server: {
 		POSTGRES_URL: z.string().url(),
-		SUPABASE_KEY: z.string(),
+		SUPABASE_KEY: z.string().optional(),
 		SUPABASE_URL: z.string().url(),
 		SUPABASE_ANON_KEY: z.string(),
 	},
