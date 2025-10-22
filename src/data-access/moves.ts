@@ -90,3 +90,34 @@ export async function getMoveBySlug(slug: string) {
 
 	return move ?? null;
 }
+
+export async function getMovesForUser(
+	userId: string,
+	level?: "Beginner" | "Intermediate" | "Advanced"
+) {
+	const { userMoveStatuses } = await import("../db/schema");
+
+	const conditions = [eq(userMoveStatuses.userId, userId)];
+
+	if (level) {
+		conditions.push(eq(moves.level, level));
+	}
+
+	const result = await db
+		.select({
+			id: moves.id,
+			name: moves.name,
+			level: moves.level,
+			slug: moves.slug,
+			imageUrl: moves.imageUrl,
+			status: userMoveStatuses.status,
+			note: userMoveStatuses.note,
+			isDeleted: sql<boolean>`${moves.deletedAt} IS NOT NULL`,
+		})
+		.from(userMoveStatuses)
+		.innerJoin(moves, eq(userMoveStatuses.moveId, moves.id))
+		.where(and(...conditions))
+		.orderBy(desc(userMoveStatuses.updatedAt));
+
+	return result;
+}

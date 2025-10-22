@@ -9,6 +9,7 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as MyMovesRouteImport } from './routes/my-moves'
 import { Route as CatalogRouteImport } from './routes/catalog'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as MovesSlugRouteImport } from './routes/moves.$slug'
@@ -20,6 +21,11 @@ import { Route as AuthForgotPasswordRouteImport } from './routes/auth/forgot-pas
 import { Route as ApiSplatRouteImport } from './routes/api.$'
 import { Route as ApiRpcSplatRouteImport } from './routes/api.rpc.$'
 
+const MyMovesRoute = MyMovesRouteImport.update({
+  id: '/my-moves',
+  path: '/my-moves',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const CatalogRoute = CatalogRouteImport.update({
   id: '/catalog',
   path: '/catalog',
@@ -74,6 +80,7 @@ const ApiRpcSplatRoute = ApiRpcSplatRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/catalog': typeof CatalogRoute
+  '/my-moves': typeof MyMovesRoute
   '/api/$': typeof ApiSplatRoute
   '/auth/forgot-password': typeof AuthForgotPasswordRoute
   '/auth/oauth-callback': typeof AuthOauthCallbackRoute
@@ -86,6 +93,7 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/catalog': typeof CatalogRoute
+  '/my-moves': typeof MyMovesRoute
   '/api/$': typeof ApiSplatRoute
   '/auth/forgot-password': typeof AuthForgotPasswordRoute
   '/auth/oauth-callback': typeof AuthOauthCallbackRoute
@@ -99,6 +107,7 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/catalog': typeof CatalogRoute
+  '/my-moves': typeof MyMovesRoute
   '/api/$': typeof ApiSplatRoute
   '/auth/forgot-password': typeof AuthForgotPasswordRoute
   '/auth/oauth-callback': typeof AuthOauthCallbackRoute
@@ -113,6 +122,7 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/catalog'
+    | '/my-moves'
     | '/api/$'
     | '/auth/forgot-password'
     | '/auth/oauth-callback'
@@ -125,6 +135,7 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/catalog'
+    | '/my-moves'
     | '/api/$'
     | '/auth/forgot-password'
     | '/auth/oauth-callback'
@@ -137,6 +148,7 @@ export interface FileRouteTypes {
     | '__root__'
     | '/'
     | '/catalog'
+    | '/my-moves'
     | '/api/$'
     | '/auth/forgot-password'
     | '/auth/oauth-callback'
@@ -150,6 +162,7 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   CatalogRoute: typeof CatalogRoute
+  MyMovesRoute: typeof MyMovesRoute
   ApiSplatRoute: typeof ApiSplatRoute
   AuthForgotPasswordRoute: typeof AuthForgotPasswordRoute
   AuthOauthCallbackRoute: typeof AuthOauthCallbackRoute
@@ -162,6 +175,13 @@ export interface RootRouteChildren {
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/my-moves': {
+      id: '/my-moves'
+      path: '/my-moves'
+      fullPath: '/my-moves'
+      preLoaderRoute: typeof MyMovesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/catalog': {
       id: '/catalog'
       path: '/catalog'
@@ -238,6 +258,7 @@ declare module '@tanstack/react-router' {
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   CatalogRoute: CatalogRoute,
+  MyMovesRoute: MyMovesRoute,
   ApiSplatRoute: ApiSplatRoute,
   AuthForgotPasswordRoute: AuthForgotPasswordRoute,
   AuthOauthCallbackRoute: AuthOauthCallbackRoute,

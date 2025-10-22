@@ -6,7 +6,7 @@ import { Button } from "./ui/button";
 
 export function Nav() {
 	const navigate = useNavigate();
-	const { isAuthenticated, clearAuth } = useAuth();
+	const { isAuthenticated, clearAuth, email } = useAuth();
 
 	const handleSignOut = async () => {
 		try {
@@ -43,17 +43,27 @@ export function Nav() {
 					initial={{ opacity: 0, x: 20 }}
 					transition={{ duration: 0.5, delay: 0.1 }}
 				>
-					<Link
-						className="text-muted-foreground text-sm hover:text-foreground"
-						to="/catalog"
-					>
-						Moves
-					</Link>
-
 					{isAuthenticated ? (
-						<Button onClick={handleSignOut} size="sm" variant="ghost">
-							Sign out
-						</Button>
+						<>
+							<Link
+								className="text-muted-foreground text-sm hover:text-foreground"
+								to="/catalog"
+							>
+								Katalog
+							</Link>
+							<Link
+								className="text-muted-foreground text-sm hover:text-foreground"
+								to="/my-moves"
+							>
+								Moje Figury
+							</Link>
+							<span className="text-muted-foreground text-sm">
+								{email?.split("@")[0]}
+							</span>
+							<Button onClick={handleSignOut} size="sm" variant="ghost">
+								Wyloguj
+							</Button>
+						</>
 					) : (
 						<>
 							<a

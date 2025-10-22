@@ -9,13 +9,14 @@ import {
 	resetPassword,
 } from "./auth";
 import { addNote, deleteNote, getNotes } from "./move-notes";
-import { getBySlug, listMoves } from "./moves";
+import { getBySlug, getForUser, listMoves } from "./moves";
 import { get, set } from "./user-move-statuses";
 
 export default {
 	moves: {
 		list: listMoves,
 		getBySlug,
+		getForUser,
 	},
 	userMoveStatuses: {
 		get,
