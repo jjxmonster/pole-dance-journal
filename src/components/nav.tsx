@@ -6,7 +6,7 @@ import { Button } from "./ui/button";
 
 export function Nav() {
 	const navigate = useNavigate();
-	const { isAuthenticated, clearAuth } = useAuth();
+	const { isAuthenticated, clearAuth, email } = useAuth();
 
 	const handleSignOut = async () => {
 		try {
@@ -55,8 +55,11 @@ export function Nav() {
 								className="text-muted-foreground text-sm hover:text-foreground"
 								to="/my-moves"
 							>
-								Moje Ruchy
+								Moje Figury
 							</Link>
+							<span className="text-muted-foreground text-sm">
+								{email?.split("@")[0]}
+							</span>
 							<Button onClick={handleSignOut} size="sm" variant="ghost">
 								Wyloguj
 							</Button>

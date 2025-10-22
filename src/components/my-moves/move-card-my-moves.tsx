@@ -3,14 +3,9 @@ import { FileTextIcon } from "lucide-react";
 import type { MyMoveViewModel } from "../../types/my-moves";
 import { Badge } from "../ui/badge";
 import { Card, CardContent } from "../ui/card";
-import { StatusDropdown } from "./status-dropdown";
 
 type MoveCardMyMovesProps = {
 	move: MyMoveViewModel;
-	onStatusUpdate: (
-		moveId: string,
-		newStatus: MyMoveViewModel["status"]
-	) => void;
 };
 
 const LEVEL_LABELS: Record<MyMoveViewModel["level"], string> = {
@@ -21,10 +16,7 @@ const LEVEL_LABELS: Record<MyMoveViewModel["level"], string> = {
 
 const FALLBACK_IMAGE = "/move.jpg";
 
-export function MoveCardMyMoves({
-	move,
-	onStatusUpdate,
-}: MoveCardMyMovesProps) {
+export function MoveCardMyMoves({ move }: MoveCardMyMovesProps) {
 	const imageUrl = move.imageUrl || FALLBACK_IMAGE;
 
 	return (
@@ -80,13 +72,6 @@ export function MoveCardMyMoves({
 				<span className="block text-muted-foreground text-sm">
 					{LEVEL_LABELS[move.level]}
 				</span>
-
-				<StatusDropdown
-					currentStatus={move.status}
-					onStatusChange={(newStatus) => {
-						onStatusUpdate(move.id, newStatus);
-					}}
-				/>
 			</CardContent>
 		</Card>
 	);

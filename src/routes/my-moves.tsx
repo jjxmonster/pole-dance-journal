@@ -32,7 +32,7 @@ export const Route = createFileRoute("/my-moves")({
 	head: () => ({
 		meta: [
 			{
-				title: "Moje Ruchy - Spinella",
+				title: "Moje Figury - Spinella",
 			},
 			{
 				name: "description",
@@ -41,7 +41,7 @@ export const Route = createFileRoute("/my-moves")({
 			},
 			{
 				property: "og:title",
-				content: "Moje Ruchy - Spinella",
+				content: "Moje Figury - Spinella",
 			},
 			{
 				property: "og:description",
@@ -53,15 +53,8 @@ export const Route = createFileRoute("/my-moves")({
 });
 
 function MyMovesView() {
-	const {
-		moves,
-		isLoading,
-		isError,
-		updateStatus,
-		activeFilter,
-		setFilter,
-		refetch,
-	} = useMyMoves();
+	const { moves, isLoading, isError, activeFilter, setFilter, refetch } =
+		useMyMoves();
 
 	const renderContent = () => {
 		if (isLoading) {
@@ -79,11 +72,7 @@ function MyMovesView() {
 		return (
 			<div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-4">
 				{moves.map((move) => (
-					<MoveCardMyMoves
-						key={move.id}
-						move={move}
-						onStatusUpdate={updateStatus}
-					/>
+					<MoveCardMyMoves key={move.id} move={move} />
 				))}
 			</div>
 		);
@@ -93,15 +82,15 @@ function MyMovesView() {
 		<div className="container mx-auto max-w-7xl px-4 py-8">
 			<div className="mb-6 flex items-start justify-between gap-4">
 				<div>
-					<h1 className="font-bold text-3xl">Moje Ruchy</h1>
+					<h1 className="font-bold text-3xl">Moje Figury</h1>
 					<p className="mt-2 text-muted-foreground">
-						Zobacz i zarządzaj swoją osobistą kolekcją ruchów pole dance
+						Zobacz i zarządzaj swoją osobistą kolekcją figur pole dance
 					</p>
 				</div>
 				<Button asChild type="button">
 					<Link to="/catalog">
 						<PlusIcon className="size-4" />
-						Dodaj ruch
+						Dodaj figury
 					</Link>
 				</Button>
 			</div>
