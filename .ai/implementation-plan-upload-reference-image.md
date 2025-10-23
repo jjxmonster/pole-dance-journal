@@ -227,12 +227,6 @@ const uploadReferenceImageErrorSchema = z.union([
   - Prevent directory listing
 - **URL Expiration**: Consider implementing signed URLs with time-based expiration
 
-### Rate Limiting
-
-- **Implementation**: Consider rate limiting per user (e.g., max 10 uploads per hour)
-- **Purpose**: Prevent abuse and storage quota exhaustion
-- **Storage**: Track upload attempts in cache or application state
-
 ### Data Privacy
 
 - **User Association**: Optional moveId links uploads to specific moves for context

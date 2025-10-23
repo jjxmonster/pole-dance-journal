@@ -1,6 +1,10 @@
 import { z } from "zod";
 import { moveLevelEnum, moveStatusEnum } from "../db/schema";
-import { NOTE_MAX_LENGTH } from "../utils/constants";
+import {
+	ALLOWED_MIME_TYPES,
+	MAX_FILE_SIZE,
+	NOTE_MAX_LENGTH,
+} from "../utils/constants";
 
 export const TodoSchema = z.object({
 	id: z.number().int().min(1),
@@ -198,3 +202,27 @@ export const AuthOAuthCallbackInputSchema = z.object({
 export const AuthDeleteAccountInputSchema = z.object({
 	confirm: z.literal(true),
 });
+
+export const UploadReferenceImageInputSchema = z.object({
+	file: z.instanceof(File),
+	moveId: z.string().uuid().optional(),
+});
+
+export type UploadReferenceImageInput = z.infer<
+	typeof UploadReferenceImageInputSchema
+>;
+
+export const UploadReferenceImageResponseSchema = z.object({
+	referenceImageUrl: z.string().url(),
+	uploadedAt: z.date(),
+	expiresAt: z.date(),
+});
+
+export type UploadReferenceImageResponse = z.infer<
+	typeof UploadReferenceImageResponseSchema
+>;
+
+export const UPLOAD_REFERENCE_IMAGE_VALIDATION = {
+	MAX_FILE_SIZE,
+	ALLOWED_MIME_TYPES,
+} as const;

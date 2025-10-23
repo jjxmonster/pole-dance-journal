@@ -1,3 +1,4 @@
+import { uploadReferenceImageProcedure } from "./admin";
 import {
 	forgotPassword,
 	getSession,
@@ -26,6 +27,11 @@ export default {
 		getNotes,
 		addNote,
 		deleteNote,
+	},
+	admin: {
+		moves: {
+			uploadReferenceImage: uploadReferenceImageProcedure,
+		},
 	},
 	auth: {
 		register,
