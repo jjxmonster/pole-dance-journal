@@ -226,3 +226,28 @@ export const UPLOAD_REFERENCE_IMAGE_VALIDATION = {
 	MAX_FILE_SIZE,
 	ALLOWED_MIME_TYPES,
 } as const;
+
+export const GENERATE_IMAGE_VALIDATION = {
+	PROMPT_MIN_LENGTH: 10,
+	PROMPT_MAX_LENGTH: 500,
+	RATE_LIMIT_PER_24H: 5,
+} as const;
+
+export const GenerateImageInputSchema = z.object({
+	moveId: z.string().uuid("Invalid move ID format"),
+	referenceImageUrl: z
+		.string()
+		.url("Invalid URL format")
+		.startsWith("https://", "Must use HTTPS"),
+	sessionId: z.string().uuid("Invalid session ID format").optional(),
+});
+
+export type GenerateImageInput = z.infer<typeof GenerateImageInputSchema>;
+
+export const GenerateImageOutputSchema = z.object({
+	previewUrl: z.string().url(),
+	sessionId: z.string().uuid(),
+	generatedAt: z.date(),
+});
+
+export type GenerateImageOutput = z.infer<typeof GenerateImageOutputSchema>;
