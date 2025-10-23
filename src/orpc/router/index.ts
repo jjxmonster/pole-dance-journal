@@ -1,4 +1,4 @@
-import { uploadReferenceImageProcedure } from "./admin";
+import { getStatsProcedure, uploadReferenceImageProcedure } from "./admin";
 import {
 	forgotPassword,
 	getSession,
@@ -29,6 +29,7 @@ export default {
 		deleteNote,
 	},
 	admin: {
+		getStats: getStatsProcedure,
 		moves: {
 			uploadReferenceImage: uploadReferenceImageProcedure,
 		},

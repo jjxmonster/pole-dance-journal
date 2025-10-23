@@ -1,4 +1,5 @@
 import { ORPCError, os } from "@orpc/server";
+import { validateUserIsAdmin } from "@/data-access/profiles";
 import { db } from "@/db";
 import { profiles } from "@/db/schema";
 import { getSupabaseServerClient } from "@/integrations/supabase/server";
@@ -119,20 +120,12 @@ export const getSession = os
 		const supabase = getSupabaseServerClient();
 		try {
 			const data = await supabase.auth.getUser();
-
-			if (!data.data.user) {
-				return {
-					userId: null,
-					email: null,
-					isAdmin: false,
-					expiresAt: null,
-				};
-			}
+			const isAdmin = await validateUserIsAdmin(data.data.user?.id ?? "");
 
 			return {
-				userId: data.data.user.id,
-				email: data.data.user.email ?? null,
-				isAdmin: false,
+				userId: data.data.user?.id ?? null,
+				email: data.data.user?.email ?? null,
+				isAdmin,
 				expiresAt: null,
 			};
 		} catch {

@@ -1,16 +1,16 @@
 import { ORPCError, os } from "@orpc/server";
+import { getAdminStats } from "@/data-access/moves";
 import { validateUserIsAdmin } from "@/data-access/profiles";
 import { getSupabaseServerClient } from "@/integrations/supabase/server";
 import {
-	createSignedUrl,
 	generateImageWithReplicate,
 	getSessionId,
-	uploadPreviewImage,
 } from "@/services/image-generation";
 import { uploadReferenceImage } from "@/services/image-upload";
 import { GENERATE_IMAGE_PROMPT } from "@/utils/prompts";
 import { validateInputFile, validateMoveId } from "@/utils/utils";
 import {
+	AdminGetStatsOutputSchema,
 	GenerateImageInputSchema,
 	GenerateImageOutputSchema,
 	UploadReferenceImageInputSchema,
@@ -97,36 +97,6 @@ async function performImageGeneration(
 	return { imageUrl: generatedImageUrl, sessionId };
 }
 
-async function _storeAndSignPreviewImage(
-	imageUrl: string,
-	moveId: string,
-	sessionId: string
-): Promise<string> {
-	let storagePath: string;
-	try {
-		storagePath = await uploadPreviewImage(imageUrl, moveId, sessionId);
-	} catch (error) {
-		const errorMessage =
-			error instanceof Error ? error.message : "Upload failed";
-		throw new ORPCError("INTERNAL_SERVER_ERROR", {
-			message: `Failed to store preview image: ${errorMessage}`,
-		});
-	}
-
-	let previewUrl: string;
-	try {
-		previewUrl = await createSignedUrl(storagePath, 24);
-	} catch (error) {
-		const errorMessage =
-			error instanceof Error ? error.message : "Signed URL creation failed";
-		throw new ORPCError("INTERNAL_SERVER_ERROR", {
-			message: `Failed to create preview URL: ${errorMessage}`,
-		});
-	}
-
-	return previewUrl;
-}
-
 export const generateImageProcedure = os
 	.input(GenerateImageInputSchema)
 	.output(GenerateImageOutputSchema)
@@ -166,4 +136,29 @@ export const generateImageProcedure = os
 			sessionId,
 			generatedAt: new Date(),
 		};
+	});
+
+export const getStatsProcedure = os
+	.output(AdminGetStatsOutputSchema)
+	.handler(async () => {
+		const supabase = getSupabaseServerClient();
+		const authData = await supabase.auth.getUser();
+
+		if (!authData.data.user) {
+			throw new ORPCError("UNAUTHORIZED", {
+				message: "User is not authenticated.",
+			});
+		}
+
+		const userId = authData.data.user.id;
+
+		const isAdmin = await validateUserIsAdmin(userId);
+		if (!isAdmin) {
+			throw new ORPCError("UNAUTHORIZED", {
+				message: "User is not an administrator.",
+			});
+		}
+
+		const stats = await getAdminStats();
+		return stats;
 	});

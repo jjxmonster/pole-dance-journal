@@ -251,3 +251,11 @@ export const GenerateImageOutputSchema = z.object({
 });
 
 export type GenerateImageOutput = z.infer<typeof GenerateImageOutputSchema>;
+
+export const AdminGetStatsOutputSchema = z.object({
+	totalMoves: z.number().int().nonnegative(),
+	publishedMoves: z.number().int().nonnegative(),
+	unpublishedMoves: z.number().int().nonnegative(),
+});
+
+export type AdminGetStatsOutput = z.infer<typeof AdminGetStatsOutputSchema>;

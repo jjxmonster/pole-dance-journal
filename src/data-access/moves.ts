@@ -121,3 +121,23 @@ export async function getMovesForUser(
 
 	return result;
 }
+
+export async function getAdminStats() {
+	const [totalResult, publishedResult, unpublishedResult] = await Promise.all([
+		db.select({ count: count() }).from(moves).where(isNull(moves.deletedAt)),
+		db
+			.select({ count: count() })
+			.from(moves)
+			.where(and(isNotNull(moves.publishedAt), isNull(moves.deletedAt))),
+		db
+			.select({ count: count() })
+			.from(moves)
+			.where(and(isNull(moves.publishedAt), isNull(moves.deletedAt))),
+	]);
+
+	return {
+		totalMoves: totalResult[0]?.count ?? 0,
+		publishedMoves: publishedResult[0]?.count ?? 0,
+		unpublishedMoves: unpublishedResult[0]?.count ?? 0,
+	};
+}
