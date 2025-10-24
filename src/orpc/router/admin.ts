@@ -1,5 +1,12 @@
 import { ORPCError, os } from "@orpc/server";
-import { getAdminStats } from "@/data-access/moves";
+import {
+	deleteMove,
+	getAdminStats,
+	listAdminMoves,
+	publishMove,
+	restoreMove,
+	unpublishMove,
+} from "@/data-access/moves";
 import { validateUserIsAdmin } from "@/data-access/profiles";
 import { getSupabaseServerClient } from "@/integrations/supabase/server";
 import {
@@ -10,7 +17,12 @@ import { uploadReferenceImage } from "@/services/image-upload";
 import { GENERATE_IMAGE_PROMPT } from "@/utils/prompts";
 import { validateInputFile, validateMoveId } from "@/utils/utils";
 import {
+	AdminActionOutputSchema,
 	AdminGetStatsOutputSchema,
+	AdminListMovesInputSchema,
+	AdminListMovesOutputSchema,
+	AdminMoveIdInputSchema,
+	AdminPublishMoveOutputSchema,
 	GenerateImageInputSchema,
 	GenerateImageOutputSchema,
 	UploadReferenceImageInputSchema,
@@ -161,4 +173,143 @@ export const getStatsProcedure = os
 
 		const stats = await getAdminStats();
 		return stats;
+	});
+
+export const listMovesProcedure = os
+	.input(AdminListMovesInputSchema)
+	.output(AdminListMovesOutputSchema)
+	.handler(async ({ input }) => {
+		const supabase = getSupabaseServerClient();
+		const authData = await supabase.auth.getUser();
+
+		if (!authData.data.user) {
+			throw new ORPCError("UNAUTHORIZED", {
+				message: "User is not authenticated.",
+			});
+		}
+
+		const userId = authData.data.user.id;
+
+		const isAdmin = await validateUserIsAdmin(userId);
+		if (!isAdmin) {
+			throw new ORPCError("UNAUTHORIZED", {
+				message: "User is not an administrator.",
+			});
+		}
+
+		const result = await listAdminMoves(input);
+		return result;
+	});
+
+export const publishMoveProcedure = os
+	.input(AdminMoveIdInputSchema)
+	.output(AdminPublishMoveOutputSchema)
+	.handler(async ({ input }) => {
+		const supabase = getSupabaseServerClient();
+		const authData = await supabase.auth.getUser();
+
+		if (!authData.data.user) {
+			throw new ORPCError("UNAUTHORIZED", {
+				message: "User is not authenticated.",
+			});
+		}
+
+		const userId = authData.data.user.id;
+
+		const isAdmin = await validateUserIsAdmin(userId);
+		if (!isAdmin) {
+			throw new ORPCError("UNAUTHORIZED", {
+				message: "User is not an administrator.",
+			});
+		}
+
+		const result = await publishMove(input.id);
+		if (!result) {
+			throw new ORPCError("NOT_FOUND", {
+				message: "Move not found.",
+			});
+		}
+
+		return {
+			success: true,
+			publishedAt: result.publishedAt ?? new Date(),
+		};
+	});
+
+export const unpublishMoveProcedure = os
+	.input(AdminMoveIdInputSchema)
+	.output(AdminActionOutputSchema)
+	.handler(async ({ input }) => {
+		const supabase = getSupabaseServerClient();
+		const authData = await supabase.auth.getUser();
+
+		if (!authData.data.user) {
+			throw new ORPCError("UNAUTHORIZED", {
+				message: "User is not authenticated.",
+			});
+		}
+
+		const userId = authData.data.user.id;
+
+		const isAdmin = await validateUserIsAdmin(userId);
+		if (!isAdmin) {
+			throw new ORPCError("UNAUTHORIZED", {
+				message: "User is not an administrator.",
+			});
+		}
+
+		await unpublishMove(input.id);
+		return { success: true };
+	});
+
+export const deleteMoveProcedure = os
+	.input(AdminMoveIdInputSchema)
+	.output(AdminActionOutputSchema)
+	.handler(async ({ input }) => {
+		const supabase = getSupabaseServerClient();
+		const authData = await supabase.auth.getUser();
+
+		if (!authData.data.user) {
+			throw new ORPCError("UNAUTHORIZED", {
+				message: "User is not authenticated.",
+			});
+		}
+
+		const userId = authData.data.user.id;
+
+		const isAdmin = await validateUserIsAdmin(userId);
+		if (!isAdmin) {
+			throw new ORPCError("UNAUTHORIZED", {
+				message: "User is not an administrator.",
+			});
+		}
+
+		await deleteMove(input.id);
+		return { success: true };
+	});
+
+export const restoreMoveProcedure = os
+	.input(AdminMoveIdInputSchema)
+	.output(AdminActionOutputSchema)
+	.handler(async ({ input }) => {
+		const supabase = getSupabaseServerClient();
+		const authData = await supabase.auth.getUser();
+
+		if (!authData.data.user) {
+			throw new ORPCError("UNAUTHORIZED", {
+				message: "User is not authenticated.",
+			});
+		}
+
+		const userId = authData.data.user.id;
+
+		const isAdmin = await validateUserIsAdmin(userId);
+		if (!isAdmin) {
+			throw new ORPCError("UNAUTHORIZED", {
+				message: "User is not an administrator.",
+			});
+		}
+
+		await restoreMove(input.id);
+		return { success: true };
 	});

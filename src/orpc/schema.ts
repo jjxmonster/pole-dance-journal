@@ -259,3 +259,58 @@ export const AdminGetStatsOutputSchema = z.object({
 });
 
 export type AdminGetStatsOutput = z.infer<typeof AdminGetStatsOutputSchema>;
+
+export const AdminListMovesInputSchema = z.object({
+	limit: z
+		.number()
+		.int()
+		.positive()
+		.max(MAX_LIMIT)
+		.optional()
+		.default(DEFAULT_LIMIT),
+	offset: z.number().int().nonnegative().optional().default(DEFAULT_OFFSET),
+	level: z.enum(moveLevelEnum.enumValues).optional(),
+	status: z.enum(["Published", "Unpublished", "Deleted"]).optional(),
+	query: z.string().trim().optional(),
+});
+
+export type AdminListMovesInput = z.infer<typeof AdminListMovesInputSchema>;
+
+export const AdminMoveItemSchema = z.object({
+	id: z.string().uuid(),
+	name: z.string(),
+	level: z.enum(moveLevelEnum.enumValues),
+	slug: z.string(),
+	status: z.enum(["Published", "Unpublished", "Deleted"]),
+	updatedAt: z.date(),
+});
+
+export type AdminMoveItem = z.infer<typeof AdminMoveItemSchema>;
+
+export const AdminListMovesOutputSchema = z.object({
+	moves: z.array(AdminMoveItemSchema),
+	total: z.number().int().nonnegative(),
+});
+
+export type AdminListMovesOutput = z.infer<typeof AdminListMovesOutputSchema>;
+
+export const AdminMoveIdInputSchema = z.object({
+	id: z.string().uuid(),
+});
+
+export type AdminMoveIdInput = z.infer<typeof AdminMoveIdInputSchema>;
+
+export const AdminPublishMoveOutputSchema = z.object({
+	success: z.literal(true),
+	publishedAt: z.date(),
+});
+
+export type AdminPublishMoveOutput = z.infer<
+	typeof AdminPublishMoveOutputSchema
+>;
+
+export const AdminActionOutputSchema = z.object({
+	success: z.literal(true),
+});
+
+export type AdminActionOutput = z.infer<typeof AdminActionOutputSchema>;

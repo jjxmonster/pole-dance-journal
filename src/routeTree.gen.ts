@@ -21,6 +21,7 @@ import { Route as AuthResetPasswordRouteImport } from './routes/auth/reset-passw
 import { Route as AuthOauthCallbackRouteImport } from './routes/auth/oauth-callback'
 import { Route as AuthForgotPasswordRouteImport } from './routes/auth/forgot-password'
 import { Route as ApiSplatRouteImport } from './routes/api.$'
+import { Route as AdminMovesRouteImport } from './routes/admin/moves'
 import { Route as ApiRpcSplatRouteImport } from './routes/api.rpc.$'
 
 const MyMovesRoute = MyMovesRouteImport.update({
@@ -83,6 +84,11 @@ const ApiSplatRoute = ApiSplatRouteImport.update({
   path: '/api/$',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AdminMovesRoute = AdminMovesRouteImport.update({
+  id: '/moves',
+  path: '/moves',
+  getParentRoute: () => AdminRoute,
+} as any)
 const ApiRpcSplatRoute = ApiRpcSplatRouteImport.update({
   id: '/api/rpc/$',
   path: '/api/rpc/$',
@@ -94,6 +100,7 @@ export interface FileRoutesByFullPath {
   '/admin': typeof AdminRouteWithChildren
   '/catalog': typeof CatalogRoute
   '/my-moves': typeof MyMovesRoute
+  '/admin/moves': typeof AdminMovesRoute
   '/api/$': typeof ApiSplatRoute
   '/auth/forgot-password': typeof AuthForgotPasswordRoute
   '/auth/oauth-callback': typeof AuthOauthCallbackRoute
@@ -108,6 +115,7 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/catalog': typeof CatalogRoute
   '/my-moves': typeof MyMovesRoute
+  '/admin/moves': typeof AdminMovesRoute
   '/api/$': typeof ApiSplatRoute
   '/auth/forgot-password': typeof AuthForgotPasswordRoute
   '/auth/oauth-callback': typeof AuthOauthCallbackRoute
@@ -124,6 +132,7 @@ export interface FileRoutesById {
   '/admin': typeof AdminRouteWithChildren
   '/catalog': typeof CatalogRoute
   '/my-moves': typeof MyMovesRoute
+  '/admin/moves': typeof AdminMovesRoute
   '/api/$': typeof ApiSplatRoute
   '/auth/forgot-password': typeof AuthForgotPasswordRoute
   '/auth/oauth-callback': typeof AuthOauthCallbackRoute
@@ -141,6 +150,7 @@ export interface FileRouteTypes {
     | '/admin'
     | '/catalog'
     | '/my-moves'
+    | '/admin/moves'
     | '/api/$'
     | '/auth/forgot-password'
     | '/auth/oauth-callback'
@@ -155,6 +165,7 @@ export interface FileRouteTypes {
     | '/'
     | '/catalog'
     | '/my-moves'
+    | '/admin/moves'
     | '/api/$'
     | '/auth/forgot-password'
     | '/auth/oauth-callback'
@@ -170,6 +181,7 @@ export interface FileRouteTypes {
     | '/admin'
     | '/catalog'
     | '/my-moves'
+    | '/admin/moves'
     | '/api/$'
     | '/auth/forgot-password'
     | '/auth/oauth-callback'
@@ -282,6 +294,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiSplatRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/admin/moves': {
+      id: '/admin/moves'
+      path: '/moves'
+      fullPath: '/admin/moves'
+      preLoaderRoute: typeof AdminMovesRouteImport
+      parentRoute: typeof AdminRoute
+    }
     '/api/rpc/$': {
       id: '/api/rpc/$'
       path: '/api/rpc/$'
@@ -293,10 +312,12 @@ declare module '@tanstack/react-router' {
 }
 
 interface AdminRouteChildren {
+  AdminMovesRoute: typeof AdminMovesRoute
   AdminIndexRoute: typeof AdminIndexRoute
 }
 
 const AdminRouteChildren: AdminRouteChildren = {
+  AdminMovesRoute: AdminMovesRoute,
   AdminIndexRoute: AdminIndexRoute,
 }
 

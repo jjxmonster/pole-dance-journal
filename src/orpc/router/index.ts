@@ -1,4 +1,12 @@
-import { getStatsProcedure, uploadReferenceImageProcedure } from "./admin";
+import {
+	deleteMoveProcedure,
+	getStatsProcedure,
+	listMovesProcedure,
+	publishMoveProcedure,
+	restoreMoveProcedure,
+	unpublishMoveProcedure,
+	uploadReferenceImageProcedure,
+} from "./admin";
 import {
 	forgotPassword,
 	getSession,
@@ -31,6 +39,11 @@ export default {
 	admin: {
 		getStats: getStatsProcedure,
 		moves: {
+			listMoves: listMovesProcedure,
+			publishMove: publishMoveProcedure,
+			unpublishMove: unpublishMoveProcedure,
+			deleteMove: deleteMoveProcedure,
+			restoreMove: restoreMoveProcedure,
 			uploadReferenceImage: uploadReferenceImageProcedure,
 		},
 	},
