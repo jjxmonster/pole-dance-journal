@@ -1,6 +1,5 @@
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import { useState } from "react";
 import { AdminMovesFilters } from "@/components/admin/moves/admin-moves-filters";
 import { AdminMovesHeader } from "@/components/admin/moves/admin-moves-header";
 import { AdminMovesPagination } from "@/components/admin/moves/admin-moves-pagination";
@@ -10,7 +9,7 @@ import { adminMovesQueryOptions } from "@/query-options/admin";
 import type { AdminMoveStatus, MoveLevel } from "@/types/admin";
 
 export const Route = createFileRoute("/admin/moves")({
-	component: AdminMovesView,
+	component: AdminMovesPage,
 	head: () => ({
 		meta: [
 			{
@@ -24,13 +23,8 @@ export const Route = createFileRoute("/admin/moves")({
 	}),
 });
 
-function AdminMovesView() {
-	return <AdminMovesPage />;
-}
-
 function AdminMovesPage() {
 	const navigate = useNavigate();
-	const [isLoading, setIsLoading] = useState(false);
 
 	const {
 		query,
@@ -43,7 +37,6 @@ function AdminMovesPage() {
 		setStatus,
 		setPage,
 	} = useAdminMovesFilters((filters) => {
-		setIsLoading(true);
 		const searchParams = new URLSearchParams();
 		if (filters.query) {
 			searchParams.set("query", filters.query);
@@ -73,7 +66,7 @@ function AdminMovesPage() {
 		...(query && { query }),
 	};
 
-	const { data, isError } = useSuspenseQuery(
+	const { data, isError, isLoading } = useSuspenseQuery(
 		adminMovesQueryOptions(queryInput)
 	);
 
