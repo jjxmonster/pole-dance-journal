@@ -1,8 +1,6 @@
-import { Skeleton } from "@/components/ui/skeleton";
 import {
 	Table,
 	TableBody,
-	TableCell,
 	TableHead,
 	TableHeader,
 	TableRow,
@@ -12,54 +10,10 @@ import { AdminMoveTableRow } from "./admin-move-table-row";
 
 type AdminMovesTableProps = {
 	moves: AdminMoveViewModel[];
-	isLoading: boolean;
 	isError: boolean;
 };
 
-export function AdminMovesTable({
-	moves,
-	isLoading,
-	isError,
-}: AdminMovesTableProps) {
-	if (isLoading) {
-		return (
-			<div className="mb-6 rounded-lg border">
-				<Table>
-					<TableHeader>
-						<TableRow>
-							<TableHead>Name</TableHead>
-							<TableHead>Level</TableHead>
-							<TableHead>Status</TableHead>
-							<TableHead>Updated</TableHead>
-							<TableHead className="text-right">Actions</TableHead>
-						</TableRow>
-					</TableHeader>
-					<TableBody>
-						{Array.from({ length: 5 }).map(() => (
-							<TableRow key={crypto.randomUUID()}>
-								<TableCell>
-									<Skeleton className="h-5 w-32" />
-								</TableCell>
-								<TableCell>
-									<Skeleton className="h-5 w-20" />
-								</TableCell>
-								<TableCell>
-									<Skeleton className="h-5 w-24" />
-								</TableCell>
-								<TableCell>
-									<Skeleton className="h-5 w-24" />
-								</TableCell>
-								<TableCell>
-									<Skeleton className="h-5 w-20" />
-								</TableCell>
-							</TableRow>
-						))}
-					</TableBody>
-				</Table>
-			</div>
-		);
-	}
-
+export function AdminMovesTable({ moves, isError }: AdminMovesTableProps) {
 	if (isError) {
 		return (
 			<div className="mb-6 rounded-lg border border-destructive/50 bg-destructive/10 p-6">

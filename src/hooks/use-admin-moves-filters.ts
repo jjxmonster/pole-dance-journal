@@ -1,5 +1,4 @@
-import { useSearch } from "@tanstack/react-router";
-import { useCallback } from "react";
+import { useCallback, useState } from "react";
 import type { AdminMoveStatus, MoveLevel } from "@/types/admin";
 
 const DEFAULT_ADMIN_MOVES_LIMIT = 20;
@@ -22,42 +21,45 @@ type AdminMovesFilterActions = {
 export function useAdminMovesFilters(
 	onFiltersChange?: (filters: AdminMovesFilterState) => void
 ): AdminMovesFilterState & AdminMovesFilterActions {
-	const searchParams = useSearch({
-		from: "/admin/moves",
-	}) as Partial<AdminMovesFilterState>;
-
-	const query = searchParams.query ?? "";
-	const level = (searchParams.level ?? "All") as MoveLevel | "All";
-	const status = (searchParams.status ?? "All") as AdminMoveStatus | "All";
-	const page = searchParams.page ?? 1;
-	const limit = searchParams.limit ?? DEFAULT_ADMIN_MOVES_LIMIT;
+	const [query, setQueryState] = useState<string>("");
+	const [level, setLevelState] = useState<MoveLevel | "All">("All");
+	const [status, setStatusState] = useState<AdminMoveStatus | "All">("All");
+	const [page, setPageState] = useState<number>(1);
+	const limit = DEFAULT_ADMIN_MOVES_LIMIT;
 
 	const setQuery = useCallback(
 		(newQuery: string) => {
+			setQueryState(newQuery);
 			const newFilters = { query: newQuery, level, status, page: 1, limit };
 			onFiltersChange?.(newFilters);
+			setPageState(1);
 		},
 		[level, status, limit, onFiltersChange]
 	);
 
 	const setLevel = useCallback(
 		(newLevel: MoveLevel | "All") => {
+			setLevelState(newLevel);
 			const newFilters = { query, level: newLevel, status, page: 1, limit };
 			onFiltersChange?.(newFilters);
+			setPageState(1);
 		},
 		[query, status, limit, onFiltersChange]
 	);
 
 	const setStatus = useCallback(
 		(newStatus: AdminMoveStatus | "All") => {
+			setStatusState(newStatus);
 			const newFilters = { query, level, status: newStatus, page: 1, limit };
 			onFiltersChange?.(newFilters);
+			setPageState(1);
 		},
 		[query, level, limit, onFiltersChange]
 	);
 
 	const setPage = useCallback(
 		(newPage: number) => {
+			setPageState(newPage);
 			const newFilters = { query, level, status, page: newPage, limit };
 			onFiltersChange?.(newFilters);
 		},
