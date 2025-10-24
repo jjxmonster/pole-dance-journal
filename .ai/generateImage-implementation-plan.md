@@ -441,28 +441,4 @@ export const generateImageProcedure = adminProcedure
 
 ---
 
-## 10. Constants & Configuration
-
-```typescript
-// src/utils/constants.ts - Add to existing file
-
-export const IMAGE_GENERATION = {
-	PROMPT_MIN_LENGTH: 10,
-	PROMPT_MAX_LENGTH: 500,
-	RATE_LIMIT_PER_24H: 5,
-	REFERENCE_IMAGE_VALIDATION_TIMEOUT_MS: 5000,
-	REFERENCE_IMAGE_MAX_SIZE_MB: 50,
-	PREVIEW_IMAGE_EXPIRATION_HOURS: 24,
-	REPLICATE_TIMEOUT_MS: 120000,
-	ALLOWED_IMAGE_TYPES: ["image/jpeg", "image/png", "image/webp"],
-} as const;
-
-export const REPLICATE_MODEL = {
-	ID: "black-forest-labs/flux-schnell",
-	NUM_OUTPUTS: 1,
-	NUM_INFERENCE_STEPS: 4,
-	GUIDANCE_SCALE: 7.5,
-} as const;
-```
-
 ---
