@@ -17,7 +17,7 @@ import { useAdminMovesFilters } from "@/hooks/use-admin-moves-filters";
 import { adminMovesQueryOptions } from "@/query-options/admin";
 import type { AdminMoveStatus, MoveLevel } from "@/types/admin";
 
-export const Route = createFileRoute("/admin/moves")({
+export const Route = createFileRoute("/admin/moves/")({
 	component: AdminMovesPage,
 	head: () => ({
 		meta: [

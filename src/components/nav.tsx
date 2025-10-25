@@ -6,7 +6,7 @@ import { Button } from "./ui/button";
 
 export function Nav() {
 	const navigate = useNavigate();
-	const { isAuthenticated, clearAuth, email } = useAuth();
+	const { isAuthenticated, clearAuth, email, isAdmin } = useAuth();
 
 	const handleSignOut = async () => {
 		try {
@@ -57,6 +57,14 @@ export function Nav() {
 							>
 								Moje Figury
 							</Link>
+							{isAdmin && (
+								<Link
+									className="text-muted-foreground text-sm hover:text-foreground"
+									to="/admin"
+								>
+									Admin
+								</Link>
+							)}
 							<span className="text-muted-foreground text-sm">
 								{email?.split("@")[0]}
 							</span>

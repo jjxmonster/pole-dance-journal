@@ -8,7 +8,6 @@ import {
 	PLURAL_THRESHOLD,
 	RANDOM_STRING_END_INDEX,
 	RANDOM_STRING_START_INDEX,
-	UUID_REGEX,
 } from "./constants";
 
 export function getPluralForm(count: number): string {
@@ -41,14 +40,6 @@ export function validateInputFile(file: File): void {
 	if (file.size > UPLOAD_REFERENCE_IMAGE_VALIDATION.MAX_FILE_SIZE) {
 		throw new ORPCError("BAD_REQUEST", {
 			message: "File size exceeds maximum limit of 10MB.",
-		});
-	}
-}
-
-export function validateMoveId(moveId: string | undefined): void {
-	if (moveId && !UUID_REGEX.test(moveId)) {
-		throw new ORPCError("BAD_REQUEST", {
-			message: "Invalid moveId format. Must be a valid UUID.",
 		});
 	}
 }
@@ -97,4 +88,13 @@ export function generateStoragePath(
 		path: `temp/${userId}-${timestamp}-${randomId}`,
 		filename,
 	};
+}
+
+export function generateSlug(name: string): string {
+	return name
+		.toLowerCase()
+		.trim()
+		.replace(/[^\w\s-]/g, "")
+		.replace(/\s+/g, "-")
+		.replace(/-+/g, "-");
 }

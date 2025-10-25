@@ -256,3 +256,41 @@ export async function deleteMove(moveId: string) {
 export async function restoreMove(moveId: string) {
 	await db.update(moves).set({ deletedAt: null }).where(eq(moves.id, moveId));
 }
+
+export async function createMove(data: {
+	name: string;
+	description: string;
+	level: "Beginner" | "Intermediate" | "Advanced";
+	slug: string;
+	steps: Array<{ title: string; description: string }>;
+}) {
+	const moveId = crypto.randomUUID();
+
+	const stepsWithIndices = data.steps.map((step, index) => ({
+		id: crypto.randomUUID(),
+		moveId,
+		orderIndex: index + 1,
+		title: step.title,
+		description: step.description,
+		createdAt: new Date(),
+		updatedAt: new Date(),
+	}));
+
+	await db.insert(moves).values({
+		id: moveId,
+		name: data.name,
+		description: data.description,
+		level: data.level,
+		slug: data.slug,
+		createdAt: new Date(),
+		updatedAt: new Date(),
+	});
+
+	await db.insert(steps).values(stepsWithIndices);
+
+	return { id: moveId, slug: data.slug };
+}
+
+export async function acceptMoveImage(moveId: string, imageUrl: string) {
+	await db.update(moves).set({ imageUrl }).where(eq(moves.id, moveId));
+}

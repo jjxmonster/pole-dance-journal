@@ -1,5 +1,8 @@
 import {
+	acceptImageProcedure,
+	createMoveProcedure,
 	deleteMoveProcedure,
+	generateImageProcedure,
 	getStatsProcedure,
 	listMovesProcedure,
 	publishMoveProcedure,
@@ -45,6 +48,9 @@ export default {
 			deleteMove: deleteMoveProcedure,
 			restoreMove: restoreMoveProcedure,
 			uploadReferenceImage: uploadReferenceImageProcedure,
+			createMove: createMoveProcedure,
+			acceptImage: acceptImageProcedure,
+			generateImage: generateImageProcedure,
 		},
 	},
 	auth: {

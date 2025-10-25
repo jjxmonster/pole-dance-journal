@@ -15,9 +15,13 @@ import {
 } from "@/services/image-generation";
 import { uploadReferenceImage } from "@/services/image-upload";
 import { GENERATE_IMAGE_PROMPT } from "@/utils/prompts";
-import { validateInputFile, validateMoveId } from "@/utils/utils";
+import { validateInputFile } from "@/utils/utils";
 import {
+	AdminAcceptImageInputSchema,
+	AdminAcceptImageOutputSchema,
 	AdminActionOutputSchema,
+	AdminCreateMoveInputSchema,
+	AdminCreateMoveOutputSchema,
 	AdminGetStatsOutputSchema,
 	AdminListMovesInputSchema,
 	AdminListMovesOutputSchema,
@@ -52,7 +56,6 @@ export const uploadReferenceImageProcedure = os
 		}
 
 		validateInputFile(input.file);
-		validateMoveId(input.moveId);
 
 		try {
 			const result = await uploadReferenceImage(input.file, userId);
@@ -312,4 +315,85 @@ export const restoreMoveProcedure = os
 
 		await restoreMove(input.id);
 		return { success: true };
+	});
+
+export const createMoveProcedure = os
+	.input(AdminCreateMoveInputSchema)
+	.output(AdminCreateMoveOutputSchema)
+	.handler(async ({ input }) => {
+		const supabase = getSupabaseServerClient();
+		const authData = await supabase.auth.getUser();
+
+		if (!authData.data.user) {
+			throw new ORPCError("UNAUTHORIZED", {
+				message: "User is not authenticated.",
+			});
+		}
+
+		const userId = authData.data.user.id;
+
+		const isAdmin = await validateUserIsAdmin(userId);
+		if (!isAdmin) {
+			throw new ORPCError("UNAUTHORIZED", {
+				message: "User is not an administrator.",
+			});
+		}
+
+		const { createMove } = await import("@/data-access/moves");
+		const { generateSlug } = await import("@/utils/utils");
+
+		const slug = generateSlug(input.name);
+
+		try {
+			const result = await createMove({
+				name: input.name,
+				description: input.description,
+				level: input.level,
+				slug,
+				steps: input.steps,
+			});
+
+			return result;
+		} catch (error) {
+			const errorMessage =
+				error instanceof Error ? error.message : "Failed to create move";
+
+			throw new ORPCError("BAD_REQUEST", {
+				message: errorMessage,
+			});
+		}
+	});
+
+export const acceptImageProcedure = os
+	.input(AdminAcceptImageInputSchema)
+	.output(AdminAcceptImageOutputSchema)
+	.handler(async ({ input }) => {
+		const supabase = getSupabaseServerClient();
+		const authData = await supabase.auth.getUser();
+
+		if (!authData.data.user) {
+			throw new ORPCError("UNAUTHORIZED", {
+				message: "User is not authenticated.",
+			});
+		}
+
+		const userId = authData.data.user.id;
+
+		const isAdmin = await validateUserIsAdmin(userId);
+		if (!isAdmin) {
+			throw new ORPCError("UNAUTHORIZED", {
+				message: "User is not an administrator.",
+			});
+		}
+
+		const { acceptMoveImage } = await import("@/data-access/moves");
+
+		try {
+			await acceptMoveImage(input.moveId, input.imageUrl);
+			return { success: true };
+		} catch {
+			throw new ORPCError("INTERNAL_SERVER_ERROR", {
+				message: "Failed to accept image",
+			});
+		}
 	});

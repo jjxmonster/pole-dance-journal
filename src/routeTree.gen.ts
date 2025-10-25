@@ -21,8 +21,9 @@ import { Route as AuthResetPasswordRouteImport } from './routes/auth/reset-passw
 import { Route as AuthOauthCallbackRouteImport } from './routes/auth/oauth-callback'
 import { Route as AuthForgotPasswordRouteImport } from './routes/auth/forgot-password'
 import { Route as ApiSplatRouteImport } from './routes/api.$'
-import { Route as AdminMovesRouteImport } from './routes/admin/moves'
+import { Route as AdminMovesIndexRouteImport } from './routes/admin/moves/index'
 import { Route as ApiRpcSplatRouteImport } from './routes/api.rpc.$'
+import { Route as AdminMovesNewRouteImport } from './routes/admin/moves/new'
 
 const MyMovesRoute = MyMovesRouteImport.update({
   id: '/my-moves',
@@ -84,9 +85,9 @@ const ApiSplatRoute = ApiSplatRouteImport.update({
   path: '/api/$',
   getParentRoute: () => rootRouteImport,
 } as any)
-const AdminMovesRoute = AdminMovesRouteImport.update({
-  id: '/moves',
-  path: '/moves',
+const AdminMovesIndexRoute = AdminMovesIndexRouteImport.update({
+  id: '/moves/',
+  path: '/moves/',
   getParentRoute: () => AdminRoute,
 } as any)
 const ApiRpcSplatRoute = ApiRpcSplatRouteImport.update({
@@ -94,13 +95,17 @@ const ApiRpcSplatRoute = ApiRpcSplatRouteImport.update({
   path: '/api/rpc/$',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AdminMovesNewRoute = AdminMovesNewRouteImport.update({
+  id: '/moves/new',
+  path: '/moves/new',
+  getParentRoute: () => AdminRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/admin': typeof AdminRouteWithChildren
   '/catalog': typeof CatalogRoute
   '/my-moves': typeof MyMovesRoute
-  '/admin/moves': typeof AdminMovesRoute
   '/api/$': typeof ApiSplatRoute
   '/auth/forgot-password': typeof AuthForgotPasswordRoute
   '/auth/oauth-callback': typeof AuthOauthCallbackRoute
@@ -109,13 +114,14 @@ export interface FileRoutesByFullPath {
   '/auth/sign-up': typeof AuthSignUpRoute
   '/moves/$slug': typeof MovesSlugRoute
   '/admin/': typeof AdminIndexRoute
+  '/admin/moves/new': typeof AdminMovesNewRoute
   '/api/rpc/$': typeof ApiRpcSplatRoute
+  '/admin/moves': typeof AdminMovesIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/catalog': typeof CatalogRoute
   '/my-moves': typeof MyMovesRoute
-  '/admin/moves': typeof AdminMovesRoute
   '/api/$': typeof ApiSplatRoute
   '/auth/forgot-password': typeof AuthForgotPasswordRoute
   '/auth/oauth-callback': typeof AuthOauthCallbackRoute
@@ -124,7 +130,9 @@ export interface FileRoutesByTo {
   '/auth/sign-up': typeof AuthSignUpRoute
   '/moves/$slug': typeof MovesSlugRoute
   '/admin': typeof AdminIndexRoute
+  '/admin/moves/new': typeof AdminMovesNewRoute
   '/api/rpc/$': typeof ApiRpcSplatRoute
+  '/admin/moves': typeof AdminMovesIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -132,7 +140,6 @@ export interface FileRoutesById {
   '/admin': typeof AdminRouteWithChildren
   '/catalog': typeof CatalogRoute
   '/my-moves': typeof MyMovesRoute
-  '/admin/moves': typeof AdminMovesRoute
   '/api/$': typeof ApiSplatRoute
   '/auth/forgot-password': typeof AuthForgotPasswordRoute
   '/auth/oauth-callback': typeof AuthOauthCallbackRoute
@@ -141,7 +148,9 @@ export interface FileRoutesById {
   '/auth/sign-up': typeof AuthSignUpRoute
   '/moves/$slug': typeof MovesSlugRoute
   '/admin/': typeof AdminIndexRoute
+  '/admin/moves/new': typeof AdminMovesNewRoute
   '/api/rpc/$': typeof ApiRpcSplatRoute
+  '/admin/moves/': typeof AdminMovesIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -150,7 +159,6 @@ export interface FileRouteTypes {
     | '/admin'
     | '/catalog'
     | '/my-moves'
-    | '/admin/moves'
     | '/api/$'
     | '/auth/forgot-password'
     | '/auth/oauth-callback'
@@ -159,13 +167,14 @@ export interface FileRouteTypes {
     | '/auth/sign-up'
     | '/moves/$slug'
     | '/admin/'
+    | '/admin/moves/new'
     | '/api/rpc/$'
+    | '/admin/moves'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
     | '/catalog'
     | '/my-moves'
-    | '/admin/moves'
     | '/api/$'
     | '/auth/forgot-password'
     | '/auth/oauth-callback'
@@ -174,14 +183,15 @@ export interface FileRouteTypes {
     | '/auth/sign-up'
     | '/moves/$slug'
     | '/admin'
+    | '/admin/moves/new'
     | '/api/rpc/$'
+    | '/admin/moves'
   id:
     | '__root__'
     | '/'
     | '/admin'
     | '/catalog'
     | '/my-moves'
-    | '/admin/moves'
     | '/api/$'
     | '/auth/forgot-password'
     | '/auth/oauth-callback'
@@ -190,7 +200,9 @@ export interface FileRouteTypes {
     | '/auth/sign-up'
     | '/moves/$slug'
     | '/admin/'
+    | '/admin/moves/new'
     | '/api/rpc/$'
+    | '/admin/moves/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -294,11 +306,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiSplatRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/admin/moves': {
-      id: '/admin/moves'
+    '/admin/moves/': {
+      id: '/admin/moves/'
       path: '/moves'
       fullPath: '/admin/moves'
-      preLoaderRoute: typeof AdminMovesRouteImport
+      preLoaderRoute: typeof AdminMovesIndexRouteImport
       parentRoute: typeof AdminRoute
     }
     '/api/rpc/$': {
@@ -308,17 +320,26 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiRpcSplatRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/admin/moves/new': {
+      id: '/admin/moves/new'
+      path: '/moves/new'
+      fullPath: '/admin/moves/new'
+      preLoaderRoute: typeof AdminMovesNewRouteImport
+      parentRoute: typeof AdminRoute
+    }
   }
 }
 
 interface AdminRouteChildren {
-  AdminMovesRoute: typeof AdminMovesRoute
   AdminIndexRoute: typeof AdminIndexRoute
+  AdminMovesNewRoute: typeof AdminMovesNewRoute
+  AdminMovesIndexRoute: typeof AdminMovesIndexRoute
 }
 
 const AdminRouteChildren: AdminRouteChildren = {
-  AdminMovesRoute: AdminMovesRoute,
   AdminIndexRoute: AdminIndexRoute,
+  AdminMovesNewRoute: AdminMovesNewRoute,
+  AdminMovesIndexRoute: AdminMovesIndexRoute,
 }
 
 const AdminRouteWithChildren = AdminRoute._addFileChildren(AdminRouteChildren)

@@ -400,6 +400,7 @@ The architecture employs **server-side rendering for public pages** to optimize 
   - `Select` component (Shadcn): Level dropdown
   - `Button` component (Shadcn): Add step, remove step, save, cancel
   - `Alert` component (Shadcn): Validation errors
+  - `ImageGenerator` component (Shadcn): Generate Move Image
 - **UX Considerations**:
   - Real-time character counters for all text fields
   - Inline validation errors below fields
