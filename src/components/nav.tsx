@@ -1,11 +1,19 @@
-import { Link, useNavigate } from "@tanstack/react-router";
+import { Link, useLocation, useNavigate } from "@tanstack/react-router";
+import { User } from "lucide-react";
 import { motion } from "motion/react";
 import { useAuth } from "@/hooks/use-auth";
 import { orpc } from "@/orpc/client";
 import { Button } from "./ui/button";
+import {
+	DropdownMenu,
+	DropdownMenuContent,
+	DropdownMenuItem,
+	DropdownMenuTrigger,
+} from "./ui/dropdown-menu";
 
 export function Nav() {
 	const navigate = useNavigate();
+	const location = useLocation();
 	const { isAuthenticated, clearAuth, email, isAdmin } = useAuth();
 
 	const handleSignOut = async () => {
@@ -17,6 +25,15 @@ export function Nav() {
 			clearAuth();
 			await navigate({ to: "/" });
 		}
+	};
+
+	const isActive = (path: string) => location.pathname === path;
+
+	const getNavLinkClass = (path: string) => {
+		const baseClass = "text-sm transition-colors hover:text-foreground";
+		return isActive(path)
+			? `${baseClass} text-primary font-medium`
+			: `${baseClass} text-muted-foreground`;
 	};
 
 	return (
@@ -39,60 +56,57 @@ export function Nav() {
 				</motion.div>
 				<motion.div
 					animate={{ opacity: 1, x: 0 }}
+					className="-translate-x-1/2 absolute left-1/2 flex items-center gap-8"
+					initial={{ opacity: 0, x: 0 }}
+					transition={{ duration: 0.5, delay: 0.1 }}
+				>
+					{isAuthenticated && (
+						<>
+							<Link className={getNavLinkClass("/catalog")} to="/catalog">
+								Katalog
+							</Link>
+							<Link className={getNavLinkClass("/my-moves")} to="/my-moves">
+								Moje Figury
+							</Link>
+							{isAdmin && (
+								<Link className={getNavLinkClass("/admin")} to="/admin">
+									Admin
+								</Link>
+							)}
+						</>
+					)}
+				</motion.div>
+				<motion.div
+					animate={{ opacity: 1, x: 0 }}
 					className="flex items-center gap-4"
 					initial={{ opacity: 0, x: 20 }}
 					transition={{ duration: 0.5, delay: 0.1 }}
 				>
 					{isAuthenticated ? (
-						<>
-							<Link
-								className="text-muted-foreground text-sm hover:text-foreground"
-								to="/catalog"
-							>
-								Katalog
-							</Link>
-							<Link
-								className="text-muted-foreground text-sm hover:text-foreground"
-								to="/my-moves"
-							>
-								Moje Figury
-							</Link>
-							{isAdmin && (
-								<Link
-									className="text-muted-foreground text-sm hover:text-foreground"
-									to="/admin"
-								>
-									Admin
-								</Link>
-							)}
-							<span className="text-muted-foreground text-sm">
-								{email?.split("@")[0]}
-							</span>
-							<Button onClick={handleSignOut} size="sm" variant="ghost">
-								Wyloguj
-							</Button>
-						</>
+						<DropdownMenu>
+							<DropdownMenuTrigger asChild>
+								<Button size="icon-sm" variant="ghost">
+									<User className="size-5" />
+								</Button>
+							</DropdownMenuTrigger>
+							<DropdownMenuContent align="end">
+								<div className="px-2 py-1.5 font-medium text-sm">
+									{email?.split("@")[0]}
+								</div>
+								<DropdownMenuItem onClick={handleSignOut} variant="destructive">
+									Wyloguj
+								</DropdownMenuItem>
+							</DropdownMenuContent>
+						</DropdownMenu>
 					) : (
 						<>
-							<a
-								className="text-muted-foreground text-sm hover:text-foreground"
-								href="#features"
-							>
-								Features
-							</a>
-							<a
-								className="text-muted-foreground text-sm hover:text-foreground"
-								href="#pricing"
-							>
-								Pricing
-							</a>
 							<Link to="/auth/sign-in">
 								<Button size="sm" variant="ghost">
-									Sign in
+									Zaloguj się
 								</Button>
 							</Link>
 							<Link to="/auth/sign-up">
-								<Button size="sm">Sign up</Button>
+								<Button size="sm">Stwórz konto</Button>
 							</Link>
 						</>
 					)}
