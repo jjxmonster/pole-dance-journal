@@ -10,7 +10,9 @@ import {
 	userMoveStatuses,
 } from "./schema";
 
-const client = postgres(env.POSTGRES_URL);
+const client = postgres(env.POSTGRES_URL, {
+	prepare: false,
+});
 export const db = drizzle({
 	client,
 	schema: {

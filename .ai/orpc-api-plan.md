@@ -261,6 +261,55 @@ All procedures under the `admin` router require administrator privileges.
   ```
 - **Errors**: `UNAUTHORIZED` if the user is not an admin, `NOT_FOUND` if the move ID doesn't exist.
 
+#### `admin.moves.uploadReferenceImage` (Admin-only)
+
+- **Description**: Uploads a reference image to Supabase Storage for use in AI image generation. The image is stored in a temporary location and returns a URL that can be used with `generateImage` or `regenerateImage`. Reference images are automatically cleaned up after 24 hours if not used.
+- **Input Schema**:
+  ```typescript
+  {
+    file: File, // The image file (JPEG, PNG, or WebP)
+    moveId: string().optional(), // Optional move ID for organizing uploads
+  }
+  ```
+- **Output Schema**:
+  ```typescript
+  {
+    referenceImageUrl: string(), // Public URL of the uploaded reference image
+    uploadedAt: date(),
+    expiresAt: date(), // When the reference image will be automatically deleted (24 hours)
+  }
+  ```
+- **Errors**:
+  - `UNAUTHORIZED` if the user is not an admin
+  - `BAD_REQUEST` if the file is not a valid image format, exceeds size limits (e.g., max 10MB), or validation fails
+  - `INTERNAL_SERVER_ERROR` if the storage upload fails
+
+#### `admin.moves.generateImage` (Admin-only)
+
+- **Description**: Generates an AI image preview for a move using flux-schnell model with image-to-image transformation. Requires a reference image URL (from `uploadReferenceImage`) and prompt. The generated image is stored temporarily and not yet associated with the move. This allows the admin to preview and decide whether to accept or regenerate.
+- **Input Schema**:
+  ```typescript
+  {
+    moveId: string(),
+    prompt: string().min(10).max(500), // Description/prompt for the AI image generation
+    referenceImageUrl: string().url(), // URL of the reference image to use for image-to-image generation
+    sessionId: string().optional(), // Optional session ID to track regeneration attempts
+  }
+  ```
+- **Output Schema**:
+  ```typescript
+  {
+    previewUrl: string(), // Temporary URL to the generated preview image
+    sessionId: string(), // Session identifier for tracking this generation attempt
+    generatedAt: date(),
+  }
+  ```
+- **Errors**:
+  - `UNAUTHORIZED` if the user is not an admin
+  - `NOT_FOUND` if the move ID doesn't exist
+  - `BAD_REQUEST` on validation failure, if generation limits are exceeded, or if the reference image URL is invalid/inaccessible
+  - `INTERNAL_SERVER_ERROR` if the AI generation service fails
+
 ## 3. Authentication and Authorization
 
 - **Authentication**: All procedures marked as `(Authenticated)` or `(Admin-only)` will require a valid JWT from Supabase Auth, passed in the `Authorization` header. The server middleware will verify the token and attach the user's session to the context.
@@ -276,3 +325,13 @@ All procedures under the `admin` router require administrator privileges.
   - **Soft Deletes**: The `admin.moves.delete` procedure implements the soft-delete pattern by setting a `deleted_at` timestamp, preserving user data associated with the move. The `moves.listMyMoves` procedure surfaces this state to the user.
   - **Autosave**: The `userMoveStatuses.set` procedure's upsert logic is designed to support the "autosave" feature for user notes, simplifying client-side implementation.
   - **Step Management**: In `admin.moves.create` and `admin.moves.update`, steps are managed as a complete, ordered list within the move payload. The server will handle the logic to create, update, or delete step records to match the provided list, ensuring transactional integrity.
+  - **AI Image Generation**: The image generation workflow consists of four steps:
+    1. **Upload Reference**: `admin.moves.uploadReferenceImage` handles the upload of a reference image (photo, sketch, etc.) to Supabase Storage. The image is validated (format: JPEG/PNG/WebP, max size: 10MB) and stored in `reference-images/{timestamp}-{uuid}.{ext}` with a 24-hour expiration. The returned URL is used in subsequent generation steps.
+    2. **Generate**: `admin.moves.generateImage` calls the flux-schnell API with image-to-image transformation, using a reference image URL and text prompt to generate a stylized image. The generated image is stored in a temporary location in Supabase Storage (e.g., `temp-images/{sessionId}/{moveId}.jpg`) with a short expiration time (e.g., 1 hour). The reference image is fetched, validated, and sent to the AI service along with the prompt.
+    3. **Regenerate**: `admin.moves.regenerateImage` allows the admin to generate a new image if unsatisfied with the current preview. The admin can modify the prompt and/or provide a different reference image URL (by uploading a new reference). The procedure enforces a per-session limit (default: 5 regenerations) to prevent abuse. Each regeneration replaces the temporary preview image.
+    4. **Accept**: `admin.moves.acceptGeneratedImage` moves the temporary image to permanent storage (e.g., `move-images/{moveId}.jpg`), makes it publicly accessible, updates the move's `image_url` field in the database, and cleans up the temporary session data.
+  - **Session Management**: Each image generation session is tracked using a unique `sessionId` (UUID). The server maintains session metadata (generation count, timestamps, temporary URLs) in memory or a short-lived cache (e.g., Redis) to enforce limits and manage cleanup. Sessions expire after 1 hour of inactivity or when accepted.
+  - **Storage Organization**: Supabase Storage buckets are organized as follows:
+    - `reference-images`: Public bucket for temporary reference images uploaded by admins (24-hour TTL)
+    - `temp-images`: Private bucket for temporary preview images during generation sessions (1-hour TTL)
+    - `move-images`: Public bucket for permanently accepted move images

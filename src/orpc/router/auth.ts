@@ -1,4 +1,7 @@
 import { ORPCError, os } from "@orpc/server";
+import { validateUserIsAdmin } from "@/data-access/profiles";
+import { db } from "@/db";
+import { profiles } from "@/db/schema";
 import { getSupabaseServerClient } from "@/integrations/supabase/server";
 import {
 	AuthForgotPasswordInputSchema,
@@ -19,7 +22,7 @@ export const register = os
 		const supabase = (context as Record<string, SupabaseClient>).supabase;
 
 		try {
-			const { error } = await supabase.auth.signUp({
+			const { error, data } = await supabase.auth.signUp({
 				email: input.email,
 				password: input.password,
 			});
@@ -35,6 +38,13 @@ export const register = os
 					message: "Failed to register. Please check your email and password.",
 				});
 			}
+
+			await db.insert(profiles).values({
+				userId: data.user.id,
+				isAdmin: false,
+				createdAt: new Date(),
+				updatedAt: new Date(),
+			});
 
 			return { success: true };
 		} catch (error) {
@@ -110,20 +120,12 @@ export const getSession = os
 		const supabase = getSupabaseServerClient();
 		try {
 			const data = await supabase.auth.getUser();
-
-			if (!data.data.user) {
-				return {
-					userId: null,
-					email: null,
-					isAdmin: false,
-					expiresAt: null,
-				};
-			}
+			const isAdmin = await validateUserIsAdmin(data.data.user?.id ?? "");
 
 			return {
-				userId: data.data.user.id,
-				email: data.data.user.email ?? null,
-				isAdmin: false,
+				userId: data.data.user?.id ?? null,
+				email: data.data.user?.email ?? null,
+				isAdmin,
 				expiresAt: null,
 			};
 		} catch {

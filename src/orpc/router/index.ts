@@ -1,4 +1,16 @@
 import {
+	acceptImageProcedure,
+	createMoveProcedure,
+	deleteMoveProcedure,
+	generateImageProcedure,
+	getStatsProcedure,
+	listMovesProcedure,
+	publishMoveProcedure,
+	restoreMoveProcedure,
+	unpublishMoveProcedure,
+	uploadReferenceImageProcedure,
+} from "./admin";
+import {
 	forgotPassword,
 	getSession,
 	login,
@@ -26,6 +38,20 @@ export default {
 		getNotes,
 		addNote,
 		deleteNote,
+	},
+	admin: {
+		getStats: getStatsProcedure,
+		moves: {
+			listMoves: listMovesProcedure,
+			publishMove: publishMoveProcedure,
+			unpublishMove: unpublishMoveProcedure,
+			deleteMove: deleteMoveProcedure,
+			restoreMove: restoreMoveProcedure,
+			uploadReferenceImage: uploadReferenceImageProcedure,
+			createMove: createMoveProcedure,
+			acceptImage: acceptImageProcedure,
+			generateImage: generateImageProcedure,
+		},
 	},
 	auth: {
 		register,

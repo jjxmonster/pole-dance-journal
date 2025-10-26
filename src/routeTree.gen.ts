@@ -11,7 +11,9 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as MyMovesRouteImport } from './routes/my-moves'
 import { Route as CatalogRouteImport } from './routes/catalog'
+import { Route as AdminRouteImport } from './routes/admin'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as AdminIndexRouteImport } from './routes/admin/index'
 import { Route as MovesSlugRouteImport } from './routes/moves.$slug'
 import { Route as AuthSignUpRouteImport } from './routes/auth/sign-up'
 import { Route as AuthSignInRouteImport } from './routes/auth/sign-in'
@@ -19,7 +21,9 @@ import { Route as AuthResetPasswordRouteImport } from './routes/auth/reset-passw
 import { Route as AuthOauthCallbackRouteImport } from './routes/auth/oauth-callback'
 import { Route as AuthForgotPasswordRouteImport } from './routes/auth/forgot-password'
 import { Route as ApiSplatRouteImport } from './routes/api.$'
+import { Route as AdminMovesIndexRouteImport } from './routes/admin/moves/index'
 import { Route as ApiRpcSplatRouteImport } from './routes/api.rpc.$'
+import { Route as AdminMovesNewRouteImport } from './routes/admin/moves/new'
 
 const MyMovesRoute = MyMovesRouteImport.update({
   id: '/my-moves',
@@ -31,10 +35,20 @@ const CatalogRoute = CatalogRouteImport.update({
   path: '/catalog',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AdminRoute = AdminRouteImport.update({
+  id: '/admin',
+  path: '/admin',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
+} as any)
+const AdminIndexRoute = AdminIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => AdminRoute,
 } as any)
 const MovesSlugRoute = MovesSlugRouteImport.update({
   id: '/moves/$slug',
@@ -71,14 +85,25 @@ const ApiSplatRoute = ApiSplatRouteImport.update({
   path: '/api/$',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AdminMovesIndexRoute = AdminMovesIndexRouteImport.update({
+  id: '/moves/',
+  path: '/moves/',
+  getParentRoute: () => AdminRoute,
+} as any)
 const ApiRpcSplatRoute = ApiRpcSplatRouteImport.update({
   id: '/api/rpc/$',
   path: '/api/rpc/$',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AdminMovesNewRoute = AdminMovesNewRouteImport.update({
+  id: '/moves/new',
+  path: '/moves/new',
+  getParentRoute: () => AdminRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/admin': typeof AdminRouteWithChildren
   '/catalog': typeof CatalogRoute
   '/my-moves': typeof MyMovesRoute
   '/api/$': typeof ApiSplatRoute
@@ -88,7 +113,10 @@ export interface FileRoutesByFullPath {
   '/auth/sign-in': typeof AuthSignInRoute
   '/auth/sign-up': typeof AuthSignUpRoute
   '/moves/$slug': typeof MovesSlugRoute
+  '/admin/': typeof AdminIndexRoute
+  '/admin/moves/new': typeof AdminMovesNewRoute
   '/api/rpc/$': typeof ApiRpcSplatRoute
+  '/admin/moves': typeof AdminMovesIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -101,11 +129,15 @@ export interface FileRoutesByTo {
   '/auth/sign-in': typeof AuthSignInRoute
   '/auth/sign-up': typeof AuthSignUpRoute
   '/moves/$slug': typeof MovesSlugRoute
+  '/admin': typeof AdminIndexRoute
+  '/admin/moves/new': typeof AdminMovesNewRoute
   '/api/rpc/$': typeof ApiRpcSplatRoute
+  '/admin/moves': typeof AdminMovesIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/admin': typeof AdminRouteWithChildren
   '/catalog': typeof CatalogRoute
   '/my-moves': typeof MyMovesRoute
   '/api/$': typeof ApiSplatRoute
@@ -115,12 +147,16 @@ export interface FileRoutesById {
   '/auth/sign-in': typeof AuthSignInRoute
   '/auth/sign-up': typeof AuthSignUpRoute
   '/moves/$slug': typeof MovesSlugRoute
+  '/admin/': typeof AdminIndexRoute
+  '/admin/moves/new': typeof AdminMovesNewRoute
   '/api/rpc/$': typeof ApiRpcSplatRoute
+  '/admin/moves/': typeof AdminMovesIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/admin'
     | '/catalog'
     | '/my-moves'
     | '/api/$'
@@ -130,7 +166,10 @@ export interface FileRouteTypes {
     | '/auth/sign-in'
     | '/auth/sign-up'
     | '/moves/$slug'
+    | '/admin/'
+    | '/admin/moves/new'
     | '/api/rpc/$'
+    | '/admin/moves'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -143,10 +182,14 @@ export interface FileRouteTypes {
     | '/auth/sign-in'
     | '/auth/sign-up'
     | '/moves/$slug'
+    | '/admin'
+    | '/admin/moves/new'
     | '/api/rpc/$'
+    | '/admin/moves'
   id:
     | '__root__'
     | '/'
+    | '/admin'
     | '/catalog'
     | '/my-moves'
     | '/api/$'
@@ -156,11 +199,15 @@ export interface FileRouteTypes {
     | '/auth/sign-in'
     | '/auth/sign-up'
     | '/moves/$slug'
+    | '/admin/'
+    | '/admin/moves/new'
     | '/api/rpc/$'
+    | '/admin/moves/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AdminRoute: typeof AdminRouteWithChildren
   CatalogRoute: typeof CatalogRoute
   MyMovesRoute: typeof MyMovesRoute
   ApiSplatRoute: typeof ApiSplatRoute
@@ -189,12 +236,26 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof CatalogRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/admin': {
+      id: '/admin'
+      path: '/admin'
+      fullPath: '/admin'
+      preLoaderRoute: typeof AdminRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/': {
       id: '/'
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
+    }
+    '/admin/': {
+      id: '/admin/'
+      path: '/'
+      fullPath: '/admin/'
+      preLoaderRoute: typeof AdminIndexRouteImport
+      parentRoute: typeof AdminRoute
     }
     '/moves/$slug': {
       id: '/moves/$slug'
@@ -245,6 +306,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiSplatRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/admin/moves/': {
+      id: '/admin/moves/'
+      path: '/moves'
+      fullPath: '/admin/moves'
+      preLoaderRoute: typeof AdminMovesIndexRouteImport
+      parentRoute: typeof AdminRoute
+    }
     '/api/rpc/$': {
       id: '/api/rpc/$'
       path: '/api/rpc/$'
@@ -252,11 +320,33 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiRpcSplatRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/admin/moves/new': {
+      id: '/admin/moves/new'
+      path: '/moves/new'
+      fullPath: '/admin/moves/new'
+      preLoaderRoute: typeof AdminMovesNewRouteImport
+      parentRoute: typeof AdminRoute
+    }
   }
 }
 
+interface AdminRouteChildren {
+  AdminIndexRoute: typeof AdminIndexRoute
+  AdminMovesNewRoute: typeof AdminMovesNewRoute
+  AdminMovesIndexRoute: typeof AdminMovesIndexRoute
+}
+
+const AdminRouteChildren: AdminRouteChildren = {
+  AdminIndexRoute: AdminIndexRoute,
+  AdminMovesNewRoute: AdminMovesNewRoute,
+  AdminMovesIndexRoute: AdminMovesIndexRoute,
+}
+
+const AdminRouteWithChildren = AdminRoute._addFileChildren(AdminRouteChildren)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AdminRoute: AdminRouteWithChildren,
   CatalogRoute: CatalogRoute,
   MyMovesRoute: MyMovesRoute,
   ApiSplatRoute: ApiSplatRoute,

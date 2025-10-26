@@ -1,6 +1,20 @@
 import { z } from "zod";
 import { moveLevelEnum, moveStatusEnum } from "../db/schema";
-import { NOTE_MAX_LENGTH } from "../utils/constants";
+import {
+	ALLOWED_MIME_TYPES,
+	MAX_FILE_SIZE,
+	MOVE_DESCRIPTION_MAX_LENGTH,
+	MOVE_DESCRIPTION_MIN_LENGTH,
+	MOVE_NAME_MAX_LENGTH,
+	MOVE_NAME_MIN_LENGTH,
+	MOVE_STEP_DESCRIPTION_MAX_LENGTH,
+	MOVE_STEP_DESCRIPTION_MIN_LENGTH,
+	MOVE_STEP_TITLE_MAX_LENGTH,
+	MOVE_STEP_TITLE_MIN_LENGTH,
+	MOVE_STEPS_MAX_COUNT,
+	MOVE_STEPS_MIN_COUNT,
+	NOTE_MAX_LENGTH,
+} from "../utils/constants";
 
 export const TodoSchema = z.object({
 	id: z.number().int().min(1),
@@ -198,3 +212,191 @@ export const AuthOAuthCallbackInputSchema = z.object({
 export const AuthDeleteAccountInputSchema = z.object({
 	confirm: z.literal(true),
 });
+
+export const UploadReferenceImageInputSchema = z.object({
+	file: z.instanceof(File),
+	moveId: z.string().uuid().optional(),
+});
+
+export type UploadReferenceImageInput = z.infer<
+	typeof UploadReferenceImageInputSchema
+>;
+
+export const UploadReferenceImageResponseSchema = z.object({
+	referenceImageUrl: z.string().url(),
+	uploadedAt: z.date(),
+	expiresAt: z.date(),
+});
+
+export type UploadReferenceImageResponse = z.infer<
+	typeof UploadReferenceImageResponseSchema
+>;
+
+export const UPLOAD_REFERENCE_IMAGE_VALIDATION = {
+	MAX_FILE_SIZE,
+	ALLOWED_MIME_TYPES,
+} as const;
+
+export const GENERATE_IMAGE_VALIDATION = {
+	PROMPT_MIN_LENGTH: 10,
+	PROMPT_MAX_LENGTH: 500,
+	RATE_LIMIT_PER_24H: 5,
+} as const;
+
+export const GenerateImageInputSchema = z.object({
+	moveId: z.string().uuid("Invalid move ID format"),
+	referenceImageUrl: z
+		.string()
+		.url("Invalid URL format")
+		.startsWith("https://", "Must use HTTPS"),
+	sessionId: z.string().uuid("Invalid session ID format").optional(),
+});
+
+export type GenerateImageInput = z.infer<typeof GenerateImageInputSchema>;
+
+export const GenerateImageOutputSchema = z.object({
+	previewUrl: z.string().url(),
+});
+
+export type GenerateImageOutput = z.infer<typeof GenerateImageOutputSchema>;
+
+export const AdminGetStatsOutputSchema = z.object({
+	totalMoves: z.number().int().nonnegative(),
+	publishedMoves: z.number().int().nonnegative(),
+	unpublishedMoves: z.number().int().nonnegative(),
+});
+
+export type AdminGetStatsOutput = z.infer<typeof AdminGetStatsOutputSchema>;
+
+export const AdminListMovesInputSchema = z.object({
+	limit: z
+		.number()
+		.int()
+		.positive()
+		.max(MAX_LIMIT)
+		.optional()
+		.default(DEFAULT_LIMIT),
+	offset: z.number().int().nonnegative().optional().default(DEFAULT_OFFSET),
+	level: z.enum(moveLevelEnum.enumValues).optional(),
+	status: z.enum(["Published", "Unpublished", "Deleted"]).optional(),
+	query: z.string().trim().optional(),
+});
+
+export type AdminListMovesInput = z.infer<typeof AdminListMovesInputSchema>;
+
+export const AdminMoveItemSchema = z.object({
+	id: z.string().uuid(),
+	name: z.string(),
+	level: z.enum(moveLevelEnum.enumValues),
+	slug: z.string(),
+	status: z.enum(["Published", "Unpublished", "Deleted"]),
+	updatedAt: z.date(),
+});
+
+export type AdminMoveItem = z.infer<typeof AdminMoveItemSchema>;
+
+export const AdminListMovesOutputSchema = z.object({
+	moves: z.array(AdminMoveItemSchema),
+	total: z.number().int().nonnegative(),
+});
+
+export type AdminListMovesOutput = z.infer<typeof AdminListMovesOutputSchema>;
+
+export const AdminMoveIdInputSchema = z.object({
+	id: z.string().uuid(),
+});
+
+export type AdminMoveIdInput = z.infer<typeof AdminMoveIdInputSchema>;
+
+export const AdminPublishMoveOutputSchema = z.object({
+	success: z.literal(true),
+	publishedAt: z.date(),
+});
+
+export type AdminPublishMoveOutput = z.infer<
+	typeof AdminPublishMoveOutputSchema
+>;
+
+export const AdminActionOutputSchema = z.object({
+	success: z.literal(true),
+});
+
+export type AdminActionOutput = z.infer<typeof AdminActionOutputSchema>;
+
+export const AdminCreateMoveInputSchema = z.object({
+	name: z
+		.string()
+		.min(
+			MOVE_NAME_MIN_LENGTH,
+			`Name must be at least ${MOVE_NAME_MIN_LENGTH} characters`
+		)
+		.max(
+			MOVE_NAME_MAX_LENGTH,
+			`Name must be at most ${MOVE_NAME_MAX_LENGTH} characters`
+		),
+	description: z
+		.string()
+		.min(
+			MOVE_DESCRIPTION_MIN_LENGTH,
+			`Description must be at least ${MOVE_DESCRIPTION_MIN_LENGTH} characters`
+		)
+		.max(
+			MOVE_DESCRIPTION_MAX_LENGTH,
+			`Description must be at most ${MOVE_DESCRIPTION_MAX_LENGTH} characters`
+		),
+	level: z.enum(moveLevelEnum.enumValues),
+	steps: z
+		.array(
+			z.object({
+				title: z
+					.string()
+					.min(
+						MOVE_STEP_TITLE_MIN_LENGTH,
+						`Step title must be at least ${MOVE_STEP_TITLE_MIN_LENGTH} characters`
+					)
+					.max(
+						MOVE_STEP_TITLE_MAX_LENGTH,
+						`Step title must be at most ${MOVE_STEP_TITLE_MAX_LENGTH} characters`
+					),
+				description: z
+					.string()
+					.min(
+						MOVE_STEP_DESCRIPTION_MIN_LENGTH,
+						`Step description must be at least ${MOVE_STEP_DESCRIPTION_MIN_LENGTH} characters`
+					)
+					.max(
+						MOVE_STEP_DESCRIPTION_MAX_LENGTH,
+						`Step description must be at most ${MOVE_STEP_DESCRIPTION_MAX_LENGTH} characters`
+					),
+			})
+		)
+		.min(
+			MOVE_STEPS_MIN_COUNT,
+			`At least ${MOVE_STEPS_MIN_COUNT} steps are required`
+		)
+		.max(MOVE_STEPS_MAX_COUNT, `Maximum ${MOVE_STEPS_MAX_COUNT} steps allowed`),
+});
+
+export type AdminCreateMoveInput = z.infer<typeof AdminCreateMoveInputSchema>;
+
+export const AdminCreateMoveOutputSchema = z.object({
+	id: z.string().uuid(),
+	slug: z.string(),
+});
+
+export type AdminCreateMoveOutput = z.infer<typeof AdminCreateMoveOutputSchema>;
+
+export const AdminAcceptImageInputSchema = z.object({
+	moveId: z.string().uuid(),
+	imageUrl: z.string().url(),
+});
+
+export type AdminAcceptImageInput = z.infer<typeof AdminAcceptImageInputSchema>;
+
+export const AdminAcceptImageOutputSchema = z.object({
+	success: z.literal(true),
+});
+
+export type AdminAcceptImageOutput = z.infer<
+	typeof AdminAcceptImageOutputSchema
+>;
