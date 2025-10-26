@@ -2,12 +2,7 @@ import Replicate, { type FileOutput } from "replicate";
 import { validateUserIsAdmin } from "@/data-access/profiles";
 import { env } from "@/env";
 import { getSupabaseServerClient } from "@/integrations/supabase/server";
-import {
-	CACHE_CONTROL_SECONDS,
-	HOURS_PER_DAY,
-	MINUTES_PER_HOUR,
-	SECONDS_PER_MINUTE,
-} from "@/utils/constants";
+import { CACHE_CONTROL_SECONDS } from "@/utils/constants";
 
 const replicate = new Replicate({
 	auth: env.REPLICATE_API_TOKEN,
@@ -103,11 +98,9 @@ export async function uploadPreviewImage(
 
 export async function createSignedUrl(
 	filePath: string,
-	expirationHours: number
+	expirationSeconds: number
 ): Promise<string> {
 	const supabase = getSupabaseServerClient();
-	const expirationSeconds =
-		expirationHours * HOURS_PER_DAY * MINUTES_PER_HOUR * SECONDS_PER_MINUTE;
 
 	const { data, error } = await supabase.storage
 		.from("moves-images")

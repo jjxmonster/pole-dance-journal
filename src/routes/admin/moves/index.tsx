@@ -58,7 +58,7 @@ function AdminMovesPage() {
 		adminMovesQueryOptions(queryInput)
 	);
 
-	const totalPages = Math.ceil(data?.total ?? 0 / limit);
+	const totalPages = Math.ceil((data?.total ?? 0) / limit);
 
 	return (
 		<div className="container mx-auto max-w-7xl px-4 py-8">
