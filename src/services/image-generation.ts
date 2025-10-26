@@ -1,4 +1,4 @@
-import Replicate from "replicate";
+import Replicate, { type FileOutput } from "replicate";
 import { validateUserIsAdmin } from "@/data-access/profiles";
 import { env } from "@/env";
 import { getSupabaseServerClient } from "@/integrations/supabase/server";
@@ -34,7 +34,6 @@ export async function generateImageWithReplicate(
 	if (!authData.data.user) {
 		throw new Error("User not authenticated");
 	}
-
 	const userId = authData.data.user.id;
 	const isAdmin = await validateUserIsAdmin(userId);
 	if (!isAdmin) {
@@ -43,15 +42,17 @@ export async function generateImageWithReplicate(
 
 	const input = {
 		prompt,
-		image: [referenceImageUrl],
+		image_input: [referenceImageUrl],
 		output_format: "jpg",
 		aspect_ratio: "5:4",
 	};
 
 	try {
 		const output = await replicate.run("google/nano-banana", { input });
-		// @ts-expect-error - TODO: fix this
-		return output.url;
+		const url = (output as FileOutput).url();
+		const imageUrl = url.href;
+
+		return imageUrl;
 	} catch (error) {
 		const message =
 			error instanceof Error ? error.message : "Unknown API error";

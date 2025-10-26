@@ -9,10 +9,7 @@ import {
 } from "@/data-access/moves";
 import { validateUserIsAdmin } from "@/data-access/profiles";
 import { getSupabaseServerClient } from "@/integrations/supabase/server";
-import {
-	generateImageWithReplicate,
-	getSessionId,
-} from "@/services/image-generation";
+import { generateImageWithReplicate } from "@/services/image-generation";
 import { uploadReferenceImage } from "@/services/image-upload";
 import { GENERATE_IMAGE_PROMPT } from "@/utils/prompts";
 import { validateInputFile } from "@/utils/utils";
@@ -85,16 +82,10 @@ export const uploadReferenceImageProcedure = os
 		}
 	});
 
-async function validateAndAuthenticateAdmin(userId: string): Promise<boolean> {
-	const isAdmin = await validateUserIsAdmin(userId);
-	return isAdmin;
-}
-
 async function performImageGeneration(
-	moveId: string,
 	prompt: string,
 	referenceImageUrl: string
-): Promise<{ imageUrl: string; sessionId: string }> {
+): Promise<{ imageUrl: string }> {
 	let generatedImageUrl: string;
 	try {
 		generatedImageUrl = await generateImageWithReplicate(
@@ -108,8 +99,7 @@ async function performImageGeneration(
 		});
 	}
 
-	const sessionId = getSessionId(moveId);
-	return { imageUrl: generatedImageUrl, sessionId };
+	return { imageUrl: generatedImageUrl };
 }
 
 export const generateImageProcedure = os
@@ -127,30 +117,18 @@ export const generateImageProcedure = os
 
 		const userId = authData.data.user.id;
 
-		const isAdmin = await validateAndAuthenticateAdmin(userId);
+		const isAdmin = await validateUserIsAdmin(userId);
 		if (!isAdmin) {
 			throw new ORPCError("UNAUTHORIZED", {
 				message: "Admin access required",
 			});
 		}
 
-		const { imageUrl, sessionId } = await performImageGeneration(
-			input.moveId,
+		const { imageUrl } = await performImageGeneration(
 			GENERATE_IMAGE_PROMPT,
 			input.referenceImageUrl
 		);
-
-		// const previewUrl = await storeAndSignPreviewImage(
-		// 	imageUrl,
-		// 	input.moveId,
-		// 	sessionId
-		// );
-
-		return {
-			previewUrl: imageUrl,
-			sessionId,
-			generatedAt: new Date(),
-		};
+		return { previewUrl: imageUrl };
 	});
 
 export const getStatsProcedure = os

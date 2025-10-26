@@ -256,8 +256,6 @@ export type GenerateImageInput = z.infer<typeof GenerateImageInputSchema>;
 
 export const GenerateImageOutputSchema = z.object({
 	previewUrl: z.string().url(),
-	sessionId: z.string().uuid(),
-	generatedAt: z.date(),
 });
 
 export type GenerateImageOutput = z.infer<typeof GenerateImageOutputSchema>;

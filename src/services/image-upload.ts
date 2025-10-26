@@ -5,6 +5,7 @@ import {
 	MINUTES_PER_HOUR,
 	MS_PER_SECOND,
 	SECONDS_PER_MINUTE,
+	SIGNED_URL_EXPIRATION_SECONDS,
 } from "@/utils/constants";
 
 import {
@@ -56,9 +57,13 @@ export async function uploadReferenceImage(
 		throw new Error("Failed to upload image to storage. Please try again.");
 	}
 
-	const { data: urlData } = supabase.storage
+	const { data: urlData, error: urlError } = await supabase.storage
 		.from("moves-images")
-		.getPublicUrl(`${path}/${filename}`);
+		.createSignedUrl(`${path}/${filename}`, SIGNED_URL_EXPIRATION_SECONDS);
+
+	if (urlError || !urlData) {
+		throw new Error("Failed to generate image URL. Please try again.");
+	}
 
 	const uploadedAt = new Date();
 	const expiresAt = new Date(
@@ -67,7 +72,7 @@ export async function uploadReferenceImage(
 	);
 
 	return {
-		referenceImageUrl: urlData.publicUrl,
+		referenceImageUrl: urlData.signedUrl,
 		uploadedAt,
 		expiresAt,
 	};

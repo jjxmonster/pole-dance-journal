@@ -1,5 +1,5 @@
 export const GENERATE_IMAGE_PROMPT = `
-Minimalist sketch illustration, clean line art style with bold contrast. Simple, elegant linework with minimal details, focus on silhouette and form. Artistic illustration with graphic design aesthetic, monochromatic ink drawing style. High contrast between solid dark areas and light negative space. The vertical pole rendered as a bold black stripe. CLEAN background. Minimalist vector art aesthetic, similar to modern graphic illustration. Strong, confident lines with no shading or gradients - pure line work and solid fills only. Image uses only #9A3F3F, #C1856D, E6CFA9 and #FBF9D1 colors. 
+Black and white minimalist sketch illustration, clean line art style with bold contrast. Simple, elegant linework with minimal details, focus on silhouette and form. Artistic illustration with graphic design aesthetic, monochromatic ink drawing style. High contrast between solid black areas and white negative space. The vertical pole rendered as a bold black stripe. CLEAN white background. Minimalist vector art aesthetic, similar to modern graphic illustration. Strong, confident lines with no shading or gradients - pure line work and solid fills only.
 
 CHARACTER DETAILS:
 - NO facial features - blank face or head shown only as outline/silhouette

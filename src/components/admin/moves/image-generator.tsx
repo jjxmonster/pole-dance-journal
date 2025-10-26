@@ -22,7 +22,6 @@ export function ImageGenerator({
 		null
 	);
 	const [previewImageUrl, setPreviewImageUrl] = useState<string | null>(null);
-	const [sessionId, setSessionId] = useState<string | null>(null);
 
 	const uploadReferenceImageMutation = useMutation({
 		mutationFn: (file: File) =>
@@ -49,12 +48,10 @@ export function ImageGenerator({
 			return orpc.admin.moves.generateImage.call({
 				moveId,
 				referenceImageUrl,
-				sessionId: sessionId ?? undefined,
 			});
 		},
 		onSuccess: (data) => {
 			setPreviewImageUrl(data.previewUrl);
-			setSessionId(data.sessionId);
 			toast.success("Image generated successfully");
 		},
 		onError: (error) => {
@@ -121,13 +118,19 @@ export function ImageGenerator({
 							onChange={handleFileChange}
 							type="file"
 						/>
-						{referenceImageUrl && (
-							<img alt="Reference preview" src={referenceImageUrl} />
-						)}
 						{uploadReferenceImageMutation.isPending && (
 							<p className="mt-2 text-muted-foreground text-sm">
 								Uploading image...
 							</p>
+						)}
+						{referenceImageUrl && (
+							<div className="mt-4 overflow-hidden rounded-lg border border-border bg-muted">
+								<img
+									alt="Reference for AI generation"
+									className="h-auto w-full"
+									src={referenceImageUrl}
+								/>
+							</div>
 						)}
 					</div>
 
