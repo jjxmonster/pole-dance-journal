@@ -1,6 +1,8 @@
 import { Link } from "@tanstack/react-router";
 import type { z } from "zod";
+import { LEVEL_COLORS } from "@/utils/constants";
 import type { MoveListItemSchema } from "../../orpc/schema";
+import { Badge } from "../ui/badge";
 import { Card, CardContent } from "../ui/card";
 
 type MoveDTO = z.infer<typeof MoveListItemSchema>;
@@ -42,9 +44,10 @@ export function MoveCard({ move }: MoveCardProps) {
 					>
 						{move.name}
 					</h3>
-					<span className="text-muted-foreground text-sm">
+
+					<Badge className={LEVEL_COLORS[move.level]} variant="secondary">
 						{LEVEL_LABELS[move.level]}
-					</span>
+					</Badge>
 				</CardContent>
 			</Card>
 		</Link>

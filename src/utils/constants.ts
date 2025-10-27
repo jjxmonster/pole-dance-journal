@@ -55,3 +55,9 @@ export const MOVE_STEPS_MAX_COUNT = 15;
 export const MOVE_NAME_WARNING_THRESHOLD = 90;
 export const MOVE_DESCRIPTION_WARNING_THRESHOLD = 450;
 export const SIGNED_URL_EXPIRATION_SECONDS = 3600;
+
+export const LEVEL_COLORS = {
+	Beginner: "bg-green-100 text-green-800 hover:bg-green-100",
+	Intermediate: "bg-yellow-100 text-yellow-800 hover:bg-yellow-100",
+	Advanced: "bg-red-100 text-red-800 hover:bg-red-100",
+} as const;

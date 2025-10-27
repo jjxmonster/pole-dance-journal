@@ -1,5 +1,6 @@
 import { expect, test } from "@playwright/test";
-import { CatalogPage, MoveDetailPage } from "../utils/page-objects";
+import { CatalogPage } from "../pages/catalog-page";
+import { MoveDetailsPage } from "../pages/move-details-page";
 
 test.describe("Move Catalog", () => {
 	test("should display the move catalog with moves", async ({ page }) => {
@@ -86,12 +87,12 @@ test.describe("Move Catalog", () => {
 		await page.getByTestId("move-card").first().click();
 
 		// Check that we're on the move detail page
-		const moveDetailPage = new MoveDetailPage(page);
-		await expect(moveDetailPage.title).toBeVisible();
+		const moveDetailsPage = new MoveDetailsPage(page);
+		await expect(moveDetailsPage.title).toBeVisible();
 
 		// Verify the title matches what we clicked
 		if (firstCardTitle) {
-			await expect(moveDetailPage.title).toContainText(firstCardTitle);
+			await expect(moveDetailsPage.title).toContainText(firstCardTitle);
 		}
 	});
 });

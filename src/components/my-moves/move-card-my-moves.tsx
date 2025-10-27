@@ -1,5 +1,6 @@
 import { Link } from "@tanstack/react-router";
 import { FileTextIcon } from "lucide-react";
+import { LEVEL_COLORS } from "@/utils/constants";
 import type { MyMoveViewModel } from "../../types/my-moves";
 import { Badge } from "../ui/badge";
 import { Card, CardContent } from "../ui/card";
@@ -69,9 +70,9 @@ export function MoveCardMyMoves({ move }: MoveCardMyMovesProps) {
 					)}
 				</div>
 
-				<span className="block text-muted-foreground text-sm">
+				<Badge className={LEVEL_COLORS[move.level]} variant="secondary">
 					{LEVEL_LABELS[move.level]}
-				</span>
+				</Badge>
 			</CardContent>
 		</Card>
 	);
