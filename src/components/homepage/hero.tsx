@@ -35,37 +35,33 @@ export function Hero() {
 					>
 						<motion.div variants={fadeInUp}>
 							<Badge className="mb-4 w-fit" variant="secondary">
-								Master Every Move
+								Opanuj każdą figurę
 							</Badge>
 						</motion.div>
 						<motion.h1
 							className="mb-6 font-sans font-semibold text-5xl text-foreground tracking-tight sm:text-6xl lg:text-7xl"
 							variants={fadeInUp}
 						>
-							Track Your{" "}
+							Śledź swój postęp w{" "}
 							<span className="font-borel text-primary leading-1">
 								Pole Dance
 							</span>{" "}
-							Progress
 						</motion.h1>
 						<motion.p
 							className="mb-8 text-lg text-muted-foreground sm:text-xl"
 							variants={fadeInUp}
 						>
-							Browse a comprehensive catalog of pole moves, mark your status,
-							and keep private notes. Your personal workspace for mastering
-							every move.
+							Masz dość zapomnianych figur i notatek na skrawkach papieru?
+							Spinella to Twój osobisty dziennik postępów. Przeglądaj, odhaczaj
+							i notuj. Prościej się nie da.
 						</motion.p>
 						<motion.div
 							className="flex flex-col gap-4 sm:flex-row"
 							variants={fadeInUp}
 						>
 							<Button className="group" size="lg">
-								Sign Up
+								Dołącz teraz
 								<ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
-							</Button>
-							<Button size="lg" variant="outline">
-								Log In
 							</Button>
 						</motion.div>
 					</motion.div>

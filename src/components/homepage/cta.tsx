@@ -14,18 +14,18 @@ export function Cta() {
 					whileInView={{ opacity: 1, y: 0 }}
 				>
 					<h2 className="mb-6 font-bold text-4xl tracking-tight sm:text-5xl">
-						Ready to Master Your Moves?
+						Gotowa, by wzbić się na wyższy poziom?
 					</h2>
 					<p className="mb-8 text-lg opacity-90">
-						Start tracking your pole learning journey today. Browse moves, set
-						your status, and keep private notes.
+						Zacznij swoją przygodę ze Spinellą już dziś. Dołącz do grona osób,
+						które świadomie budują swoje umiejętności. Twoja rurka czeka!
 					</p>
 					<Button
 						className="group shadow-lg hover:shadow-xl"
 						size="lg"
 						variant="secondary"
 					>
-						Get Started
+						Zacznij za Darmo
 						<ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
 					</Button>
 				</motion.div>
