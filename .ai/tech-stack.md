@@ -1,4 +1,6 @@
-Frontend
+# Technology Stack
+
+## Frontend
 
 - Tanstack Start as a fullstack framework
 - React 19 ensures interactivity
@@ -19,4 +21,5 @@ AI - Communication with LLMs with Vercel's AI SDK
 
 Tests
 
+- Unit Tests with Vitest and React Testing Library
 - E2E Tests with Playwright

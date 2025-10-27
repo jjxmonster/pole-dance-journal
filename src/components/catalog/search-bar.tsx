@@ -32,6 +32,7 @@ export function SearchBar({ value, onChange, onClear }: SearchBarProps) {
 			<Input
 				aria-label="Wyszukaj ruchy pole dance"
 				className="w-full py-6 pr-10 pl-10"
+				data-testid="search-moves-input"
 				maxLength={MAX_SEARCH_LENGTH}
 				onChange={handleChange}
 				placeholder="Search moves..."

@@ -10,3 +10,10 @@ count.txt
 .output
 .vinxi
 todos.json
+
+# Test artifacts
+/coverage/
+/playwright-report/
+/playwright/.cache/
+/test-results/
+/playwright/*

@@ -23,6 +23,7 @@ export function MoveCard({ move }: MoveCardProps) {
 	return (
 		<Link
 			className="group block focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+			data-testid="move-card"
 			params={{ slug: move.slug }}
 			to="/moves/$slug"
 		>
@@ -35,7 +36,10 @@ export function MoveCard({ move }: MoveCardProps) {
 					/>
 				</div>
 				<CardContent className="space-y-1 p-3">
-					<h3 className="mb-0 font-semibold text-base group-hover:text-primary">
+					<h3
+						className="mb-0 font-semibold text-base group-hover:text-primary"
+						data-testid="move-card-title"
+					>
 						{move.name}
 					</h3>
 					<span className="text-muted-foreground text-sm">
