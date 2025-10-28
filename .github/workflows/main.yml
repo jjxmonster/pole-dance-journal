@@ -40,6 +40,7 @@ jobs:
       E2E_PASSWORD: ${{ secrets.E2E_PASSWORD }}
       SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
       SUPABASE_KEY: ${{ secrets.SUPABASE_KEY }}
+      POSTGRES_URL: ${{ secrets.POSTGRES_URL }}
       SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
       REPLICATE_API_TOKEN: ${{ secrets.REPLICATE_API_TOKEN }}
     steps:
@@ -72,7 +73,7 @@ jobs:
           echo "E2E_PASSWORD=$E2E_PASSWORD" >> .env.test
           echo "SUPABASE_URL=$SUPABASE_URL" >> .env.test
           echo "SUPABASE_KEY=$SUPABASE_KEY" >> .env.test
-          echo "REPLICATE_API_TOKEN=$REPLICATE_API_TOKEN" >> .env.test
+          echo "POSTGRES_URL=$POSTGRES_URL" >> .env.test
           echo "SUPABASE_ANON_KEY=$SUPABASE_ANON_KEY" >> .env.test
 
       - name: Run E2E tests
