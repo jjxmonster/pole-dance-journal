@@ -34,7 +34,11 @@
   },
   "overrides": [
     {
-      "includes": ["src/routeTree.gen.ts", "supabase/migrations/**"],
+      "includes": [
+        "src/routeTree.gen.ts",
+        "supabase/migrations/**",
+        ".nitro/**"
+      ],
       "formatter": {
         "enabled": false
       },
