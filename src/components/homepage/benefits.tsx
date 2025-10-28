@@ -5,12 +5,12 @@ import { Badge } from "../ui/badge";
 const ANIMATION_STAGGER_DELAY = 0.1;
 
 const benefits = [
-	"Filter moves by difficulty level",
-	"Search through the move catalog",
-	"Set custom status for each move",
-	"Keep private notes with autosave",
-	"View all your moves in one place",
-	"Track your learning progress",
+	"Filtruj figury po poziomie trudności",
+	"Błyskawicznie szukaj w katalogu",
+	"Oznaczaj status każdej figury",
+	"Notuj triki z autozapisem",
+	"Wszystkie Twoje figury w jednym miejscu",
+	"Obserwuj, jak rośniesz w siłę!",
 ];
 
 export function Benefits() {
@@ -26,15 +26,15 @@ export function Benefits() {
 						whileInView={{ opacity: 1, x: 0 }}
 					>
 						<Badge className="mb-4 w-fit" variant="secondary">
-							Your Learning Hub
+							Od Chaosu do Perfekcji
 						</Badge>
 						<h2 className="mb-6 font-bold text-4xl text-foreground tracking-tight sm:text-5xl">
-							Organize your pole journey with ease
+							Uporządkuj swoją taneczną podróż
 						</h2>
 						<p className="mb-8 text-lg text-muted-foreground">
-							No more scattered notes or forgotten progress. Keep everything
-							organized in one place with your personalized move catalog and
-							private workspace.
+							Koniec z bałaganem w notatkach i zapomnianymi celami. Spinella to
+							Twoja uporządkowana przestrzeń, gdzie każdy ruch ma swoje miejsce,
+							a każdy postęp jest zauważony.
 						</p>
 						<div className="grid gap-4 sm:grid-cols-2">
 							{benefits.map((benefit, benefitIndex) => (

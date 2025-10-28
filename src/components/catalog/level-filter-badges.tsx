@@ -20,6 +20,13 @@ const LEVELS: Array<MoveLevel | "All"> = [
 	"Advanced",
 ];
 
+const LEVEL_LABELS_POLISH: Record<MoveLevel | "All", string> = {
+	All: "Wszystkie",
+	Beginner: "Początkujący",
+	Intermediate: "Średnio zaawansowany",
+	Advanced: "Zaawansowany",
+};
+
 export function LevelFilterBadges({
 	activeLevel,
 	onChange,
@@ -33,6 +40,7 @@ export function LevelFilterBadges({
 						aria-label={`Filtruj według poziomu: ${LEVEL_LABELS[level]}`}
 						aria-pressed={isActive}
 						className="rounded-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+						data-testid="level-filter-badge"
 						key={level}
 						onClick={() => onChange(level)}
 						type="button"
@@ -45,7 +53,7 @@ export function LevelFilterBadges({
 							}`}
 							variant={isActive ? "default" : "outline"}
 						>
-							{LEVEL_LABELS[level]}
+							{LEVEL_LABELS_POLISH[level]}
 						</Badge>
 					</button>
 				);

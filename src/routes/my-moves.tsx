@@ -79,7 +79,10 @@ function MyMovesView() {
 	};
 
 	return (
-		<div className="container mx-auto max-w-7xl px-4 py-8">
+		<div
+			className="container mx-auto max-w-7xl px-4 py-8"
+			data-testid="my-moves-page"
+		>
 			<div className="mb-6 flex items-start justify-between gap-4">
 				<div>
 					<h1 className="font-bold text-3xl">Moje Figury</h1>
@@ -87,7 +90,7 @@ function MyMovesView() {
 						Zobacz i zarządzaj swoją osobistą kolekcją figur pole dance
 					</p>
 				</div>
-				<Button asChild type="button">
+				<Button asChild data-testid="add-moves-button" type="button">
 					<Link to="/catalog">
 						<PlusIcon className="size-4" />
 						Dodaj figury

@@ -4,7 +4,7 @@ type MoveDescriptionProps = {
 
 export function MoveDescription({ description }: MoveDescriptionProps) {
 	return (
-		<section>
+		<section data-testid="move-description">
 			<p className="text-foreground text-lg leading-relaxed">{description}</p>
 		</section>
 	);

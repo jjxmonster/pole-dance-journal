@@ -82,6 +82,7 @@ export function SignInForm({
 				<Input
 					aria-describedby={emailError ? "email-error" : undefined}
 					autoComplete="email"
+					data-testid="auth-input-email"
 					disabled={isLoading}
 					id="email"
 					onBlur={() => validateEmail(email)}
@@ -113,6 +114,7 @@ export function SignInForm({
 				<Input
 					aria-describedby={passwordError ? "password-error" : undefined}
 					autoComplete="current-password"
+					data-testid="auth-input-password"
 					disabled={isLoading}
 					id="password"
 					onBlur={() => validatePassword(password)}

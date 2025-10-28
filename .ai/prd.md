@@ -1,8 +1,8 @@
-# PRD - Pole Journal
+# PRD - Spinella
 
 ## 1. Product Overview
 
-Pole Journal is a mobile-first web application that helps pole dance practitioners track their learning progress for moves. The MVP provides a browsable, SEO-friendly public catalog of moves and a private workspace for users to mark status and capture personal notes. An admin panel allows curators to manage move data and generate illustrative images using AI.
+Spinella is a mobile-first web application that helps pole dance practitioners track their learning progress for moves. The MVP provides a browsable, SEO-friendly public catalog of moves and a private workspace for users to mark status and capture personal notes. An admin panel allows curators to manage move data and generate illustrative images using AI.
 
 Objectives:
 

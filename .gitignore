@@ -5,8 +5,16 @@ dist-ssr
 *.local
 count.txt
 .env
+.env.test
 .nitro
 .tanstack
 .output
 .vinxi
 todos.json
+
+# Test artifacts
+/coverage/
+/playwright-report/
+/playwright/.cache/
+/test-results/
+/playwright/*

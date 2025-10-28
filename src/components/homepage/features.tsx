@@ -28,21 +28,21 @@ const staggerContainer = {
 const features = [
 	{
 		icon: BookOpen,
-		title: "Browse Moves Catalog",
+		title: "Przeglądaj Katalog Figur",
 		description:
-			"Discover a comprehensive catalog of pole moves with detailed descriptions, difficulty levels, and step-by-step instructions.",
+			"Odkryj setki figur pole dance. Każda z opisem, poziomem trudności i instrukcją krok po kroku. Twoja następna ulubiona figura już tu jest.",
 	},
 	{
 		icon: ListChecks,
-		title: "Track Your Status",
+		title: "Śledź Swój Progres",
 		description:
-			"Mark moves as Want to learn, Almost there, or Done. Keep track of your learning journey and see your progress at a glance.",
+			"Oznaczaj figury jako 'Chcę zrobić', 'Prawie umiem' lub 'Zrobione'. Obserwuj, jak Twoja lista 'Zrobione' rośnie z każdym treningiem!",
 	},
 	{
 		icon: StickyNote,
-		title: "Private Notes",
+		title: "Prywatne Notatki",
 		description:
-			"Add personal notes to each move. Your thoughts, tips, and observations stay completely private.",
+			"Zapisuj swoje przemyślenia, triki i uwagi przy każdej figurze. Twoje notatki są tylko dla Ciebie – bezpieczne i zawsze pod ręką.",
 	},
 ];
 
@@ -58,14 +58,15 @@ export function Features() {
 					whileInView={{ opacity: 1, y: 0 }}
 				>
 					<Badge className="mb-4" variant="outline">
-						Key Features
+						Twój Segregator Figur
 					</Badge>
 					<h2 className="mb-4 font-bold text-4xl text-foreground tracking-tight sm:text-5xl">
-						Everything you need in one place
+						Wszystko, czego potrzebujesz, w jednym miejscu
 					</h2>
 					<p className="mx-auto max-w-2xl text-lg text-muted-foreground">
-						A simple, delightful way to find moves, track your status, and keep
-						personal notes as you master each technique.
+						Spinella to proste i intuicyjne narzędzie, które zamienia Twój
+						trening w świadomą podróż. Twoje wszystkie figury, notatki i postępy
+						w jednym miejscu.
 					</p>
 				</motion.div>
 

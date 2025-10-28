@@ -1,6 +1,8 @@
 import { Link } from "@tanstack/react-router";
 import type { z } from "zod";
+import { LEVEL_COLORS } from "@/utils/constants";
 import type { MoveListItemSchema } from "../../orpc/schema";
+import { Badge } from "../ui/badge";
 import { Card, CardContent } from "../ui/card";
 
 type MoveDTO = z.infer<typeof MoveListItemSchema>;
@@ -23,6 +25,7 @@ export function MoveCard({ move }: MoveCardProps) {
 	return (
 		<Link
 			className="group block focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+			data-testid="move-card"
 			params={{ slug: move.slug }}
 			to="/moves/$slug"
 		>
@@ -35,12 +38,16 @@ export function MoveCard({ move }: MoveCardProps) {
 					/>
 				</div>
 				<CardContent className="space-y-1 p-3">
-					<h3 className="mb-0 font-semibold text-base group-hover:text-primary">
+					<h3
+						className="mb-0 font-semibold text-base group-hover:text-primary"
+						data-testid="move-card-title"
+					>
 						{move.name}
 					</h3>
-					<span className="text-muted-foreground text-sm">
+
+					<Badge className={LEVEL_COLORS[move.level]} variant="secondary">
 						{LEVEL_LABELS[move.level]}
-					</span>
+					</Badge>
 				</CardContent>
 			</Card>
 		</Link>

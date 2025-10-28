@@ -16,10 +16,11 @@ const tabs: Array<{ value: MoveLevel | "All"; label: string }> = [
 
 export function TabNavigation({ activeTab, onTabChange }: TabNavigationProps) {
 	return (
-		<nav className="mb-6">
+		<nav className="mb-6" data-testid="level-filters">
 			<div className="flex flex-wrap gap-2">
 				{tabs.map((tab) => (
 					<Button
+						data-testid={`filter-${tab.value.toLowerCase()}`}
 						key={tab.value}
 						onClick={() => {
 							onTabChange(tab.value);

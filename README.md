@@ -35,6 +35,9 @@ The project is built with a modern, type-safe stack:
 - **Build Tool**: [Vite](https://vitejs.dev/)
 - **Language**: [TypeScript](https://www.typescriptlang.org/)
 - **Linting & Formatting**: [Biome](https://biomejs.dev/)
+- **Testing**:
+  - **Unit Testing**: [Vitest](https://vitest.dev/) with [React Testing Library](https://testing-library.com/docs/react-testing-library/intro/)
+  - **E2E Testing**: [Playwright](https://playwright.dev/)
 
 ## Getting Started Locally
 
@@ -83,7 +86,7 @@ The following scripts are available in the `package.json`:
 - `pnpm build`: Builds the application for production.
 - `pnpm start`: Starts the production server after a build.
 - `pnpm serve`: Serves the production build locally for preview.
-- `pnpm test`: Runs tests using Vitest.
+- `pnpm test`: Runs unit tests using Vitest and React Testing Library.
 - `pnpm format`: Formats the code using Biome.
 - `pnpm lint`: Lints the code using Biome.
 - `pnpm check`: Runs all Biome checks (lint, format, etc.).

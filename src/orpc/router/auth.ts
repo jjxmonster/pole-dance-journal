@@ -71,6 +71,13 @@ export const login = os
 			});
 
 			if (error) {
+				if (error.message.includes("Email not confirmed")) {
+					throw new ORPCError("UNAUTHORIZED", {
+						message:
+							"Konto nie zostało potwierdzone. Sprawdź swoją pocztę i kliknij w link w celu potwierdzenia konta.",
+					});
+				}
+
 				throw new ORPCError("UNAUTHORIZED", {
 					message: "Invalid email or password.",
 				});

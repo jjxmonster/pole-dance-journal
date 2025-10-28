@@ -19,16 +19,11 @@ import {
 	useUnpublishMoveMutation,
 } from "@/hooks/use-admin-move-mutations";
 import type { AdminMoveViewModel } from "@/types/admin";
+import { LEVEL_COLORS } from "@/utils/constants";
 
 type AdminMoveTableRowProps = {
 	move: AdminMoveViewModel;
 };
-
-const LEVEL_COLORS = {
-	Beginner: "bg-green-100 text-green-800 hover:bg-green-100",
-	Intermediate: "bg-yellow-100 text-yellow-800 hover:bg-yellow-100",
-	Advanced: "bg-red-100 text-red-800 hover:bg-red-100",
-} as const;
 
 const STATUS_COLORS = {
 	Published: "bg-blue-100 text-blue-800 hover:bg-blue-100",

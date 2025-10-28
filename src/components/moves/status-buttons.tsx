@@ -14,7 +14,10 @@ export function StatusButtons({
 	disabled,
 }: StatusButtonsProps) {
 	return (
-		<div className="flex w-full flex-col gap-2">
+		<div
+			className="flex w-full flex-col gap-2"
+			data-testid="status-buttons-container"
+		>
 			<h2 className="font-medium text-lg">Mój Status</h2>
 			<div className="flex flex-col gap-2">
 				{STATUS_OPTIONS.map((option) => {
@@ -26,6 +29,8 @@ export function StatusButtons({
 					return (
 						<Button
 							className="w-full justify-center"
+							data-status={option.value}
+							data-testid={`status-button-${option.value}-${isSelected ? "active" : "inactive"}`}
 							disabled={disabled}
 							key={option.value}
 							onClick={() => onChange(option.value)}

@@ -9,21 +9,21 @@ export const Route = createFileRoute("/")({
 	head: () => ({
 		meta: [
 			{
-				title: "Spinella - Track Your Pole Dance Journey",
+				title: "Spinella: Twój Dziennik Pole Dance - Opanuj Każdą Figurę",
 			},
 			{
 				name: "description",
 				content:
-					"Master pole dance with Spinella. Track your progress, discover moves, set goals, and connect with a community of pole dancers worldwide.",
+					"Zmień chaos w progres. Spinella to Twoje miejsce, gdzie śledzisz naukę figur pole dance, notujesz triki i świętujesz postępy. Dołącz i zobacz, jak szybko rośniesz w siłę!",
 			},
 			{
 				property: "og:title",
-				content: "Spinella - Track Your Pole Dance Journey",
+				content: "Spinella: Twój Dziennik Pole Dance - Opanuj Każdą Figurę",
 			},
 			{
 				property: "og:description",
 				content:
-					"Master pole dance with Spinella. Track your progress, discover moves, and achieve your fitness goals.",
+					"Zmień chaos w progres. Spinella to Twoje miejsce, gdzie śledzisz naukę figur pole dance, notujesz triki i świętujesz postępy. Dołącz i zobacz, jak szybko rośniesz w siłę!",
 			},
 			{
 				name: "twitter:card",
