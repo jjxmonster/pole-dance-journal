@@ -1,118 +1,115 @@
 name: CI/CD Pipeline
 
 on:
-    push:
-        branches: [master]
-    workflow_dispatch:
+  push:
+    branches: [master]
+  workflow_dispatch:
 
 jobs:
-    lint:
-        runs-on: ubuntu-latest
-        env:
-            NODE_VERSION: 22.14.0
-        steps:
-            - name: Checkout repository
-              uses: actions/checkout@v4
+  lint:
+    runs-on: ubuntu-latest
+    env:
+      NODE_VERSION: 22.14.0
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
 
-            - name: Install pnpm
-              uses: pnpm/action-setup@v4
-              with:
-                  version: latest
-                  run_install: false
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          run_install: false
 
-            - name: Setup Node.js
-              uses: actions/setup-node@v4
-              with:
-                  node-version: "22.14.0"
-                  cache: "pnpm"
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22.14.0"
+          cache: "pnpm"
 
-            - name: Install dependencies
-              run: pnpm install
+      - name: Install dependencies
+        run: pnpm install
 
-            - name: Run linting
-              run: pnpm lint
+      - name: Run linting
+        run: pnpm lint
 
-    e2e-tests:
-        needs: lint
-        runs-on: ubuntu-latest
-        env:
-            E2E_USER_ID: ${{ secrets.E2E_USER_ID }}
-            E2E_USERNAME: ${{ secrets.E2E_USERNAME }}
-            E2E_PASSWORD: ${{ secrets.E2E_PASSWORD }}
-            SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
-            SUPABASE_KEY: ${{ secrets.SUPABASE_KEY }}
-            POSTGRES_URL: ${{ secrets.POSTGRES_URL }}
-            SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
-        steps:
-            - name: Checkout repository
-              uses: actions/checkout@v4
+  e2e-tests:
+    needs: lint
+    runs-on: ubuntu-latest
+    env:
+      E2E_USER_ID: ${{ secrets.E2E_USER_ID }}
+      E2E_USERNAME: ${{ secrets.E2E_USERNAME }}
+      E2E_PASSWORD: ${{ secrets.E2E_PASSWORD }}
+      SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+      SUPABASE_KEY: ${{ secrets.SUPABASE_KEY }}
+      POSTGRES_URL: ${{ secrets.POSTGRES_URL }}
+      SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
 
-            - name: Install pnpm
-              uses: pnpm/action-setup@v4
-              with:
-                  version: latest
-                  run_install: false
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          run_install: false
 
-            - name: Setup Node.js
-              uses: actions/setup-node@v4
-              with:
-                  node-version: "22.14.0"
-                  cache: "pnpm"
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22.14.0"
+          cache: "pnpm"
 
-            - name: Install dependencies
-              run: pnpm install
+      - name: Install dependencies
+        run: pnpm install
 
-            - name: Install Playwright browsers
-              run: pnpm exec playwright install --with-deps chromium
+      - name: Install Playwright browsers
+        run: pnpm exec playwright install --with-deps chromium
 
-            - name: Setup environment for E2E tests
-              run: |
-                  echo "Creating .env.test file for E2E tests"
-                  touch .env.test
-                  echo "E2E_USER_ID=$E2E_USER_ID" >> .env.test
-                  echo "E2E_USERNAME=$E2E_USERNAME" >> .env.test
-                  echo "E2E_PASSWORD=$E2E_PASSWORD" >> .env.test
-                  echo "SUPABASE_URL=$SUPABASE_URL" >> .env.test
-                  echo "SUPABASE_KEY=$SUPABASE_KEY" >> .env.test
-                  echo "OPENROUTER_API_KEY=$OPENROUTER_API_KEY" >> .env.test
+      - name: Setup environment for E2E tests
+        run: |
+          echo "Creating .env.test file for E2E tests"
+          touch .env.test
+          echo "E2E_USER_ID=$E2E_USER_ID" >> .env.test
+          echo "E2E_USERNAME=$E2E_USERNAME" >> .env.test
+          echo "E2E_PASSWORD=$E2E_PASSWORD" >> .env.test
+          echo "SUPABASE_URL=$SUPABASE_URL" >> .env.test
+          echo "SUPABASE_KEY=$SUPABASE_KEY" >> .env.test
+          echo "OPENROUTER_API_KEY=$OPENROUTER_API_KEY" >> .env.test
 
-            - name: Run E2E tests
-              run: pnpm test:e2e
+      - name: Run E2E tests
+        run: pnpm test:e2e
 
-    build:
-        needs: [lint, e2e-tests]
-        runs-on: ubuntu-latest
-        env:
-            SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
-            SUPABASE_KEY: ${{ secrets.SUPABASE_KEY }}
-            POSTGRES_URL: ${{ secrets.POSTGRES_URL }}
-            SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
-            REPLICATE_API_TOKEN: ${{ secrets.REPLICATE_API_TOKEN }}
-        steps:
-            - name: Checkout repository
-              uses: actions/checkout@v4
+  build:
+    needs: [lint, e2e-tests]
+    runs-on: ubuntu-latest
+    env:
+      SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+      SUPABASE_KEY: ${{ secrets.SUPABASE_KEY }}
+      POSTGRES_URL: ${{ secrets.POSTGRES_URL }}
+      SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
+      REPLICATE_API_TOKEN: ${{ secrets.REPLICATE_API_TOKEN }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
 
-            - name: Install pnpm
-              uses: pnpm/action-setup@v4
-              with:
-                  version: latest
-                  run_install: false
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          run_install: false
 
-            - name: Setup Node.js
-              uses: actions/setup-node@v4
-              with:
-                  node-version: "22.14.0"
-                  cache: "pnpm"
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22.14.0"
+          cache: "pnpm"
 
-            - name: Install dependencies
-              run: pnpm install
+      - name: Install dependencies
+        run: pnpm install
 
-            - name: Build production version
-              run: pnpm build
+      - name: Build production version
+        run: pnpm build
 
-            - name: Archive build artifacts
-              uses: actions/upload-artifact@v4
-              with:
-                  name: build-artifacts
-                  path: .next/
-                  retention-days: 7
+      - name: Archive build artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: build-artifacts
+          path: .next/
+          retention-days: 7
