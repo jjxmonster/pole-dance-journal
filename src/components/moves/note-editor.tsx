@@ -47,12 +47,15 @@ function NoteItem({ note, onDelete, isDeleting }: NoteItemProps) {
 	}).format(new Date(note.createdAt));
 
 	return (
-		<Card className="space-y-2 p-4">
-			<div className="whitespace-pre-wrap">{note.content}</div>
+		<Card className="space-y-2 p-4" data-testid={`note-item-${note.id}`}>
+			<div className="whitespace-pre-wrap" data-testid="note-content">
+				{note.content}
+			</div>
 			<div className="flex items-center justify-between">
 				<span className="text-muted-foreground text-xs">{formattedDate}</span>
 				<Button
 					aria-label="Delete note"
+					data-testid="delete-note-button"
 					disabled={isDeleting}
 					onClick={() => onDelete(note.id)}
 					size="sm"
@@ -100,15 +103,20 @@ export function NoteEditor({ moveId }: NoteEditorProps) {
 	};
 
 	return (
-		<div className="mt-6 space-y-6">
+		<div className="mt-6 space-y-6" data-testid="note-editor-container">
 			<div>
 				<h3 className="mb-4 font-medium text-lg">Moje Notatki</h3>
 
-				<form className="space-y-4" onSubmit={handleSubmit}>
+				<form
+					className="space-y-4"
+					data-testid="note-form"
+					onSubmit={handleSubmit}
+				>
 					<div>
 						<Textarea
 							aria-label="Add a new note"
 							className={`transition-all duration-200 ${expanded ? "min-h-[150px]" : "h-[60px]"}`}
+							data-testid="note-textarea"
 							maxLength={NOTE_MAX_LENGTH}
 							onBlur={handleBlur}
 							onChange={handleChange}
@@ -126,6 +134,7 @@ export function NoteEditor({ moveId }: NoteEditorProps) {
 
 					<div className="flex justify-end">
 						<Button
+							data-testid="add-note-button"
 							disabled={content.trim() === "" || isAddingNote}
 							type="submit"
 						>
@@ -136,7 +145,7 @@ export function NoteEditor({ moveId }: NoteEditorProps) {
 			</div>
 
 			{notes.length > 0 && (
-				<div className="space-y-4">
+				<div className="space-y-4" data-testid="notes-history">
 					<h4 className="font-medium">Historia notatek</h4>
 					{isLoading ? (
 						<div className="text-muted-foreground">Ładowanie notatek...</div>

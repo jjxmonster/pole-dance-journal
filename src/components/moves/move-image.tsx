@@ -10,7 +10,7 @@ export function MoveImage({ imageUrl, alt }: MoveImageProps) {
 
 	return (
 		<figure className="overflow-hidden rounded-lg">
-			<img alt={alt} className="h-auto w-full object-cover" src={imageUrl} />
+			<img alt={alt} className="h-[500px] w-full object-cover" src={imageUrl} />
 		</figure>
 	);
 }

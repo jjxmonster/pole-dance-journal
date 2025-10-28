@@ -86,7 +86,10 @@ function MoveDetailPage() {
 	} = useMoveStatus(move.id);
 
 	return (
-		<div className="container mx-auto max-w-5xl px-4 py-8">
+		<div
+			className="container mx-auto max-w-5xl px-4 py-8"
+			data-testid="move-details-page"
+		>
 			<Breadcrumbs moveName={move.name} />
 
 			<div className="space-y-8">
@@ -96,10 +99,15 @@ function MoveDetailPage() {
 				/>
 
 				<header>
-					<h1 className="mb-4 font-bold text-4xl text-foreground">
+					<h1
+						className="mb-4 font-bold text-4xl text-foreground"
+						data-testid="move-title"
+					>
 						{move.name}
 					</h1>
-					<Badge variant="default">{move.level}</Badge>
+					<Badge data-testid="move-level" variant="default">
+						{move.level}
+					</Badge>
 				</header>
 
 				<div className="grid grid-cols-1 gap-8 md:grid-cols-3">
@@ -109,7 +117,10 @@ function MoveDetailPage() {
 					</div>
 
 					{isAuthenticated && (
-						<div className="space-y-6 md:col-span-1">
+						<div
+							className="space-y-6 md:col-span-1"
+							data-testid="user-interaction-panel"
+						>
 							<StatusButtons
 								disabled={isStatusLoading}
 								onChange={updateStatus}

@@ -1,31 +1,40 @@
-import type { Locator, Page } from "@playwright/test";
+// No need to import Page type as it's already available from BasePage
 import { BasePage } from "../utils/page-objects";
 
 export class MyMovesPage extends BasePage {
-	readonly title: Locator;
-	readonly description: Locator;
-	readonly statusButtons: Locator;
-	readonly noteEditor: Locator;
-	readonly stepsList: Locator;
-
-	constructor(page: Page) {
-		super(page);
-		this.title = page.getByRole("heading").first();
-		this.description = page.locator(".move-description");
-		this.statusButtons = page.locator(".status-buttons button");
-		this.noteEditor = page.locator(".note-editor");
-		this.stepsList = page.locator(".steps-list");
+	// Locators
+	get pageContainer() {
+		return this.page.getByTestId("my-moves-page");
 	}
 
-	async updateStatus(status: string): Promise<void> {
-		await this.page.getByRole("button", { name: status }).click();
-		await this.page.waitForLoadState("networkidle");
+	get addMovesButton() {
+		return this.page.getByTestId("add-moves-button");
 	}
 
-	async addNote(note: string): Promise<void> {
-		await this.noteEditor.click();
-		await this.page.keyboard.type(note);
-		await this.page.getByRole("button", { name: "Save" }).click();
-		await this.page.waitForLoadState("networkidle");
+	get levelFilters() {
+		return this.page.getByTestId("level-filters");
+	}
+
+	// Methods
+	async goto() {
+		await this.page.goto("/my-moves");
+		await this.pageContainer.waitFor();
+	}
+
+	async filterByLevel(level: "all" | "beginner" | "intermediate" | "advanced") {
+		await this.page.getByTestId(`filter-${level}`).click();
+	}
+
+	async clickAddMovesButton() {
+		await this.addMovesButton.click();
+	}
+
+	getMoveCards() {
+		return this.page.locator('[data-testid^="move-card-"]');
+	}
+
+	async getMovesCount() {
+		const cards = await this.getMoveCards();
+		return cards.count();
 	}
 }

@@ -23,6 +23,7 @@ export function MoveCardMyMoves({ move }: MoveCardMyMovesProps) {
 	return (
 		<Card
 			className={`h-full gap-0 py-0 ${move.isArchived ? "opacity-60" : ""}`}
+			data-testid={`move-card-${move.id}`}
 		>
 			<div className="relative">
 				<Link

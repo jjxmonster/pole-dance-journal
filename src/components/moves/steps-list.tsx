@@ -13,7 +13,7 @@ export function StepsList({ steps }: StepsListProps) {
 	const sortedSteps = [...steps].sort((a, b) => a.orderIndex - b.orderIndex);
 
 	return (
-		<section>
+		<section data-testid="steps-list">
 			<h2 className="mb-4 font-bold text-2xl text-foreground">Steps</h2>
 			<ol className="space-y-4">
 				{sortedSteps.map((step) => (
