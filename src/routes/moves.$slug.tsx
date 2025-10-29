@@ -30,7 +30,7 @@ export const Route = createFileRoute("/moves/$slug")({
 			return {
 				meta: [
 					{
-						title: "Move Not Found - Spinella",
+						title: "Figura Nie Znaleziona - Spinella",
 					},
 				],
 			};
@@ -88,49 +88,46 @@ function MoveDetailPage() {
 
 	return (
 		<div
-			className="container mx-auto max-w-5xl px-4 py-8"
+			className="container mx-auto max-w-6xl px-4 py-8"
 			data-testid="move-details-page"
 		>
 			<Breadcrumbs moveName={move.name} />
 
 			<div className="space-y-8">
-				<MoveImage
-					alt={`${move.name} pole dance move illustration`}
-					imageUrl={move.imageUrl}
-				/>
-
-				<header>
-					<h1
-						className="mb-4 font-bold text-4xl text-foreground"
-						data-testid="move-title"
-					>
-						{move.name}
-					</h1>
-					<Badge className={LEVEL_COLORS[move.level]} variant="secondary">
-						{LEVEL_LABELS_POLISH[move.level]}
-					</Badge>
-				</header>
-
 				<div className="grid grid-cols-1 gap-8 md:grid-cols-3">
 					<div className="space-y-4 md:col-span-2">
+						<header>
+							<h1
+								className="mb-4 font-bold text-4xl text-foreground"
+								data-testid="move-title"
+							>
+								{move.name}
+							</h1>
+							<Badge className={LEVEL_COLORS[move.level]} variant="secondary">
+								{LEVEL_LABELS_POLISH[move.level]}
+							</Badge>
+						</header>
 						<MoveDescription description={move.description} />
 						<StepsList steps={move.steps} />
+						<NoteEditor moveId={move.id} />
 					</div>
 
-					{isAuthenticated && (
-						<div
-							className="space-y-6 md:col-span-1"
-							data-testid="user-interaction-panel"
-						>
+					<div
+						className="space-y-6 md:col-span-1"
+						data-testid="user-interaction-panel"
+					>
+						<MoveImage
+							alt={`${move.name} figura pole dance`}
+							imageUrl={move.imageUrl}
+						/>
+						{isAuthenticated && (
 							<StatusButtons
 								disabled={isStatusLoading}
 								onChange={updateStatus}
 								value={status}
 							/>
-
-							<NoteEditor moveId={move.id} />
-						</div>
-					)}
+						)}
+					</div>
 				</div>
 			</div>
 		</div>
