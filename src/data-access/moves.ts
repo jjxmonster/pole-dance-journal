@@ -313,20 +313,22 @@ export async function updateMove(data: {
 		updatedAt: new Date(),
 	}));
 
-	await db
-		.update(moves)
-		.set({
-			name: data.name,
-			description: data.description,
-			level: data.level,
-			slug: data.slug,
-			updatedAt: new Date(),
-		})
-		.where(eq(moves.id, data.id));
+	await db.transaction(async (tx) => {
+		await tx
+			.update(moves)
+			.set({
+				name: data.name,
+				description: data.description,
+				level: data.level,
+				slug: data.slug,
+				updatedAt: new Date(),
+			})
+			.where(eq(moves.id, data.id));
 
-	await db.delete(steps).where(eq(steps.moveId, data.id));
+		await tx.delete(steps).where(eq(steps.moveId, data.id));
 
-	await db.insert(steps).values(stepsWithIndices);
+		await tx.insert(steps).values(stepsWithIndices);
+	});
 
 	return { id: data.id, slug: data.slug };
 }
