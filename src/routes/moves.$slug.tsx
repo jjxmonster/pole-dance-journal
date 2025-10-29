@@ -95,7 +95,7 @@ function MoveDetailPage() {
 
 			<div className="space-y-8">
 				<div className="grid grid-cols-1 gap-8 md:grid-cols-3">
-					<div className="space-y-4 md:col-span-2">
+					<div className="order-last space-y-4 md:order-none md:col-span-2">
 						<header>
 							<h1
 								className="mb-4 font-bold text-4xl text-foreground"
@@ -109,11 +109,11 @@ function MoveDetailPage() {
 						</header>
 						<MoveDescription description={move.description} />
 						<StepsList steps={move.steps} />
-						<NoteEditor moveId={move.id} />
+						{isAuthenticated && <NoteEditor moveId={move.id} />}
 					</div>
 
 					<div
-						className="space-y-6 md:col-span-1"
+						className="order-first space-y-6 md:order-none md:col-span-1"
 						data-testid="user-interaction-panel"
 					>
 						<MoveImage
