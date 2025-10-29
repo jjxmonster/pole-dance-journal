@@ -1,4 +1,5 @@
 import { createFileRoute, notFound } from "@tanstack/react-router";
+import { LEVEL_COLORS, LEVEL_LABELS_POLISH } from "@/utils/constants";
 import { Breadcrumbs } from "../components/moves/breadcrumbs";
 import { MoveDescription } from "../components/moves/move-description";
 import { MoveImage } from "../components/moves/move-image";
@@ -105,8 +106,8 @@ function MoveDetailPage() {
 					>
 						{move.name}
 					</h1>
-					<Badge data-testid="move-level" variant="default">
-						{move.level}
+					<Badge className={LEVEL_COLORS[move.level]} variant="secondary">
+						{LEVEL_LABELS_POLISH[move.level]}
 					</Badge>
 				</header>
 

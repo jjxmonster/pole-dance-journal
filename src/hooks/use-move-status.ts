@@ -1,5 +1,5 @@
 import { useMutation, useQuery } from "@tanstack/react-query";
-import { useOptimistic } from "react";
+import { useOptimistic, useTransition } from "react";
 import { toast } from "sonner";
 import { client, orpc } from "@/orpc/client";
 import type { MoveStatus } from "@/types/move";
@@ -7,6 +7,7 @@ import { useAuth } from "./use-auth";
 
 export function useMoveStatus(moveId: string) {
 	const { isAuthenticated, userId } = useAuth();
+	const [, startTransition] = useTransition();
 
 	const {
 		data,
@@ -59,7 +60,9 @@ export function useMoveStatus(moveId: string) {
 			return;
 		}
 
-		setOptimisticStatus(status);
+		startTransition(() => {
+			setOptimisticStatus(status);
+		});
 		mutate(status);
 	};
 

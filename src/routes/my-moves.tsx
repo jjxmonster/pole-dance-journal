@@ -37,7 +37,7 @@ export const Route = createFileRoute("/my-moves")({
 			{
 				name: "description",
 				content:
-					"Zobacz i zarządzaj swoją osobistą kolekcją ruchów pole dance. Śledź swoje postępy i notatki.",
+					"Zobacz i zarządzaj swoją osobistą kolekcją figur pole dance. Śledź swoje postępy i notatki.",
 			},
 			{
 				property: "og:title",
@@ -45,8 +45,7 @@ export const Route = createFileRoute("/my-moves")({
 			},
 			{
 				property: "og:description",
-				content:
-					"Zobacz i zarządzaj swoją osobistą kolekcją ruchów pole dance.",
+				content: "Zobacz i zarządzaj swoją osobistą kolekcją figur pole dance.",
 			},
 		],
 	}),
