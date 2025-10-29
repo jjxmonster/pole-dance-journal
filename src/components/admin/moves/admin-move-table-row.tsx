@@ -1,3 +1,4 @@
+import { useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
 import {
 	AlertDialog,
@@ -48,6 +49,7 @@ function ActionButtons({
 	onDelete,
 	onRestore,
 }: ActionButtonsProps) {
+	const navigate = useNavigate();
 	if (move.status === "Deleted") {
 		return (
 			<Button
@@ -83,6 +85,17 @@ function ActionButtons({
 				>
 					Delete
 				</Button>
+				<Button
+					disabled={isPending}
+					onClick={() => {
+						navigate({ to: `/admin/moves/${move.id}` });
+					}}
+					size="sm"
+					type="button"
+					variant="default"
+				>
+					Edit
+				</Button>
 			</div>
 		);
 	}
@@ -106,6 +119,17 @@ function ActionButtons({
 				variant="destructive"
 			>
 				Delete
+			</Button>
+			<Button
+				disabled={isPending}
+				onClick={() => {
+					navigate({ to: `/admin/moves/${move.id}` });
+				}}
+				size="sm"
+				type="button"
+				variant="default"
+			>
+				Edit
 			</Button>
 		</div>
 	);

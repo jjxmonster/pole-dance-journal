@@ -330,3 +330,29 @@ export async function updateMove(data: {
 
 	return { id: data.id, slug: data.slug };
 }
+
+export async function getMoveByIdForAdmin(moveId: string) {
+	const move = await db.query.moves.findFirst({
+		where: and(eq(moves.id, moveId), isNull(moves.deletedAt)),
+		columns: {
+			id: true,
+			name: true,
+			description: true,
+			level: true,
+			slug: true,
+			imageUrl: true,
+		},
+		with: {
+			steps: {
+				columns: {
+					orderIndex: true,
+					title: true,
+					description: true,
+				},
+				orderBy: [asc(steps.orderIndex)],
+			},
+		},
+	});
+
+	return move ?? null;
+}

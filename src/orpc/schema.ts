@@ -464,3 +464,15 @@ export const AdminEditMoveOutputSchema = z.object({
 });
 
 export type AdminEditMoveOutput = z.infer<typeof AdminEditMoveOutputSchema>;
+
+export const AdminGetMoveInputSchema = z.object({
+	id: z.string().uuid(),
+});
+
+export type AdminGetMoveInput = z.infer<typeof AdminGetMoveInputSchema>;
+
+export const AdminGetMoveOutputSchema = z.object({
+	move: MoveDetailSchema,
+});
+
+export type AdminGetMoveOutput = z.infer<typeof AdminGetMoveOutputSchema>;

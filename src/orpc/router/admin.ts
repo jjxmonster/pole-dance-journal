@@ -21,6 +21,8 @@ import {
 	AdminCreateMoveOutputSchema,
 	AdminEditMoveInputSchema,
 	AdminEditMoveOutputSchema,
+	AdminGetMoveInputSchema,
+	AdminGetMoveOutputSchema,
 	AdminGetStatsOutputSchema,
 	AdminListMovesInputSchema,
 	AdminListMovesOutputSchema,
@@ -422,6 +424,50 @@ export const acceptImageProcedure = os
 		} catch {
 			throw new ORPCError("INTERNAL_SERVER_ERROR", {
 				message: "Failed to accept image",
+			});
+		}
+	});
+
+export const getMoveProcedure = os
+	.input(AdminGetMoveInputSchema)
+	.output(AdminGetMoveOutputSchema)
+	.handler(async ({ input }) => {
+		const supabase = getSupabaseServerClient();
+		const authData = await supabase.auth.getUser();
+
+		if (!authData.data.user) {
+			throw new ORPCError("UNAUTHORIZED", {
+				message: "User is not authenticated.",
+			});
+		}
+
+		const userId = authData.data.user.id;
+
+		const isAdmin = await validateUserIsAdmin(userId);
+		if (!isAdmin) {
+			throw new ORPCError("UNAUTHORIZED", {
+				message: "User is not an administrator.",
+			});
+		}
+
+		const { getMoveByIdForAdmin } = await import("@/data-access/moves");
+
+		try {
+			const move = await getMoveByIdForAdmin(input.id);
+			if (!move) {
+				throw new ORPCError("NOT_FOUND", {
+					message: "Move not found.",
+				});
+			}
+			return { move };
+		} catch (error) {
+			if (error instanceof ORPCError) {
+				throw error;
+			}
+			const errorMessage =
+				error instanceof Error ? error.message : "Failed to get move";
+			throw new ORPCError("INTERNAL_SERVER_ERROR", {
+				message: errorMessage,
 			});
 		}
 	});

@@ -4,6 +4,7 @@ import {
 	deleteMoveProcedure,
 	editMoveProcedure,
 	generateImageProcedure,
+	getMoveProcedure,
 	getStatsProcedure,
 	listMovesProcedure,
 	publishMoveProcedure,
@@ -53,6 +54,7 @@ export default {
 			editMove: editMoveProcedure,
 			acceptImage: acceptImageProcedure,
 			generateImage: generateImageProcedure,
+			getMove: getMoveProcedure,
 		},
 	},
 	auth: {
