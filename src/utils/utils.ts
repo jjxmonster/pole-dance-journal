@@ -12,12 +12,12 @@ import {
 
 export function getPluralForm(count: number): string {
 	if (count === 1) {
-		return "move";
+		return "figurę";
 	}
 	if (count < PLURAL_THRESHOLD) {
-		return "moves";
+		return "figury";
 	}
-	return "moves";
+	return "figur";
 }
 
 export function validateInputFile(file: File): void {

@@ -10,7 +10,7 @@ export function Breadcrumbs({ moveName }: BreadcrumbsProps) {
 			<ol className="flex items-center space-x-2 text-muted-foreground text-sm">
 				<li>
 					<Link className="hover:text-foreground" to="/catalog">
-						Moves
+						Figury
 					</Link>
 				</li>
 				<li>

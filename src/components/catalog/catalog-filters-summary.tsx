@@ -1,4 +1,5 @@
 import { X } from "lucide-react";
+import { LEVEL_LABELS_POLISH } from "@/utils/constants";
 import type { moveLevelEnum } from "../../db/schema";
 import { Badge } from "../ui/badge";
 
@@ -14,12 +15,6 @@ type CatalogFiltersSummaryProps = {
 	onRemoveFilter: (filterKey: "query" | "level") => void;
 };
 
-const LEVEL_LABELS: Record<MoveLevel, string> = {
-	Beginner: "Beginner",
-	Intermediate: "Intermediate",
-	Advanced: "Advanced",
-};
-
 export function CatalogFiltersSummary({
 	activeFilters,
 	onRemoveFilter,
@@ -32,11 +27,11 @@ export function CatalogFiltersSummary({
 
 	return (
 		<div className="mb-4 flex flex-wrap items-center gap-2">
-			<span className="text-muted-foreground text-sm">Active filters:</span>
+			<span className="text-muted-foreground text-sm">Aktywne filtry:</span>
 
 			{activeFilters.query && (
 				<Badge className="gap-2 pr-1" variant="secondary">
-					<span>Search: "{activeFilters.query}"</span>
+					<span>Szukaj: "{activeFilters.query}"</span>
 					<button
 						aria-label="Remove search filter"
 						className="rounded-full transition-colors hover:bg-destructive/20"
@@ -50,7 +45,7 @@ export function CatalogFiltersSummary({
 
 			{activeFilters.level && (
 				<Badge className="gap-2 pr-1" variant="secondary">
-					<span>Level: {LEVEL_LABELS[activeFilters.level]}</span>
+					<span>Poziom: {LEVEL_LABELS_POLISH[activeFilters.level]}</span>
 					<button
 						aria-label="Remove level filter"
 						className="rounded-full transition-colors hover:bg-destructive/20"

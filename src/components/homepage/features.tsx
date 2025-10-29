@@ -58,7 +58,7 @@ export function Features() {
 					whileInView={{ opacity: 1, y: 0 }}
 				>
 					<Badge className="mb-4" variant="outline">
-						Twój Segregator Figur
+						Dziennik Postępów
 					</Badge>
 					<h2 className="mb-4 font-bold text-4xl text-foreground tracking-tight sm:text-5xl">
 						Wszystko, czego potrzebujesz, w jednym miejscu

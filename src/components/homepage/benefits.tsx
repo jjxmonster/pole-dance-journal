@@ -29,12 +29,12 @@ export function Benefits() {
 							Od Chaosu do Perfekcji
 						</Badge>
 						<h2 className="mb-6 font-bold text-4xl text-foreground tracking-tight sm:text-5xl">
-							Uporządkuj swoją taneczną podróż
+							Uporządkuj swoją naukę pole dance
 						</h2>
 						<p className="mb-8 text-lg text-muted-foreground">
 							Koniec z bałaganem w notatkach i zapomnianymi celami. Spinella to
-							Twoja uporządkowana przestrzeń, gdzie każdy ruch ma swoje miejsce,
-							a każdy postęp jest zauważony.
+							Twoja uporządkowana przestrzeń, gdzie każda figura ma swoje
+							miejsce, a każdy postęp jest zauważony.
 						</p>
 						<div className="grid gap-4 sm:grid-cols-2">
 							{benefits.map((benefit, benefitIndex) => (

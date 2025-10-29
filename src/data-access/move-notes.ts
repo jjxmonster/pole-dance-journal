@@ -1,4 +1,4 @@
-import { and, eq } from "drizzle-orm";
+import { and, desc, eq } from "drizzle-orm";
 import { db } from "../db";
 import { moveNotes } from "../db/schema";
 
@@ -11,7 +11,7 @@ export async function getMoveNotes(userId: string, moveId: string) {
 		})
 		.from(moveNotes)
 		.where(and(eq(moveNotes.userId, userId), eq(moveNotes.moveId, moveId)))
-		.orderBy(moveNotes.createdAt);
+		.orderBy(desc(moveNotes.createdAt));
 
 	return result;
 }

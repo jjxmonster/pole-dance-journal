@@ -1,3 +1,4 @@
+import { LEVEL_LABELS_POLISH } from "@/utils/constants";
 import type { MoveLevel } from "../../types/move";
 import { Badge } from "../ui/badge";
 
@@ -19,13 +20,6 @@ const LEVELS: Array<MoveLevel | "All"> = [
 	"Intermediate",
 	"Advanced",
 ];
-
-const LEVEL_LABELS_POLISH: Record<MoveLevel | "All", string> = {
-	All: "Wszystkie",
-	Beginner: "Początkujący",
-	Intermediate: "Średnio zaawansowany",
-	Advanced: "Zaawansowany",
-};
 
 export function LevelFilterBadges({
 	activeLevel,
@@ -53,7 +47,7 @@ export function LevelFilterBadges({
 							}`}
 							variant={isActive ? "default" : "outline"}
 						>
-							{LEVEL_LABELS_POLISH[level]}
+							{LEVEL_LABELS_POLISH[level as MoveLevel]}
 						</Badge>
 					</button>
 				);

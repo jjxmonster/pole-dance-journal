@@ -1,3 +1,4 @@
+import { Loader2 } from "lucide-react";
 import type { MoveStatus } from "@/types/move";
 import { STATUS_OPTIONS } from "@/utils/constants";
 import { Button } from "../ui/button";
@@ -37,6 +38,7 @@ export function StatusButtons({
 							variant={buttonVariant}
 						>
 							{option.label}
+							{disabled && <Loader2 className="size-4 animate-spin" />}
 						</Button>
 					);
 				})}

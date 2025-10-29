@@ -14,18 +14,18 @@ export function Cta() {
 					whileInView={{ opacity: 1, y: 0 }}
 				>
 					<h2 className="mb-6 font-bold text-4xl tracking-tight sm:text-5xl">
-						Gotowa, by wzbić się na wyższy poziom?
+						Śledź swoje postępy w pole dance – prosto i skutecznie
 					</h2>
 					<p className="mb-8 text-lg opacity-90">
-						Zacznij swoją przygodę ze Spinellą już dziś. Dołącz do grona osób,
-						które świadomie budują swoje umiejętności. Twoja rurka czeka!
+						Odkrywaj katalog ruchów, ustawiaj statusy i zapisuj prywatne
+						notatki. Spinella pomaga Ci wracać do treningów z jasnym planem.
 					</p>
 					<Button
 						className="group shadow-lg hover:shadow-xl"
 						size="lg"
 						variant="secondary"
 					>
-						Zacznij za Darmo
+						Zacznij za darmo
 						<ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
 					</Button>
 				</motion.div>

@@ -3,6 +3,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import {
 	MOVE_DESCRIPTION_MAX_LENGTH,
+	MOVE_STEP_DESCRIPTION_MAX_LENGTH,
 	MOVE_STEP_TITLE_MAX_LENGTH,
 } from "@/utils/constants";
 
@@ -60,7 +61,7 @@ export function StepInputGroup({
 						error?.title ? `step-title-${index}-error` : undefined
 					}
 					id={`step-title-${index}`}
-					maxLength={150}
+					maxLength={MOVE_STEP_TITLE_MAX_LENGTH}
 					onChange={(e) => onChange(index, "title", e.target.value)}
 					placeholder="e.g., Mount the pole"
 					value={step.title}
@@ -81,7 +82,7 @@ export function StepInputGroup({
 								: "text-muted-foreground"
 						}`}
 					>
-						{titleLength}/150
+						{titleLength}/{MOVE_STEP_TITLE_MAX_LENGTH}
 					</span>
 				</div>
 			</div>
@@ -98,7 +99,7 @@ export function StepInputGroup({
 						error?.description ? `step-description-${index}-error` : undefined
 					}
 					id={`step-description-${index}`}
-					maxLength={150}
+					maxLength={MOVE_STEP_DESCRIPTION_MAX_LENGTH}
 					onChange={(e) => onChange(index, "description", e.target.value)}
 					placeholder="Describe how to perform this step..."
 					rows={3}
@@ -120,7 +121,7 @@ export function StepInputGroup({
 								: "text-muted-foreground"
 						}`}
 					>
-						{descriptionLength}/150
+						{descriptionLength}/{MOVE_STEP_DESCRIPTION_MAX_LENGTH}
 					</span>
 				</div>
 			</div>

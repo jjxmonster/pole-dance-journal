@@ -85,7 +85,9 @@ function MyMovesView() {
 		>
 			<div className="mb-6 flex items-start justify-between gap-4">
 				<div>
-					<h1 className="font-bold text-3xl">Moje Figury</h1>
+					<h1 className="mb-2 font-semibold text-5xl text-foreground">
+						Moje Figury
+					</h1>
 					<p className="mt-2 text-muted-foreground">
 						Zobacz i zarządzaj swoją osobistą kolekcją figur pole dance
 					</p>

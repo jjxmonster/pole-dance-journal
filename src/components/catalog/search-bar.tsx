@@ -35,7 +35,7 @@ export function SearchBar({ value, onChange, onClear }: SearchBarProps) {
 				data-testid="search-moves-input"
 				maxLength={MAX_SEARCH_LENGTH}
 				onChange={handleChange}
-				placeholder="Search moves..."
+				placeholder="Szukaj figur..."
 				type="text"
 				value={localValue}
 			/>

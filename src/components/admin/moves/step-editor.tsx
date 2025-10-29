@@ -35,7 +35,9 @@ export function StepEditor({
 		<div className="space-y-4">
 			<div className="flex items-center justify-between">
 				<h2 className="font-semibold text-lg">Steps</h2>
-				<span className="text-muted-foreground text-sm">{steps.length}/15</span>
+				<span className="text-muted-foreground text-sm">
+					{steps.length}/{MOVE_STEPS_MAX_COUNT}
+				</span>
 			</div>
 
 			<div className="space-y-3">

@@ -58,7 +58,7 @@ export const moves = pgTable(
 		),
 		descriptionLengthCheck: check(
 			"description_length_check",
-			sql`char_length(${table.description}) between 10 and 500`
+			sql`char_length(${table.description}) between 10 and 1000`
 		),
 		nameActiveIdx: uniqueIndex("idx_moves_name_active")
 			.on(sql`lower(${table.name})`)
@@ -90,11 +90,11 @@ export const steps = pgTable(
 		orderIndexCheck: check("order_index_check", sql`${table.orderIndex} > 0`),
 		titleLengthCheck: check(
 			"title_length_check",
-			sql`char_length(${table.title}) between 3 and 150`
+			sql`char_length(${table.title}) between 3 and 350`
 		),
 		descriptionLengthCheck: check(
 			"description_length_check",
-			sql`char_length(${table.description}) between 10 and 150`
+			sql`char_length(${table.description}) between 10 and 350`
 		),
 		moveOrderUnique: unique("move_order_unique").on(
 			table.moveId,

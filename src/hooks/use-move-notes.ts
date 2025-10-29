@@ -1,5 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
+import { toast } from "sonner";
 import { client } from "@/orpc/client";
 import { NOTE_MAX_LENGTH } from "@/utils/constants";
 
@@ -25,6 +26,7 @@ export function useNotes(moveId: string) {
 		},
 		onSuccess: () => {
 			setContent("");
+			toast.success("Notatka dodana");
 			queryClient.invalidateQueries({ queryKey: ["moveNotes", moveId] });
 		},
 	});
@@ -37,6 +39,7 @@ export function useNotes(moveId: string) {
 			return result;
 		},
 		onSuccess: () => {
+			toast.success("Notatka usunięta");
 			queryClient.invalidateQueries({ queryKey: ["moveNotes", moveId] });
 		},
 	});

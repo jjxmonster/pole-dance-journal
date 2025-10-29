@@ -18,7 +18,9 @@ import { useMoveForm } from "@/hooks/use-move-form";
 import { orpc } from "@/orpc/client";
 import type { AdminCreateMoveInput } from "@/orpc/schema";
 import {
+	MOVE_DESCRIPTION_MAX_LENGTH,
 	MOVE_DESCRIPTION_WARNING_THRESHOLD,
+	MOVE_NAME_MAX_LENGTH,
 	MOVE_NAME_WARNING_THRESHOLD,
 } from "@/utils/constants";
 import { ImageGenerator } from "./image-generator";
@@ -183,7 +185,7 @@ export function MoveForm() {
 										: "text-muted-foreground text-xs"
 								}
 							>
-								{nameLength}/100
+								{nameLength}/{MOVE_NAME_MAX_LENGTH}
 							</span>
 						</div>
 					</div>
@@ -200,7 +202,7 @@ export function MoveForm() {
 								descriptionError ? "description-error" : undefined
 							}
 							id="description"
-							maxLength={500}
+							maxLength={MOVE_NAME_MAX_LENGTH}
 							onChange={(e) =>
 								handleInputChangeWithTracking("description", e.target.value)
 							}
@@ -224,7 +226,7 @@ export function MoveForm() {
 										: "text-muted-foreground text-xs"
 								}
 							>
-								{descriptionLength}/500
+								{descriptionLength}/{MOVE_DESCRIPTION_MAX_LENGTH}
 							</span>
 						</div>
 					</div>

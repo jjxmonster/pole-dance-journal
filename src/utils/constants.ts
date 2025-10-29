@@ -1,4 +1,4 @@
-import type { StatusOption } from "@/types/move";
+import type { MoveLevel, StatusOption } from "@/types/move";
 
 export const PAGE_SIZE = 20;
 export const DEBOUNCE_DELAY_MS = 250;
@@ -45,11 +45,11 @@ export const SAMPLE_USER = "6c97cd4c-bc47-45c6-b19c-7853b8eaacb2";
 export const MOVE_NAME_MIN_LENGTH = 3;
 export const MOVE_NAME_MAX_LENGTH = 100;
 export const MOVE_DESCRIPTION_MIN_LENGTH = 10;
-export const MOVE_DESCRIPTION_MAX_LENGTH = 500;
+export const MOVE_DESCRIPTION_MAX_LENGTH = 1000;
 export const MOVE_STEP_TITLE_MIN_LENGTH = 3;
-export const MOVE_STEP_TITLE_MAX_LENGTH = 150;
+export const MOVE_STEP_TITLE_MAX_LENGTH = 350;
 export const MOVE_STEP_DESCRIPTION_MIN_LENGTH = 10;
-export const MOVE_STEP_DESCRIPTION_MAX_LENGTH = 150;
+export const MOVE_STEP_DESCRIPTION_MAX_LENGTH = 350;
 export const MOVE_STEPS_MIN_COUNT = 2;
 export const MOVE_STEPS_MAX_COUNT = 15;
 export const MOVE_NAME_WARNING_THRESHOLD = 90;
@@ -58,6 +58,13 @@ export const SIGNED_URL_EXPIRATION_SECONDS = 3600;
 
 export const LEVEL_COLORS = {
 	Beginner: "bg-green-100 text-green-800 hover:bg-green-100",
-	Intermediate: "bg-yellow-100 text-yellow-800 hover:bg-yellow-100",
+	Intermediate: "bg-blue-100 text-blue-800 hover:bg-blue-100",
 	Advanced: "bg-red-100 text-red-800 hover:bg-red-100",
 } as const;
+
+export const LEVEL_LABELS_POLISH: Record<MoveLevel | "All", string> = {
+	All: "Wszystkie",
+	Beginner: "Początkujący",
+	Intermediate: "Średnio zaawansowany",
+	Advanced: "Zaawansowany",
+};

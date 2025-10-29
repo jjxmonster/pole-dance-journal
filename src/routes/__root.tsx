@@ -1,18 +1,15 @@
-import { TanstackDevtools } from "@tanstack/react-devtools";
 import type { QueryClient } from "@tanstack/react-query";
 import {
 	createRootRouteWithContext,
 	HeadContent,
 	Scripts,
 } from "@tanstack/react-router";
-import { TanStackRouterDevtoolsPanel } from "@tanstack/react-router-devtools";
 import { useEffect } from "react";
+import { Toaster } from "sonner";
 import { Footer } from "../components/footer";
 import { Nav } from "../components/nav";
 import { NotFound } from "../components/not-found";
 import { useAuth } from "../hooks/use-auth";
-import TanStackQueryDevtools from "../integrations/tanstack-query/devtools";
-import StoreDevtools from "../lib/demo-store-devtools";
 import { client } from "../orpc/client";
 import appCss from "../styles.css?url";
 
@@ -109,24 +106,12 @@ function RootDocument({ children }: { children: React.ReactNode }) {
 				<HeadContent />
 			</head>
 			<body>
-				<div className="min-h-screen bg-background">
+				<div className="flex min-h-screen flex-col bg-background">
 					<Nav />
-					<main>{children}</main>
+					<main className="flex-1">{children}</main>
 					<Footer />
 				</div>
-				<TanstackDevtools
-					config={{
-						position: "bottom-left",
-					}}
-					plugins={[
-						{
-							name: "Tanstack Router",
-							render: <TanStackRouterDevtoolsPanel />,
-						},
-						TanStackQueryDevtools,
-						StoreDevtools,
-					]}
-				/>
+				<Toaster position="top-right" richColors />
 				<Scripts />
 			</body>
 		</html>
