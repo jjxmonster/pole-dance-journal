@@ -294,3 +294,39 @@ export async function createMove(data: {
 export async function acceptMoveImage(moveId: string, imageUrl: string) {
 	await db.update(moves).set({ imageUrl }).where(eq(moves.id, moveId));
 }
+
+export async function updateMove(data: {
+	id: string;
+	name: string;
+	description: string;
+	level: "Beginner" | "Intermediate" | "Advanced";
+	slug: string;
+	steps: Array<{ title: string; description: string }>;
+}) {
+	const stepsWithIndices = data.steps.map((step, index) => ({
+		id: crypto.randomUUID(),
+		moveId: data.id,
+		orderIndex: index + 1,
+		title: step.title,
+		description: step.description,
+		createdAt: new Date(),
+		updatedAt: new Date(),
+	}));
+
+	await db
+		.update(moves)
+		.set({
+			name: data.name,
+			description: data.description,
+			level: data.level,
+			slug: data.slug,
+			updatedAt: new Date(),
+		})
+		.where(eq(moves.id, data.id));
+
+	await db.delete(steps).where(eq(steps.moveId, data.id));
+
+	await db.insert(steps).values(stepsWithIndices);
+
+	return { id: data.id, slug: data.slug };
+}

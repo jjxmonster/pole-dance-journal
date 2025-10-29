@@ -19,6 +19,8 @@ import {
 	AdminActionOutputSchema,
 	AdminCreateMoveInputSchema,
 	AdminCreateMoveOutputSchema,
+	AdminEditMoveInputSchema,
+	AdminEditMoveOutputSchema,
 	AdminGetStatsOutputSchema,
 	AdminListMovesInputSchema,
 	AdminListMovesOutputSchema,
@@ -335,6 +337,54 @@ export const createMoveProcedure = os
 		} catch (error) {
 			const errorMessage =
 				error instanceof Error ? error.message : "Failed to create move";
+
+			throw new ORPCError("BAD_REQUEST", {
+				message: errorMessage,
+			});
+		}
+	});
+
+export const editMoveProcedure = os
+	.input(AdminEditMoveInputSchema)
+	.output(AdminEditMoveOutputSchema)
+	.handler(async ({ input }) => {
+		const supabase = getSupabaseServerClient();
+		const authData = await supabase.auth.getUser();
+
+		if (!authData.data.user) {
+			throw new ORPCError("UNAUTHORIZED", {
+				message: "User is not authenticated.",
+			});
+		}
+
+		const userId = authData.data.user.id;
+
+		const isAdmin = await validateUserIsAdmin(userId);
+		if (!isAdmin) {
+			throw new ORPCError("UNAUTHORIZED", {
+				message: "User is not an administrator.",
+			});
+		}
+
+		const { updateMove } = await import("@/data-access/moves");
+		const { generateSlug } = await import("@/utils/utils");
+
+		const slug = generateSlug(input.name);
+
+		try {
+			const result = await updateMove({
+				id: input.id,
+				name: input.name,
+				description: input.description,
+				level: input.level,
+				slug,
+				steps: input.steps,
+			});
+
+			return result;
+		} catch (error) {
+			const errorMessage =
+				error instanceof Error ? error.message : "Failed to edit move";
 
 			throw new ORPCError("BAD_REQUEST", {
 				message: errorMessage,
