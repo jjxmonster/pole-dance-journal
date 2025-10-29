@@ -195,7 +195,7 @@ export function SignInForm({
 			<div className="mt-6 text-center text-sm">
 				Nie masz jeszcze konta?{" "}
 				<Link className="text-primary hover:underline" to="/auth/sign-up">
-					Sign up
+					Stwórz konto
 				</Link>
 			</div>
 		</form>
