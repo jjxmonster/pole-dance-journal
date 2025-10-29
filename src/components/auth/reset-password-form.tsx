@@ -60,7 +60,7 @@ export function ResetPasswordForm({
 
 	const validateConfirmPassword = (value: string) => {
 		if (value !== newPassword) {
-			setConfirmPasswordError("Passwords do not match");
+			setConfirmPasswordError("Hasła nie pasują do siebie");
 			return false;
 		}
 		setConfirmPasswordError(null);
@@ -86,7 +86,7 @@ export function ResetPasswordForm({
 			});
 		} catch (error) {
 			setFormError(
-				error instanceof Error ? error.message : "An unexpected error occurred"
+				error instanceof Error ? error.message : "Wystąpił nieoczekiwany błąd"
 			);
 		}
 	};

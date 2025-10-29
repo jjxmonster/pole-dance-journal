@@ -102,13 +102,13 @@ export function SignInForm({
 			<div>
 				<div className="mb-2 flex items-center justify-between">
 					<label className="font-medium text-sm" htmlFor="password">
-						Password
+						Hasło
 					</label>
 					<Link
 						className="text-primary text-xs hover:underline"
 						to="/auth/forgot-password"
 					>
-						Forgot password?
+						Zapomniałeś hasła?
 					</Link>
 				</div>
 				<Input
@@ -141,7 +141,7 @@ export function SignInForm({
 				disabled={isLoading || !isFormValid}
 				type="submit"
 			>
-				{isLoading ? "Signing in..." : "Sign in"}
+				{isLoading ? "Logowanie..." : "Zaloguj się"}
 			</Button>
 
 			{onGoogleSignIn && (
@@ -193,7 +193,7 @@ export function SignInForm({
 			)}
 
 			<div className="mt-6 text-center text-sm">
-				Don&apos;t have an account?{" "}
+				Nie masz jeszcze konta?{" "}
 				<Link className="text-primary hover:underline" to="/auth/sign-up">
 					Sign up
 				</Link>

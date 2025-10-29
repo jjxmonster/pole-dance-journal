@@ -4,24 +4,24 @@ import { MAX_PASSWORD_LENGTH, MIN_PASSWORD_LENGTH } from "./constants";
 export const SignInAuthEmailSchema = z
 	.string()
 	.trim()
-	.email("Please enter a valid email address");
-export const SignInPasswordSchema = z.string().min(1, "Password is required");
+	.email("Wprowadź poprawny adres e-mail");
+export const SignInPasswordSchema = z.string().min(1, "Hasło jest wymagane");
 
 export const SignUpAuthEmailSchema = z
 	.string()
 	.trim()
-	.email("Please enter a valid email address");
+	.email("Wprowadź poprawny adres e-mail");
 export const SignUpPasswordSchema = z
 	.string()
 	.min(
 		MIN_PASSWORD_LENGTH,
-		`Password must be at least ${MIN_PASSWORD_LENGTH} characters`
+		`Hasło musi mieć co najmniej ${MIN_PASSWORD_LENGTH} znaków`
 	)
 	.max(
 		MAX_PASSWORD_LENGTH,
-		`Password must be at most ${MAX_PASSWORD_LENGTH} characters`
+		`Hasło musi mieć co najwyżej ${MAX_PASSWORD_LENGTH} znaków`
 	)
 	.regex(
 		/^(?=.*[A-Za-z])(?=.*\d).+$/,
-		"Password must contain at least 1 letter and 1 number"
+		"Hasło musi zawierać co najmniej 1 literę i 1 cyfrę"
 	);

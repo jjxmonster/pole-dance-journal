@@ -26,11 +26,11 @@ function SignUpPage() {
 			);
 		} catch (err) {
 			if (err instanceof Error && err.message.includes("already registered")) {
-				setError("This email is already registered.");
+				setError("Ten e-mail jest już zarejestrowany.");
 			} else if (err instanceof Error && err.message.includes("password")) {
-				setError("Password does not meet requirements.");
+				setError("Hasło nie spełnia wymagań.");
 			} else {
-				setError("An error occurred during registration. Please try again.");
+				setError("Wystąpił błąd podczas rejestracji. Spróbuj ponownie.");
 			}
 		} finally {
 			setIsLoading(false);
@@ -39,10 +39,10 @@ function SignUpPage() {
 
 	return (
 		<AuthFormWrapper
-			description="Enter your details below to create your account"
+			description="Wprowadź swoje dane poniżej, aby utworzyć swoje konto"
 			error={error}
 			success={success}
-			title="Create an account"
+			title="Utwórz konto"
 		>
 			<SignUpForm isLoading={isLoading} onSubmit={handleSubmit} />
 		</AuthFormWrapper>
