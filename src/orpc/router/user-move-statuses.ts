@@ -1,10 +1,10 @@
 import { ORPCError, os } from "@orpc/server";
-import { getSupabaseServerClient } from "@/integrations/supabase/server";
 import {
 	checkMoveExists,
 	getUserMoveStatus,
 	upsertUserMoveStatus,
 } from "../../data-access/user-move-statuses";
+import { authMiddleware } from "../auth";
 import {
 	UserMoveStatusGetInputSchema,
 	UserMoveStatusGetOutputSchema,
@@ -15,17 +15,9 @@ import {
 export const get = os
 	.input(UserMoveStatusGetInputSchema)
 	.output(UserMoveStatusGetOutputSchema)
-	.handler(async ({ input }) => {
-		const supabase = getSupabaseServerClient();
-		const data = await supabase.auth.getUser();
-
-		if (!data.data.user) {
-			throw new ORPCError("UNAUTHORIZED", {
-				message: "You must be signed in to get move status.",
-			});
-		}
-
-		const userId = data.data.user.id;
+	.use(authMiddleware)
+	.handler(async ({ input, context }) => {
+		const userId = context.user.id;
 
 		const moveExists = await checkMoveExists(input.moveId);
 		if (!moveExists) {
@@ -48,18 +40,9 @@ export const get = os
 export const set = os
 	.input(UserMoveStatusSetInputSchema)
 	.output(UserMoveStatusSetOutputSchema)
-	.handler(async ({ input }) => {
-		const supabase = getSupabaseServerClient();
-
-		const data = await supabase.auth.getUser();
-
-		if (!data.data.user) {
-			throw new ORPCError("UNAUTHORIZED", {
-				message: "You must be signed in to update move status.",
-			});
-		}
-
-		const userId = data.data.user.id;
+	.use(authMiddleware)
+	.handler(async ({ input, context }) => {
+		const userId = context.user.id;
 
 		const moveExists = await checkMoveExists(input.moveId);
 		if (!moveExists) {

@@ -8,11 +8,11 @@ import {
 	unpublishMove,
 } from "@/data-access/moves";
 import { validateUserIsAdmin } from "@/data-access/profiles";
-import { getSupabaseServerClient } from "@/integrations/supabase/server";
 import { generateImageWithReplicate } from "@/services/image-generation";
 import { uploadReferenceImage } from "@/services/image-upload";
 import { GENERATE_IMAGE_PROMPT } from "@/utils/prompts";
 import { validateInputFile } from "@/utils/utils";
+import { authMiddleware } from "../auth";
 import {
 	AdminAcceptImageInputSchema,
 	AdminAcceptImageOutputSchema,
@@ -37,17 +37,9 @@ import {
 export const uploadReferenceImageProcedure = os
 	.input(UploadReferenceImageInputSchema)
 	.output(UploadReferenceImageResponseSchema)
-	.handler(async ({ input }) => {
-		const supabase = getSupabaseServerClient();
-		const authData = await supabase.auth.getUser();
-
-		if (!authData.data.user) {
-			throw new ORPCError("UNAUTHORIZED", {
-				message: "User is not authenticated.",
-			});
-		}
-
-		const userId = authData.data.user.id;
+	.use(authMiddleware)
+	.handler(async ({ input, context }) => {
+		const userId = context.user.id;
 
 		const isAdmin = await validateUserIsAdmin(userId);
 		if (!isAdmin) {
@@ -109,17 +101,9 @@ async function performImageGeneration(
 export const generateImageProcedure = os
 	.input(GenerateImageInputSchema)
 	.output(GenerateImageOutputSchema)
-	.handler(async ({ input }) => {
-		const supabase = getSupabaseServerClient();
-		const authData = await supabase.auth.getUser();
-
-		if (!authData.data.user) {
-			throw new ORPCError("UNAUTHORIZED", {
-				message: "Authentication required",
-			});
-		}
-
-		const userId = authData.data.user.id;
+	.use(authMiddleware)
+	.handler(async ({ input, context }) => {
+		const userId = context.user.id;
 
 		const isAdmin = await validateUserIsAdmin(userId);
 		if (!isAdmin) {
@@ -137,17 +121,9 @@ export const generateImageProcedure = os
 
 export const getStatsProcedure = os
 	.output(AdminGetStatsOutputSchema)
-	.handler(async () => {
-		const supabase = getSupabaseServerClient();
-		const authData = await supabase.auth.getUser();
-
-		if (!authData.data.user) {
-			throw new ORPCError("UNAUTHORIZED", {
-				message: "User is not authenticated.",
-			});
-		}
-
-		const userId = authData.data.user.id;
+	.use(authMiddleware)
+	.handler(async ({ context }) => {
+		const userId = context.user.id;
 
 		const isAdmin = await validateUserIsAdmin(userId);
 		if (!isAdmin) {
@@ -163,17 +139,9 @@ export const getStatsProcedure = os
 export const listMovesProcedure = os
 	.input(AdminListMovesInputSchema)
 	.output(AdminListMovesOutputSchema)
-	.handler(async ({ input }) => {
-		const supabase = getSupabaseServerClient();
-		const authData = await supabase.auth.getUser();
-
-		if (!authData.data.user) {
-			throw new ORPCError("UNAUTHORIZED", {
-				message: "User is not authenticated.",
-			});
-		}
-
-		const userId = authData.data.user.id;
+	.use(authMiddleware)
+	.handler(async ({ input, context }) => {
+		const userId = context.user.id;
 
 		const isAdmin = await validateUserIsAdmin(userId);
 		if (!isAdmin) {
@@ -189,17 +157,9 @@ export const listMovesProcedure = os
 export const publishMoveProcedure = os
 	.input(AdminMoveIdInputSchema)
 	.output(AdminPublishMoveOutputSchema)
-	.handler(async ({ input }) => {
-		const supabase = getSupabaseServerClient();
-		const authData = await supabase.auth.getUser();
-
-		if (!authData.data.user) {
-			throw new ORPCError("UNAUTHORIZED", {
-				message: "User is not authenticated.",
-			});
-		}
-
-		const userId = authData.data.user.id;
+	.use(authMiddleware)
+	.handler(async ({ input, context }) => {
+		const userId = context.user.id;
 
 		const isAdmin = await validateUserIsAdmin(userId);
 		if (!isAdmin) {
@@ -224,17 +184,9 @@ export const publishMoveProcedure = os
 export const unpublishMoveProcedure = os
 	.input(AdminMoveIdInputSchema)
 	.output(AdminActionOutputSchema)
-	.handler(async ({ input }) => {
-		const supabase = getSupabaseServerClient();
-		const authData = await supabase.auth.getUser();
-
-		if (!authData.data.user) {
-			throw new ORPCError("UNAUTHORIZED", {
-				message: "User is not authenticated.",
-			});
-		}
-
-		const userId = authData.data.user.id;
+	.use(authMiddleware)
+	.handler(async ({ input, context }) => {
+		const userId = context.user.id;
 
 		const isAdmin = await validateUserIsAdmin(userId);
 		if (!isAdmin) {
@@ -250,17 +202,9 @@ export const unpublishMoveProcedure = os
 export const deleteMoveProcedure = os
 	.input(AdminMoveIdInputSchema)
 	.output(AdminActionOutputSchema)
-	.handler(async ({ input }) => {
-		const supabase = getSupabaseServerClient();
-		const authData = await supabase.auth.getUser();
-
-		if (!authData.data.user) {
-			throw new ORPCError("UNAUTHORIZED", {
-				message: "User is not authenticated.",
-			});
-		}
-
-		const userId = authData.data.user.id;
+	.use(authMiddleware)
+	.handler(async ({ input, context }) => {
+		const userId = context.user.id;
 
 		const isAdmin = await validateUserIsAdmin(userId);
 		if (!isAdmin) {
@@ -276,17 +220,9 @@ export const deleteMoveProcedure = os
 export const restoreMoveProcedure = os
 	.input(AdminMoveIdInputSchema)
 	.output(AdminActionOutputSchema)
-	.handler(async ({ input }) => {
-		const supabase = getSupabaseServerClient();
-		const authData = await supabase.auth.getUser();
-
-		if (!authData.data.user) {
-			throw new ORPCError("UNAUTHORIZED", {
-				message: "User is not authenticated.",
-			});
-		}
-
-		const userId = authData.data.user.id;
+	.use(authMiddleware)
+	.handler(async ({ input, context }) => {
+		const userId = context.user.id;
 
 		const isAdmin = await validateUserIsAdmin(userId);
 		if (!isAdmin) {
@@ -302,17 +238,9 @@ export const restoreMoveProcedure = os
 export const createMoveProcedure = os
 	.input(AdminCreateMoveInputSchema)
 	.output(AdminCreateMoveOutputSchema)
-	.handler(async ({ input }) => {
-		const supabase = getSupabaseServerClient();
-		const authData = await supabase.auth.getUser();
-
-		if (!authData.data.user) {
-			throw new ORPCError("UNAUTHORIZED", {
-				message: "User is not authenticated.",
-			});
-		}
-
-		const userId = authData.data.user.id;
+	.use(authMiddleware)
+	.handler(async ({ input, context }) => {
+		const userId = context.user.id;
 
 		const isAdmin = await validateUserIsAdmin(userId);
 		if (!isAdmin) {
@@ -349,17 +277,9 @@ export const createMoveProcedure = os
 export const editMoveProcedure = os
 	.input(AdminEditMoveInputSchema)
 	.output(AdminEditMoveOutputSchema)
-	.handler(async ({ input }) => {
-		const supabase = getSupabaseServerClient();
-		const authData = await supabase.auth.getUser();
-
-		if (!authData.data.user) {
-			throw new ORPCError("UNAUTHORIZED", {
-				message: "User is not authenticated.",
-			});
-		}
-
-		const userId = authData.data.user.id;
+	.use(authMiddleware)
+	.handler(async ({ input, context }) => {
+		const userId = context.user.id;
 
 		const isAdmin = await validateUserIsAdmin(userId);
 		if (!isAdmin) {
@@ -397,17 +317,9 @@ export const editMoveProcedure = os
 export const acceptImageProcedure = os
 	.input(AdminAcceptImageInputSchema)
 	.output(AdminAcceptImageOutputSchema)
-	.handler(async ({ input }) => {
-		const supabase = getSupabaseServerClient();
-		const authData = await supabase.auth.getUser();
-
-		if (!authData.data.user) {
-			throw new ORPCError("UNAUTHORIZED", {
-				message: "User is not authenticated.",
-			});
-		}
-
-		const userId = authData.data.user.id;
+	.use(authMiddleware)
+	.handler(async ({ input, context }) => {
+		const userId = context.user.id;
 
 		const isAdmin = await validateUserIsAdmin(userId);
 		if (!isAdmin) {
@@ -431,17 +343,9 @@ export const acceptImageProcedure = os
 export const getMoveProcedure = os
 	.input(AdminGetMoveInputSchema)
 	.output(AdminGetMoveOutputSchema)
-	.handler(async ({ input }) => {
-		const supabase = getSupabaseServerClient();
-		const authData = await supabase.auth.getUser();
-
-		if (!authData.data.user) {
-			throw new ORPCError("UNAUTHORIZED", {
-				message: "User is not authenticated.",
-			});
-		}
-
-		const userId = authData.data.user.id;
+	.use(authMiddleware)
+	.handler(async ({ input, context }) => {
+		const userId = context.user.id;
 
 		const isAdmin = await validateUserIsAdmin(userId);
 		if (!isAdmin) {

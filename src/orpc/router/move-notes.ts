@@ -6,6 +6,7 @@ import {
 	getMoveNotes,
 } from "../../data-access/move-notes";
 import { checkMoveExists } from "../../data-access/user-move-statuses";
+import { authMiddleware } from "../auth";
 import {
 	MoveNoteAddInputSchema,
 	MoveNoteAddOutputSchema,
@@ -18,6 +19,7 @@ import {
 export const getNotes = os
 	.input(MoveNotesGetInputSchema)
 	.output(MoveNotesGetOutputSchema)
+	.use(authMiddleware)
 	.handler(async ({ input }) => {
 		const supabase = getSupabaseServerClient();
 		const data = await supabase.auth.getUser();
@@ -50,6 +52,7 @@ export const getNotes = os
 export const addNote = os
 	.input(MoveNoteAddInputSchema)
 	.output(MoveNoteAddOutputSchema)
+	.use(authMiddleware)
 	.handler(async ({ input }) => {
 		const supabase = getSupabaseServerClient();
 		const data = await supabase.auth.getUser();
@@ -82,6 +85,7 @@ export const addNote = os
 export const deleteNote = os
 	.input(MoveNoteDeleteInputSchema)
 	.output(MoveNoteDeleteOutputSchema)
+	.use(authMiddleware)
 	.handler(async ({ input }) => {
 		const supabase = getSupabaseServerClient();
 		const data = await supabase.auth.getUser();

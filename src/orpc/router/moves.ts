@@ -5,6 +5,7 @@ import {
 	getMovesForUser,
 	listPublishedMoves,
 } from "../../data-access/moves";
+import { authMiddleware } from "../auth";
 import {
 	MoveGetBySlugInputSchema,
 	MoveGetBySlugOutputSchema,
@@ -17,6 +18,7 @@ import {
 export const listMoves = os
 	.input(MovesListInputSchema)
 	.output(MovesListOutputSchema)
+	.use(authMiddleware)
 	.handler(async ({ input }) => {
 		const result = await listPublishedMoves(input);
 		return result;
@@ -25,6 +27,7 @@ export const listMoves = os
 export const getBySlug = os
 	.input(MoveGetBySlugInputSchema)
 	.output(MoveGetBySlugOutputSchema)
+	.use(authMiddleware)
 	.handler(async ({ input }) => {
 		const move = await getMoveBySlug(input.slug);
 		if (!move) {
@@ -38,6 +41,7 @@ export const getBySlug = os
 export const getForUser = os
 	.input(MovesGetForUserInputSchema)
 	.output(MovesGetForUserOutputSchema)
+	.use(authMiddleware)
 	.handler(async ({ input }) => {
 		const supabase = getSupabaseServerClient();
 		const data = await supabase.auth.getUser();

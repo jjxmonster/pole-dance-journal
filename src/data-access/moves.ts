@@ -12,6 +12,8 @@ import {
 	sql,
 } from "drizzle-orm";
 import type { z } from "zod";
+import { getSupabaseServerClient } from "@/integrations/supabase/server";
+import { CACHE_CONTROL_SECONDS } from "@/utils/constants";
 import { db } from "../db";
 import { moves, steps } from "../db/schema";
 import type { MovesListInputSchema } from "../orpc/schema";
@@ -292,7 +294,49 @@ export async function createMove(data: {
 }
 
 export async function acceptMoveImage(moveId: string, imageUrl: string) {
-	await db.update(moves).set({ imageUrl }).where(eq(moves.id, moveId));
+	try {
+		const response = await fetch(imageUrl);
+		if (!response.ok) {
+			throw new Error(`Failed to fetch image: ${response.statusText}`);
+		}
+
+		const buffer = await response.arrayBuffer();
+		const filename = `moves/${moveId}/image.jpg`;
+
+		const supabase = getSupabaseServerClient();
+		const { data, error } = await supabase.storage
+			.from("moves-images")
+			.upload(filename, buffer, {
+				cacheControl: CACHE_CONTROL_SECONDS.toString(),
+				upsert: true,
+				contentType: "image/jpeg",
+			});
+
+		if (error) {
+			throw new Error(`Storage upload failed: ${error.message}`);
+		}
+
+		if (!data) {
+			throw new Error("No data returned from storage upload");
+		}
+
+		const { data: publicUrlData } = supabase.storage
+			.from("moves-images")
+			.getPublicUrl(filename);
+
+		if (!publicUrlData?.publicUrl) {
+			throw new Error("Failed to get public URL for image");
+		}
+
+		await db
+			.update(moves)
+			.set({ imageUrl: publicUrlData.publicUrl })
+			.where(eq(moves.id, moveId));
+	} catch (error) {
+		const message =
+			error instanceof Error ? error.message : "Unknown error occurred";
+		throw new Error(`Failed to accept move image: ${message}`);
+	}
 }
 
 export async function updateMove(data: {
