@@ -24,6 +24,7 @@ import { Route as ApiSplatRouteImport } from './routes/api.$'
 import { Route as AdminMovesIndexRouteImport } from './routes/admin/moves/index'
 import { Route as ApiRpcSplatRouteImport } from './routes/api.rpc.$'
 import { Route as AdminMovesNewRouteImport } from './routes/admin/moves/new'
+import { Route as AdminMovesMoveIdRouteImport } from './routes/admin/moves/$moveId'
 
 const MyMovesRoute = MyMovesRouteImport.update({
   id: '/my-moves',
@@ -100,6 +101,11 @@ const AdminMovesNewRoute = AdminMovesNewRouteImport.update({
   path: '/moves/new',
   getParentRoute: () => AdminRoute,
 } as any)
+const AdminMovesMoveIdRoute = AdminMovesMoveIdRouteImport.update({
+  id: '/moves/$moveId',
+  path: '/moves/$moveId',
+  getParentRoute: () => AdminRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -114,6 +120,7 @@ export interface FileRoutesByFullPath {
   '/auth/sign-up': typeof AuthSignUpRoute
   '/moves/$slug': typeof MovesSlugRoute
   '/admin/': typeof AdminIndexRoute
+  '/admin/moves/$moveId': typeof AdminMovesMoveIdRoute
   '/admin/moves/new': typeof AdminMovesNewRoute
   '/api/rpc/$': typeof ApiRpcSplatRoute
   '/admin/moves': typeof AdminMovesIndexRoute
@@ -130,6 +137,7 @@ export interface FileRoutesByTo {
   '/auth/sign-up': typeof AuthSignUpRoute
   '/moves/$slug': typeof MovesSlugRoute
   '/admin': typeof AdminIndexRoute
+  '/admin/moves/$moveId': typeof AdminMovesMoveIdRoute
   '/admin/moves/new': typeof AdminMovesNewRoute
   '/api/rpc/$': typeof ApiRpcSplatRoute
   '/admin/moves': typeof AdminMovesIndexRoute
@@ -148,6 +156,7 @@ export interface FileRoutesById {
   '/auth/sign-up': typeof AuthSignUpRoute
   '/moves/$slug': typeof MovesSlugRoute
   '/admin/': typeof AdminIndexRoute
+  '/admin/moves/$moveId': typeof AdminMovesMoveIdRoute
   '/admin/moves/new': typeof AdminMovesNewRoute
   '/api/rpc/$': typeof ApiRpcSplatRoute
   '/admin/moves/': typeof AdminMovesIndexRoute
@@ -167,6 +176,7 @@ export interface FileRouteTypes {
     | '/auth/sign-up'
     | '/moves/$slug'
     | '/admin/'
+    | '/admin/moves/$moveId'
     | '/admin/moves/new'
     | '/api/rpc/$'
     | '/admin/moves'
@@ -183,6 +193,7 @@ export interface FileRouteTypes {
     | '/auth/sign-up'
     | '/moves/$slug'
     | '/admin'
+    | '/admin/moves/$moveId'
     | '/admin/moves/new'
     | '/api/rpc/$'
     | '/admin/moves'
@@ -200,6 +211,7 @@ export interface FileRouteTypes {
     | '/auth/sign-up'
     | '/moves/$slug'
     | '/admin/'
+    | '/admin/moves/$moveId'
     | '/admin/moves/new'
     | '/api/rpc/$'
     | '/admin/moves/'
@@ -327,17 +339,26 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminMovesNewRouteImport
       parentRoute: typeof AdminRoute
     }
+    '/admin/moves/$moveId': {
+      id: '/admin/moves/$moveId'
+      path: '/moves/$moveId'
+      fullPath: '/admin/moves/$moveId'
+      preLoaderRoute: typeof AdminMovesMoveIdRouteImport
+      parentRoute: typeof AdminRoute
+    }
   }
 }
 
 interface AdminRouteChildren {
   AdminIndexRoute: typeof AdminIndexRoute
+  AdminMovesMoveIdRoute: typeof AdminMovesMoveIdRoute
   AdminMovesNewRoute: typeof AdminMovesNewRoute
   AdminMovesIndexRoute: typeof AdminMovesIndexRoute
 }
 
 const AdminRouteChildren: AdminRouteChildren = {
   AdminIndexRoute: AdminIndexRoute,
+  AdminMovesMoveIdRoute: AdminMovesMoveIdRoute,
   AdminMovesNewRoute: AdminMovesNewRoute,
   AdminMovesIndexRoute: AdminMovesIndexRoute,
 }

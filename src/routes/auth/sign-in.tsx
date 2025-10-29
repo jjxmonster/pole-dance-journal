@@ -17,7 +17,7 @@ export const Route = createFileRoute("/auth/sign-in")({
 		meta: [
 			{
 				name: "description",
-				content: "Sign in to your account",
+				content: "Zaloguj się na swoje konto",
 			},
 		],
 	}),
@@ -58,9 +58,9 @@ function SignInPage() {
 
 	return (
 		<AuthFormWrapper
-			description="Enter your email below to sign in to your account"
+			description="Wprowadź e-mail i hasło, aby zalogować się na swoje konto"
 			error={error}
-			title="Sign in"
+			title="Zaloguj się"
 		>
 			<SignInForm isLoading={isLoading} onSubmit={handleSubmit} />
 		</AuthFormWrapper>

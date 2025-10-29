@@ -294,3 +294,67 @@ export async function createMove(data: {
 export async function acceptMoveImage(moveId: string, imageUrl: string) {
 	await db.update(moves).set({ imageUrl }).where(eq(moves.id, moveId));
 }
+
+export async function updateMove(data: {
+	id: string;
+	name: string;
+	description: string;
+	level: "Beginner" | "Intermediate" | "Advanced";
+	slug: string;
+	steps: Array<{ title: string; description: string }>;
+}) {
+	const stepsWithIndices = data.steps.map((step, index) => ({
+		id: crypto.randomUUID(),
+		moveId: data.id,
+		orderIndex: index + 1,
+		title: step.title,
+		description: step.description,
+		createdAt: new Date(),
+		updatedAt: new Date(),
+	}));
+
+	await db.transaction(async (tx) => {
+		await tx
+			.update(moves)
+			.set({
+				name: data.name,
+				description: data.description,
+				level: data.level,
+				slug: data.slug,
+				updatedAt: new Date(),
+			})
+			.where(eq(moves.id, data.id));
+
+		await tx.delete(steps).where(eq(steps.moveId, data.id));
+
+		await tx.insert(steps).values(stepsWithIndices);
+	});
+
+	return { id: data.id, slug: data.slug };
+}
+
+export async function getMoveByIdForAdmin(moveId: string) {
+	const move = await db.query.moves.findFirst({
+		where: and(eq(moves.id, moveId), isNull(moves.deletedAt)),
+		columns: {
+			id: true,
+			name: true,
+			description: true,
+			level: true,
+			slug: true,
+			imageUrl: true,
+		},
+		with: {
+			steps: {
+				columns: {
+					orderIndex: true,
+					title: true,
+					description: true,
+				},
+				orderBy: [asc(steps.orderIndex)],
+			},
+		},
+	});
+
+	return move ?? null;
+}

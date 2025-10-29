@@ -3,8 +3,8 @@ import { useState } from "react";
 import { z } from "zod";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { MAX_PASSWORD_LENGTH, MIN_PASSWORD_LENGTH } from "@/utils/constants";
 import { SignUpAuthEmailSchema, SignUpPasswordSchema } from "@/utils/schemas";
+import { PasswordRequirementsCheck } from "./password-requirements-check";
 
 type SignUpFormProps = {
 	onSubmit: (values: { email: string; password: string }) => Promise<void>;
@@ -55,7 +55,7 @@ export function SignUpForm({
 
 	const validateConfirmPassword = (value: string) => {
 		if (value !== password) {
-			setConfirmPasswordError("Passwords do not match");
+			setConfirmPasswordError("Hasła nie pasują do siebie");
 			return false;
 		}
 		setConfirmPasswordError(null);
@@ -117,7 +117,7 @@ export function SignUpForm({
 
 			<div>
 				<label className="mb-2 block font-medium text-sm" htmlFor="password">
-					Password
+					Hasło
 				</label>
 				<Input
 					aria-describedby={passwordError ? "password-error" : undefined}
@@ -147,7 +147,7 @@ export function SignUpForm({
 					className="mb-2 block font-medium text-sm"
 					htmlFor="confirmPassword"
 				>
-					Confirm Password
+					Potwierdź hasło
 				</label>
 				<Input
 					aria-describedby={
@@ -172,14 +172,7 @@ export function SignUpForm({
 				)}
 			</div>
 
-			<div className="rounded-md bg-muted p-3">
-				<h3 className="font-medium text-sm">Password requirements:</h3>
-				<ul className="mt-1 text-muted-foreground text-xs">
-					<li>At least {MIN_PASSWORD_LENGTH} characters</li>
-					<li>At most {MAX_PASSWORD_LENGTH} characters</li>
-					<li>At least 1 letter and 1 number</li>
-				</ul>
-			</div>
+			<PasswordRequirementsCheck password={password} />
 
 			{formError && (
 				<div className="text-destructive text-sm" role="alert">
@@ -192,13 +185,13 @@ export function SignUpForm({
 				disabled={isLoading || !isFormValid}
 				type="submit"
 			>
-				{isLoading ? "Creating account..." : "Create account"}
+				{isLoading ? "Tworzenie konta..." : "Utwórz konto"}
 			</Button>
 
 			<div className="mt-6 text-center text-sm">
-				Already have an account?{" "}
+				Masz już konto?{" "}
 				<Link className="text-primary hover:underline" to="/auth/sign-in">
-					Sign in
+					Zaloguj się
 				</Link>
 			</div>
 

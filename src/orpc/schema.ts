@@ -400,3 +400,79 @@ export const AdminAcceptImageOutputSchema = z.object({
 export type AdminAcceptImageOutput = z.infer<
 	typeof AdminAcceptImageOutputSchema
 >;
+
+export const AdminEditMoveInputSchema = z.object({
+	id: z.string().uuid(),
+	name: z
+		.string()
+		.min(
+			MOVE_NAME_MIN_LENGTH,
+			`Name must be at least ${MOVE_NAME_MIN_LENGTH} characters`
+		)
+		.max(
+			MOVE_NAME_MAX_LENGTH,
+			`Name must be at most ${MOVE_NAME_MAX_LENGTH} characters`
+		),
+	description: z
+		.string()
+		.min(
+			MOVE_DESCRIPTION_MIN_LENGTH,
+			`Description must be at least ${MOVE_DESCRIPTION_MIN_LENGTH} characters`
+		)
+		.max(
+			MOVE_DESCRIPTION_MAX_LENGTH,
+			`Description must be at most ${MOVE_DESCRIPTION_MAX_LENGTH} characters`
+		),
+	level: z.enum(moveLevelEnum.enumValues),
+	steps: z
+		.array(
+			z.object({
+				title: z
+					.string()
+					.min(
+						MOVE_STEP_TITLE_MIN_LENGTH,
+						`Step title must be at least ${MOVE_STEP_TITLE_MIN_LENGTH} characters`
+					)
+					.max(
+						MOVE_STEP_TITLE_MAX_LENGTH,
+						`Step title must be at most ${MOVE_STEP_TITLE_MAX_LENGTH} characters`
+					),
+				description: z
+					.string()
+					.min(
+						MOVE_STEP_DESCRIPTION_MIN_LENGTH,
+						`Step description must be at least ${MOVE_STEP_DESCRIPTION_MIN_LENGTH} characters`
+					)
+					.max(
+						MOVE_STEP_DESCRIPTION_MAX_LENGTH,
+						`Step description must be at most ${MOVE_STEP_DESCRIPTION_MAX_LENGTH} characters`
+					),
+			})
+		)
+		.min(
+			MOVE_STEPS_MIN_COUNT,
+			`At least ${MOVE_STEPS_MIN_COUNT} steps are required`
+		)
+		.max(MOVE_STEPS_MAX_COUNT, `Maximum ${MOVE_STEPS_MAX_COUNT} steps allowed`),
+});
+
+export type AdminEditMoveInput = z.infer<typeof AdminEditMoveInputSchema>;
+
+export const AdminEditMoveOutputSchema = z.object({
+	id: z.string().uuid(),
+	slug: z.string(),
+});
+
+export type AdminEditMoveOutput = z.infer<typeof AdminEditMoveOutputSchema>;
+
+export const AdminGetMoveInputSchema = z.object({
+	id: z.string().uuid(),
+});
+
+export type AdminGetMoveInput = z.infer<typeof AdminGetMoveInputSchema>;
+
+export const AdminGetMoveOutputSchema = z.object({
+	move: MoveDetailSchema,
+});
+
+export type AdminGetMoveOutput = z.infer<typeof AdminGetMoveOutputSchema>;
