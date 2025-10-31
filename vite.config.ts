@@ -13,7 +13,14 @@ const config = defineConfig({
 		}),
 		netlify(),
 		tailwindcss(),
-		tanstackStart(),
+		tanstackStart({
+			prerender: {
+				enabled: true,
+				autoSubfolderIndex: true,
+				crawlLinks: true,
+				concurrency: 8,
+			},
+		}),
 		viteReact(),
 	],
 });
