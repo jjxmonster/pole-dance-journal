@@ -60,6 +60,7 @@ export function StepInputGroup({
 					aria-describedby={
 						error?.title ? `step-title-${index}-error` : undefined
 					}
+					className="max-w-2xl"
 					id={`step-title-${index}`}
 					maxLength={MOVE_STEP_TITLE_MAX_LENGTH}
 					onChange={(e) => onChange(index, "title", e.target.value)}
@@ -98,6 +99,7 @@ export function StepInputGroup({
 					aria-describedby={
 						error?.description ? `step-description-${index}-error` : undefined
 					}
+					className="max-w-2xl"
 					id={`step-description-${index}`}
 					maxLength={MOVE_STEP_DESCRIPTION_MAX_LENGTH}
 					onChange={(e) => onChange(index, "description", e.target.value)}

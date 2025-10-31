@@ -201,8 +201,9 @@ export function MoveForm() {
 							aria-describedby={
 								descriptionError ? "description-error" : undefined
 							}
+							className="max-w-2xl"
 							id="description"
-							maxLength={MOVE_NAME_MAX_LENGTH}
+							maxLength={MOVE_DESCRIPTION_MAX_LENGTH}
 							onChange={(e) =>
 								handleInputChangeWithTracking("description", e.target.value)
 							}

@@ -18,3 +18,5 @@ todos.json
 /playwright/.cache/
 /test-results/
 /playwright/*
+# Local Netlify folder
+.netlify
