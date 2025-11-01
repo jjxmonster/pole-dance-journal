@@ -1,4 +1,5 @@
 import { ORPCError, os } from "@orpc/server";
+import { eq } from "drizzle-orm";
 import { validateUserIsAdmin } from "@/data-access/profiles";
 import { db } from "@/db";
 import { profiles } from "@/db/schema";
@@ -8,6 +9,7 @@ import {
 	AuthLoginInputSchema,
 	AuthOAuthCallbackInputSchema,
 	AuthOAuthStartInputSchema,
+	AuthOAuthStartOutputSchema,
 	AuthRegisterInputSchema,
 	AuthResetPasswordInputSchema,
 	AuthSessionOutputSchema,
@@ -69,7 +71,6 @@ export const login = os
 				email: input.email,
 				password: input.password,
 			});
-
 			if (error) {
 				if (error.message.includes("Email not confirmed")) {
 					throw new ORPCError("UNAUTHORIZED", {
@@ -127,6 +128,7 @@ export const getSession = os
 		const supabase = getSupabaseServerClient();
 		try {
 			const data = await supabase.auth.getUser();
+
 			const isAdmin = await validateUserIsAdmin(data.data.user?.id ?? "");
 
 			return {
@@ -203,7 +205,7 @@ export const resetPassword = os
 
 export const oauthStart = os
 	.input(AuthOAuthStartInputSchema)
-	.output(AuthSuccessSchema)
+	.output(AuthOAuthStartOutputSchema)
 	.handler(async ({ input, context }) => {
 		const supabase = (context as Record<string, SupabaseClient>).supabase;
 
@@ -223,7 +225,7 @@ export const oauthStart = os
 				});
 			}
 
-			return { success: true };
+			return { url: data.url };
 		} catch (error) {
 			if (error instanceof ORPCError) {
 				throw error;
@@ -238,8 +240,8 @@ export const oauthStart = os
 export const oauthCallback = os
 	.input(AuthOAuthCallbackInputSchema)
 	.output(AuthSuccessSchema)
-	.handler(async ({ input, context }) => {
-		const supabase = (context as Record<string, SupabaseClient>).supabase;
+	.handler(async ({ input }) => {
+		const supabase = getSupabaseServerClient();
 
 		try {
 			const { error } = await supabase.auth.exchangeCodeForSession(input.code);
@@ -248,6 +250,40 @@ export const oauthCallback = os
 				throw new ORPCError("BAD_REQUEST", {
 					message: "Google sign-in link is invalid or expired.",
 				});
+			}
+
+			const { data: sessionData } = await supabase.auth.getSession();
+			const userId = sessionData?.session?.user?.id;
+
+			if (!userId) {
+				throw new ORPCError("INTERNAL_SERVER_ERROR", {
+					message: "Failed to retrieve user information.",
+				});
+			}
+
+			const existingProfile = await db
+				.select()
+				.from(profiles)
+				.where(eq(profiles.userId, userId))
+				.limit(1);
+
+			if (existingProfile.length === 0) {
+				try {
+					await db.insert(profiles).values({
+						userId,
+						isAdmin: false,
+						createdAt: new Date(),
+						updatedAt: new Date(),
+					});
+				} catch (dbError) {
+					if (
+						dbError instanceof Error &&
+						dbError.message.includes("unique constraint")
+					) {
+						return { success: true };
+					}
+					throw dbError;
+				}
 			}
 
 			return { success: true };

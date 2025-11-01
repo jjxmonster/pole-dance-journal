@@ -56,13 +56,45 @@ function SignInPage() {
 		}
 	};
 
+	const handleGoogleSignIn = async () => {
+		setIsLoading(true);
+		setError(null);
+
+		try {
+			const redirectTo = new URLSearchParams(window.location.search).get(
+				"redirectTo"
+			);
+
+			const oauthUrl = await orpc.auth.oauthStart.call({
+				provider: "google",
+				redirectTo:
+					window.location.origin +
+					"/auth/oauth-callback" +
+					(redirectTo ? `?redirectTo=${redirectTo}` : ""),
+			});
+
+			if (oauthUrl?.url) {
+				window.location.href = oauthUrl.url;
+			}
+		} catch (err) {
+			const errorMessage =
+				err instanceof Error ? err.message : "Unable to start Google sign-in.";
+			setError(errorMessage);
+			setIsLoading(false);
+		}
+	};
+
 	return (
 		<AuthFormWrapper
-			description="Wprowadź e-mail i hasło, aby zalogować się na swoje konto"
+			description="Wprowadź e-mail i hasło, aby zalogować się na swoje konto"
 			error={error}
 			title="Zaloguj się"
 		>
-			<SignInForm isLoading={isLoading} onSubmit={handleSubmit} />
+			<SignInForm
+				isLoading={isLoading}
+				onGoogleSignIn={handleGoogleSignIn}
+				onSubmit={handleSubmit}
+			/>
 		</AuthFormWrapper>
 	);
 }
