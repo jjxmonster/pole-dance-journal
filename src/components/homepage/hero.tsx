@@ -1,3 +1,4 @@
+import { Link } from "@tanstack/react-router";
 import { ArrowRight } from "lucide-react";
 import { motion } from "motion/react";
 import { Badge } from "../ui/badge";
@@ -59,9 +60,11 @@ export function Hero() {
 							className="flex flex-col gap-4 sm:flex-row"
 							variants={fadeInUp}
 						>
-							<Button className="group" size="lg">
-								Dołącz teraz
-								<ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
+							<Button asChild className="group" size="lg">
+								<Link to="/auth/sign-in">
+									Dołącz teraz
+									<ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
+								</Link>
 							</Button>
 						</motion.div>
 					</motion.div>
