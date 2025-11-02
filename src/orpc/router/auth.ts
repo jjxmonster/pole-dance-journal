@@ -215,7 +215,7 @@ export const oauthStart = os
 				options: {
 					redirectTo:
 						input.redirectTo ||
-						`${process.env.VITE_APP_URL || "http://localhost:3000"}/auth/oauth-callback`,
+						`${process.env.APP_URL || "http://localhost:3000"}/auth/oauth-callback`,
 				},
 			});
 
