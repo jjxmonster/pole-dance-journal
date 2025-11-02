@@ -8,7 +8,6 @@ export const env = createEnv({
 		SUPABASE_URL: z.string().url(),
 		SUPABASE_ANON_KEY: z.string(),
 		REPLICATE_API_TOKEN: z.string(),
-		APP_URL: z.string().url(),
 	},
 	clientPrefix: "VITE_",
 	client: {},
@@ -18,7 +17,6 @@ export const env = createEnv({
 		SUPABASE_URL: process.env.SUPABASE_URL,
 		SUPABASE_ANON_KEY: process.env.SUPABASE_ANON_KEY,
 		REPLICATE_API_TOKEN: process.env.REPLICATE_API_TOKEN,
-		APP_URL: process.env.APP_URL,
 	},
 	emptyStringAsUndefined: true,
 });
