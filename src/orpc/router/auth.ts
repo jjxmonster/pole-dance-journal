@@ -155,7 +155,7 @@ export const forgotPassword = os
 
 		try {
 			await supabase.auth.resetPasswordForEmail(input.email, {
-				redirectTo: `${process.env.VITE_APP_URL || "http://localhost:3000"}/auth/reset-password`,
+				redirectTo: `${process.env.APP_URL || "http://localhost:3000"}/auth/reset-password`,
 			});
 
 			return { success: true };
