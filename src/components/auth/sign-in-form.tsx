@@ -152,7 +152,7 @@ export function SignInForm({
 						</div>
 						<div className="relative flex justify-center text-xs uppercase">
 							<span className="bg-card px-2 text-muted-foreground">
-								Or continue with
+								Lub zaloguj się za pomocą
 							</span>
 						</div>
 					</div>
@@ -187,7 +187,7 @@ export function SignInForm({
 								fill="#EA4335"
 							/>
 						</svg>
-						Continue with Google
+						Zaloguj się z Google
 					</Button>
 				</>
 			)}

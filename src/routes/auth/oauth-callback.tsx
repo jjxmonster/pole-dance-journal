@@ -23,7 +23,7 @@ function OAuthCallbackPage() {
 			const code = (search as Record<string, string>).code;
 
 			if (!code) {
-				setError("Invalid sign-in link. Missing authorization code.");
+				setError("Nieprawidłowy link logowania. Brak kodu autoryzacyjnego.");
 				return;
 			}
 
@@ -44,7 +44,7 @@ function OAuthCallbackPage() {
 				const errorMessage =
 					err instanceof Error
 						? err.message
-						: "Failed to complete Google sign-in";
+						: "Wystąpił problem podczas logowania.";
 				setError(errorMessage);
 			}
 		};
@@ -62,20 +62,20 @@ function OAuthCallbackPage() {
 				<div className="flex flex-col items-center justify-center py-8">
 					<div className="h-8 w-8 animate-spin rounded-full border-4 border-primary border-t-transparent" />
 					<p className="mt-4 text-muted-foreground text-sm">
-						Completing your sign in...
+						Trwa logowanie...
 					</p>
 				</div>
 			)}
 
 			{error && (
 				<div className="text-center">
-					<p className="mb-4">There was a problem signing you in.</p>
+					<p className="mb-4">Wystąpił problem podczas logowania.</p>
 					<button
 						className="text-primary hover:underline"
 						onClick={() => navigate({ to: "/auth/sign-in" })}
 						type="button"
 					>
-						Return to sign in
+						Wróć do logowania
 					</button>
 				</div>
 			)}
