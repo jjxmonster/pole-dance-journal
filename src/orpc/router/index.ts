@@ -23,7 +23,13 @@ import {
 	resetPassword,
 } from "./auth";
 import { addNote, deleteNote, getNotes } from "./move-notes";
-import { getBySlug, getForUser, getRandomMove, listMoves } from "./moves";
+import {
+	getBySlug,
+	getForUser,
+	getRandomMove,
+	getRandomMovesForWheel,
+	listMoves,
+} from "./moves";
 import { get, set } from "./user-move-statuses";
 
 export default {
@@ -32,6 +38,7 @@ export default {
 		getBySlug,
 		getForUser,
 		getRandomMove,
+		getRandomMovesForWheel,
 	},
 	userMoveStatuses: {
 		get,

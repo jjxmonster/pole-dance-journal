@@ -1,6 +1,7 @@
 import { ORPCError, os } from "@orpc/server";
 import { getSupabaseServerClient } from "@/integrations/supabase/server";
 import {
+	getRandomMovesForWheel as fetchRandomMovesForWheel,
 	getMoveBySlug,
 	getMovesForUser,
 	getRandomPublishedMove,
@@ -10,6 +11,8 @@ import { authMiddleware } from "../auth";
 import {
 	MoveGetBySlugInputSchema,
 	MoveGetBySlugOutputSchema,
+	MoveGetRandomForWheelInputSchema,
+	MoveGetRandomForWheelOutputSchema,
 	MoveGetRandomOutputSchema,
 	MovesGetForUserInputSchema,
 	MovesGetForUserOutputSchema,
@@ -79,4 +82,20 @@ export const getRandomMove = os
 		}
 
 		return { slug };
+	});
+
+export const getRandomMovesForWheel = os
+	.input(MoveGetRandomForWheelInputSchema)
+	.output(MoveGetRandomForWheelOutputSchema)
+	.use(authMiddleware)
+	.handler(async ({ input }) => {
+		const moves = await fetchRandomMovesForWheel(input.count);
+
+		if (moves.length === 0) {
+			throw new ORPCError("NOT_FOUND", {
+				message: "No published moves available",
+			});
+		}
+
+		return { moves };
 	});

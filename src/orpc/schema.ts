@@ -81,6 +81,32 @@ export const MoveGetRandomOutputSchema = z.object({
 	slug: z.string(),
 });
 
+const WHEEL_MIN_SEGMENTS = 6;
+const WHEEL_MAX_SEGMENTS = 12;
+const WHEEL_DEFAULT_SEGMENTS = 10;
+
+export const WheelMoveItemSchema = z.object({
+	id: z.string().uuid(),
+	name: z.string(),
+	slug: z.string(),
+	level: z.enum(moveLevelEnum.enumValues),
+	imageUrl: z.string().nullable(),
+});
+
+export const MoveGetRandomForWheelInputSchema = z.object({
+	count: z
+		.number()
+		.int()
+		.min(WHEEL_MIN_SEGMENTS)
+		.max(WHEEL_MAX_SEGMENTS)
+		.optional()
+		.default(WHEEL_DEFAULT_SEGMENTS),
+});
+
+export const MoveGetRandomForWheelOutputSchema = z.object({
+	moves: z.array(WheelMoveItemSchema),
+});
+
 export const MovesGetForUserInputSchema = z.object({
 	level: z.enum(moveLevelEnum.enumValues).optional(),
 });

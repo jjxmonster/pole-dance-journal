@@ -107,6 +107,23 @@ export async function getRandomPublishedMove() {
 	return result[0]?.slug ?? null;
 }
 
+export async function getRandomMovesForWheel(limit = 10) {
+	const result = await db
+		.select({
+			id: moves.id,
+			name: moves.name,
+			slug: moves.slug,
+			level: moves.level,
+			imageUrl: moves.imageUrl,
+		})
+		.from(moves)
+		.where(and(isNotNull(moves.publishedAt), isNull(moves.deletedAt)))
+		.orderBy(sql`random()`)
+		.limit(limit);
+
+	return result;
+}
+
 export async function getMovesForUser(
 	userId: string,
 	level?: "Beginner" | "Intermediate" | "Advanced"
