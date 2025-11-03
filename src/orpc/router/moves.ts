@@ -3,12 +3,14 @@ import { getSupabaseServerClient } from "@/integrations/supabase/server";
 import {
 	getMoveBySlug,
 	getMovesForUser,
+	getRandomPublishedMove,
 	listPublishedMoves,
 } from "../../data-access/moves";
 import { authMiddleware } from "../auth";
 import {
 	MoveGetBySlugInputSchema,
 	MoveGetBySlugOutputSchema,
+	MoveGetRandomOutputSchema,
 	MovesGetForUserInputSchema,
 	MovesGetForUserOutputSchema,
 	MovesListInputSchema,
@@ -62,4 +64,19 @@ export const getForUser = os
 				message: "Failed to get user moves",
 			});
 		}
+	});
+
+export const getRandomMove = os
+	.output(MoveGetRandomOutputSchema)
+	.use(authMiddleware)
+	.handler(async () => {
+		const slug = await getRandomPublishedMove();
+
+		if (!slug) {
+			throw new ORPCError("NOT_FOUND", {
+				message: "No published moves available",
+			});
+		}
+
+		return { slug };
 	});

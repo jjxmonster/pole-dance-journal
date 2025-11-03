@@ -77,6 +77,10 @@ export const MoveDetailSchema = z.object({
 
 export const MoveGetBySlugOutputSchema = MoveDetailSchema;
 
+export const MoveGetRandomOutputSchema = z.object({
+	slug: z.string(),
+});
+
 export const MovesGetForUserInputSchema = z.object({
 	level: z.enum(moveLevelEnum.enumValues).optional(),
 });
