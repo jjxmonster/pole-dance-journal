@@ -26,12 +26,13 @@ const SPIN_DURATION_MS = 4000;
 const WHEEL_BORDER_WIDTH = 2;
 const DEGREES_PER_CIRCLE = 360;
 const RADIANS_DIVISOR = 180;
+const DEFAULT_ROTATION = -115;
 
 export function WheelOfFortune({
 	segments,
 	onSpinComplete,
 }: WheelOfFortuneProps) {
-	const [rotation, setRotation] = useState(0);
+	const [rotation, setRotation] = useState(DEFAULT_ROTATION);
 	const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
 	const [isSpinning, setIsSpinning] = useState(false);
 	const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -133,7 +134,7 @@ export function WheelOfFortune({
 		<div className="flex flex-col items-center gap-6">
 			<div className="relative">
 				<div
-					className="-translate-x-1/2 -translate-y-2 absolute top-0 left-1/2 z-10 h-0 w-0 border-x-[15px] border-x-transparent border-b-[25px] border-b-red-500"
+					className="-translate-x-1/2 -translate-y-2 absolute top-0 left-1/2 z-10 h-0 w-0 rotate-60 border-x-[15px] border-x-transparent border-b-[25px] border-b-red-500"
 					style={{
 						filter: "drop-shadow(0 2px 4px rgba(0,0,0,0.3))",
 					}}
