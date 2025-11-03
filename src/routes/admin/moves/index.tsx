@@ -84,8 +84,9 @@ function AdminMovesPage() {
 							</TableRow>
 						</TableHeader>
 						<TableBody>
-							{Array.from({ length: 5 }).map(() => (
-								<TableRow key={crypto.randomUUID()}>
+							{Array.from({ length: 5 }).map((_, index) => (
+								// biome-ignore lint/suspicious/noArrayIndexKey: we need a key
+								<TableRow key={index}>
 									<TableCell>
 										<Skeleton className="h-5 w-32" />
 									</TableCell>

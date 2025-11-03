@@ -53,18 +53,31 @@ export function CatalogHeader() {
 						Przeglądaj i śledź swoje postępy dzięki katalogowi figur.
 					</p>
 				</div>
-				<Button onClick={handleOpenWheel} variant="default">
+				<Button
+					className="hidden md:flex"
+					onClick={handleOpenWheel}
+					variant="default"
+				>
 					<Dices className="mr-2 h-4 w-4" />
+					Losuj figurę
+				</Button>
+				<Button
+					className="fixed right-10 bottom-10 z-50 shadow-lg md:hidden"
+					onClick={handleOpenWheel}
+					size="lg"
+					variant="default"
+				>
+					<Dices className="mr-1 h-4 w-4" />
 					Losuj figurę
 				</Button>
 			</div>
 
 			<Dialog onOpenChange={setIsWheelOpen} open={isWheelOpen}>
-				<DialogContent className="max-w-2xl">
+				<DialogContent className="max-w-[90vw] md:max-w-2xl">
 					<DialogHeader>
 						<DialogTitle>Losowa Figura</DialogTitle>
 						<DialogDescription>
-							Zakręć kołem, aby wylosować losową figurę!
+							Zakręć kołem, aby wylosować figurę!
 						</DialogDescription>
 					</DialogHeader>
 

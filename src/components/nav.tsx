@@ -98,6 +98,7 @@ export function Nav() {
 								<div className="flex h-full flex-col items-start justify-start gap-4 px-4 pt-32">
 									<Link
 										className={getNavLinkClass("/catalog")}
+										onClick={() => setIsMenuOpen(false)}
 										to="/catalog"
 										type="button"
 									>
@@ -105,6 +106,7 @@ export function Nav() {
 									</Link>
 									<Link
 										className={getNavLinkClass("/my-moves")}
+										onClick={() => setIsMenuOpen(false)}
 										to="/my-moves"
 										type="button"
 									>
@@ -113,6 +115,7 @@ export function Nav() {
 									{isAdmin && (
 										<Link
 											className={getNavLinkClass("/admin")}
+											onClick={() => setIsMenuOpen(false)}
 											to="/admin"
 											type="button"
 										>

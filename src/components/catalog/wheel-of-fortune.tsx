@@ -16,6 +16,7 @@ type WheelOfFortuneProps = {
 };
 
 const CANVAS_SIZE = 400;
+const CANVAS_SIZE_SM = 300;
 const CANVAS_MARGIN = 10;
 const CENTER_CIRCLE_RADIUS = 20;
 const STROKE_WIDTH = 2;
@@ -27,6 +28,8 @@ const WHEEL_BORDER_WIDTH = 2;
 const DEGREES_PER_CIRCLE = 360;
 const RADIANS_DIVISOR = 180;
 const DEFAULT_ROTATION = -115;
+
+const MOBILE_WIDTH_THRESHOLD = 768;
 
 export function WheelOfFortune({
 	segments,
@@ -70,9 +73,9 @@ export function WheelOfFortune({
 			ctx.closePath();
 
 			const colors = {
-				Beginner: ["#10b981", "#059669"],
-				Intermediate: ["#f59e0b", "#d97706"],
-				Advanced: ["#ef4444", "#dc2626"],
+				Beginner: ["#dcfce7", "#bbf7d0"],
+				Intermediate: ["#dbeafe", "#bfdbfe"],
+				Advanced: ["#fee2e2", "#fecaca"],
 			};
 
 			const colorPair = colors[segment.level];
@@ -86,9 +89,15 @@ export function WheelOfFortune({
 			ctx.save();
 			ctx.translate(centerX, centerY);
 			ctx.rotate(startAngle + (endAngle - startAngle) / WHEEL_BORDER_WIDTH);
+			const textColors = {
+				Beginner: "#166534",
+				Intermediate: "#1e40af",
+				Advanced: "#991b1b",
+			};
+
 			ctx.textAlign = "center";
 			ctx.textBaseline = "middle";
-			ctx.fillStyle = "#ffffff";
+			ctx.fillStyle = textColors[segment.level];
 			ctx.font = `bold ${TEXT_FONT_SIZE}px system-ui`;
 
 			const maxWidth = radius * TEXT_RADIUS_MULTIPLIER;
@@ -134,7 +143,7 @@ export function WheelOfFortune({
 		<div className="flex flex-col items-center gap-6">
 			<div className="relative">
 				<div
-					className="-translate-x-1/2 -translate-y-2 absolute top-0 left-1/2 z-10 h-0 w-0 rotate-60 border-x-[15px] border-x-transparent border-b-[25px] border-b-red-500"
+					className="-translate-x-1/2 -translate-y-2 absolute top-0 left-1/2 z-10 h-0 w-0 rotate-60 border-x-[15px] border-x-transparent border-b-[25px] border-b-primary"
 					style={{
 						filter: "drop-shadow(0 2px 4px rgba(0,0,0,0.3))",
 					}}
@@ -142,7 +151,11 @@ export function WheelOfFortune({
 
 				<canvas
 					className="rounded-full shadow-2xl"
-					height={CANVAS_SIZE}
+					height={
+						window.innerWidth < MOBILE_WIDTH_THRESHOLD
+							? CANVAS_SIZE_SM
+							: CANVAS_SIZE
+					}
 					ref={canvasRef}
 					style={{
 						transform: `rotate(${rotation}deg)`,
@@ -150,17 +163,21 @@ export function WheelOfFortune({
 							? "transform 4s cubic-bezier(0.17, 0.67, 0.12, 0.99)"
 							: "none",
 					}}
-					width={CANVAS_SIZE}
+					width={
+						window.innerWidth < MOBILE_WIDTH_THRESHOLD
+							? CANVAS_SIZE_SM
+							: CANVAS_SIZE
+					}
 				/>
 			</div>
 
 			<Button
-				className="min-w-[200px]"
+				className="min-w-[200px] cursor-pointer"
 				disabled={isSpinning || segments.length === 0}
 				onClick={spinWheel}
 				size="lg"
 			>
-				{isSpinning ? "Kręcenie..." : "Zakręć Kołem!"}
+				{isSpinning ? "Losowanie..." : "Zakręć Kołem!"}
 			</Button>
 
 			{selectedIndex !== null && !isSpinning && (

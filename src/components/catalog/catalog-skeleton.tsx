@@ -20,7 +20,7 @@ type CatalogSkeletonGridProps = {
 export function CatalogSkeletonGrid({ count = 20 }: CatalogSkeletonGridProps) {
 	const skeletonKeys = Array.from(
 		{ length: count },
-		(_, i) => `skeleton-${crypto.randomUUID()}-${i}`
+		(_, index) => `skeleton-${index}`
 	);
 
 	return (
