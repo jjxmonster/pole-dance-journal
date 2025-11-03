@@ -94,6 +94,19 @@ export async function getMoveBySlug(slug: string) {
 	return move ?? null;
 }
 
+export async function getRandomPublishedMove() {
+	const result = await db
+		.select({
+			slug: moves.slug,
+		})
+		.from(moves)
+		.where(and(isNotNull(moves.publishedAt), isNull(moves.deletedAt)))
+		.orderBy(sql`random()`)
+		.limit(1);
+
+	return result[0]?.slug ?? null;
+}
+
 export async function getMovesForUser(
 	userId: string,
 	level?: "Beginner" | "Intermediate" | "Advanced"
