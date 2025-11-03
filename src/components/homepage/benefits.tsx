@@ -8,7 +8,7 @@ const benefits = [
 	"Filtruj figury po poziomie trudności",
 	"Błyskawicznie szukaj w katalogu",
 	"Oznaczaj status każdej figury",
-	"Notuj triki z autozapisem",
+	"Dodawaj prywatne notatki",
 	"Wszystkie Twoje figury w jednym miejscu",
 	"Obserwuj, jak rośniesz w siłę!",
 ];

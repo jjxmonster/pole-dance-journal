@@ -1,3 +1,4 @@
+import { Link } from "@tanstack/react-router";
 import { ArrowRight } from "lucide-react";
 import { motion } from "motion/react";
 import { Button } from "../ui/button";
@@ -17,16 +18,19 @@ export function Cta() {
 						Śledź swoje postępy w pole dance – prosto i skutecznie
 					</h2>
 					<p className="mb-8 text-lg opacity-90">
-						Odkrywaj katalog ruchów, ustawiaj statusy i zapisuj prywatne
-						notatki. Spinella pomaga Ci wracać do treningów z jasnym planem.
+						Odkrywaj katalog figur, zmieniaj status i dodawaj prywatne notatki.
+						Spinella pomaga Ci wracać do treningów z jasnym planem.
 					</p>
 					<Button
+						asChild
 						className="group shadow-lg hover:shadow-xl"
 						size="lg"
 						variant="secondary"
 					>
-						Zacznij za darmo
-						<ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
+						<Link to="/auth/sign-in">
+							Zacznij za darmo
+							<ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
+						</Link>
 					</Button>
 				</motion.div>
 			</div>

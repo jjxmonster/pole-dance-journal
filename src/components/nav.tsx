@@ -41,11 +41,6 @@ export function Nav() {
 			: `${baseClass} text-muted-foreground`;
 	};
 
-	const handleNavigation = async (path: string) => {
-		await navigate({ to: path });
-		setIsMenuOpen(false);
-	};
-
 	return (
 		<nav className="border-border/40 border-b bg-background/95 backdrop-blur">
 			<div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-4 sm:px-6 lg:px-8">
@@ -101,28 +96,28 @@ export function Nav() {
 							</SheetTrigger>
 							<SheetContent className="w-full" side="right">
 								<div className="flex h-full flex-col items-start justify-start gap-4 px-4 pt-32">
-									<button
+									<Link
 										className={getNavLinkClass("/catalog")}
-										onClick={() => handleNavigation("/catalog")}
+										to="/catalog"
 										type="button"
 									>
 										Katalog
-									</button>
-									<button
+									</Link>
+									<Link
 										className={getNavLinkClass("/my-moves")}
-										onClick={() => handleNavigation("/my-moves")}
+										to="/my-moves"
 										type="button"
 									>
 										Moje Figury
-									</button>
+									</Link>
 									{isAdmin && (
-										<button
+										<Link
 											className={getNavLinkClass("/admin")}
-											onClick={() => handleNavigation("/admin")}
+											to="/admin"
 											type="button"
 										>
 											Admin
-										</button>
+										</Link>
 									)}
 									<Button onClick={handleSignOut} size="sm">
 										Wyloguj
@@ -134,7 +129,11 @@ export function Nav() {
 					{isAuthenticated ? (
 						<DropdownMenu>
 							<DropdownMenuTrigger asChild>
-								<Button size="icon-sm" variant="ghost">
+								<Button
+									className="cursor-pointer"
+									size="icon-sm"
+									variant="ghost"
+								>
 									<User className="size-5" />
 								</Button>
 							</DropdownMenuTrigger>
@@ -143,7 +142,7 @@ export function Nav() {
 									{email?.split("@")[0]}
 								</div>
 								<DropdownMenuItem
-									className="text-primary"
+									className="cursor-pointer text-primary"
 									onClick={handleSignOut}
 									variant="default"
 								>
@@ -153,14 +152,12 @@ export function Nav() {
 						</DropdownMenu>
 					) : (
 						<>
-							<Link to="/auth/sign-in">
-								<Button size="sm" variant="ghost">
-									Zaloguj się
-								</Button>
-							</Link>
-							<Link to="/auth/sign-up">
-								<Button size="sm">Stwórz konto</Button>
-							</Link>
+							<Button asChild size="sm" variant="ghost">
+								<Link to="/auth/sign-in">Zaloguj się</Link>
+							</Button>
+							<Button asChild size="sm" variant="default">
+								<Link to="/auth/sign-up">Stwórz konto</Link>
+							</Button>
 						</>
 					)}
 				</motion.div>

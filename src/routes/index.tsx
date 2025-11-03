@@ -9,7 +9,7 @@ export const Route = createFileRoute("/")({
 	head: () => ({
 		meta: [
 			{
-				title: "Spinella: Twój Dziennik Pole Dance - Opanuj Każdą Figurę",
+				title: "Spinella: Śledź swój postęp w Pole Dance",
 			},
 			{
 				name: "description",

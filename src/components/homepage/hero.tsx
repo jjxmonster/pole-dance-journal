@@ -52,9 +52,9 @@ export function Hero() {
 							className="mb-8 text-lg text-muted-foreground sm:text-xl"
 							variants={fadeInUp}
 						>
-							Masz dość zapomnianych figur i notatek na skrawkach papieru?
-							Spinella to Twój osobisty dziennik postępów. Przeglądaj, odhaczaj
-							i notuj. Prościej się nie da.
+							Spinella to najprostszy sposób na monitorowanie Twoich postępów.
+							Odkrywaj nowe figury w katalogu, dodawaj je do swojej kolekcji i
+							patrz, jak status "Chcę zrobić" zmienia się w "Zrobione" 🎉
 						</motion.p>
 						<motion.div
 							className="flex flex-col gap-4 sm:flex-row"

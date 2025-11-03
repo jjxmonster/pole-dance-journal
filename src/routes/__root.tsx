@@ -28,16 +28,16 @@ export const Route = createRootRouteWithContext<MyRouterContext>()({
 				content: "width=device-width, initial-scale=1",
 			},
 			{
-				title: "Spinella - Your Pole Dance Journey Tracker",
+				title: "Spinella: Śledź swój postęp w Pole Dance",
 			},
 			{
 				name: "description",
 				content:
-					"Track your pole dance progress, discover new moves, and achieve your fitness goals with Spinella. Your comprehensive pole dance companion.",
+					"Śledź swoje postępy w pole dance, odkrywaj nowe figury i osiągaj swoje cele fitness z Spinella. Twój kompleksowy partner w pole dance.",
 			},
 			{
 				property: "og:title",
-				content: "Spinella - Your Pole Dance Journey Tracker",
+				title: "Spinella: Śledź swój postęp w Pole Dance",
 			},
 			{
 				property: "og:description",
@@ -54,7 +54,7 @@ export const Route = createRootRouteWithContext<MyRouterContext>()({
 			},
 			{
 				name: "twitter:title",
-				content: "Spinella - Your Pole Dance Journey Tracker",
+				title: "Spinella: Śledź swój postęp w Pole Dance",
 			},
 			{
 				name: "twitter:description",
