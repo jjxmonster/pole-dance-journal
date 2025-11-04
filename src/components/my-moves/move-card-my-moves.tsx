@@ -48,7 +48,7 @@ export function MoveCardMyMoves({ move }: MoveCardMyMovesProps) {
 				</Link>
 			</div>
 
-			<CardContent className="space-y-3 p-3">
+			<CardContent className="space-y-2 p-3">
 				<div className="flex items-start justify-between gap-2">
 					<Link
 						className="group flex-1 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
@@ -70,10 +70,16 @@ export function MoveCardMyMoves({ move }: MoveCardMyMovesProps) {
 						</Link>
 					)}
 				</div>
-
-				<Badge className={LEVEL_COLORS[move.level]} variant="secondary">
-					{LEVEL_LABELS[move.level]}
-				</Badge>
+				<div className="flex items-center gap-2">
+					<Badge className={LEVEL_COLORS[move.level]} variant="secondary">
+						{LEVEL_LABELS[move.level]}
+					</Badge>
+					<Badge variant="default">
+						{move.status === "DONE"
+							? `${move.statusPolish} 🎉`
+							: `${move.statusPolish} 🤞`}
+					</Badge>
+				</div>
 			</CardContent>
 		</Card>
 	);

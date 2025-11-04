@@ -39,21 +39,21 @@ export const Route = createFileRoute("/catalog")({
 	head: () => ({
 		meta: [
 			{
-				title: "Browse Moves - Spinella",
+				title: "Przeglądaj Figury - Spinella",
 			},
 			{
 				name: "description",
 				content:
-					"Explore our comprehensive catalog of pole dance moves. Filter by difficulty level, search by name, and discover new techniques to master.",
+					"Przeglądaj kolekcję figur pole dance. Filtruj po poziomie trudności, wyszukuj po nazwie i odkryj nowe techniki do opanowania.",
 			},
 			{
 				property: "og:title",
-				content: "Browse Pole Dance Moves - Spinella",
+				content: "Przeglądaj Figury Pole Dance - Spinella",
 			},
 			{
 				property: "og:description",
 				content:
-					"Explore our comprehensive catalog of pole dance moves. Filter by difficulty level and discover new techniques.",
+					"Przeglądaj kolekcję figur pole dance. Filtruj po poziomie trudności i odkryj nowe techniki.",
 			},
 			{
 				name: "twitter:card",
@@ -61,7 +61,7 @@ export const Route = createFileRoute("/catalog")({
 			},
 			{
 				name: "twitter:title",
-				content: "Browse Pole Dance Moves - Spinella",
+				content: "Przeglądaj Figury Pole Dance - Spinella",
 			},
 		],
 	}),
