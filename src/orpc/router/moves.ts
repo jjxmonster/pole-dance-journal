@@ -60,7 +60,7 @@ export const getForUser = os
 		const userId = data.data.user.id;
 
 		try {
-			const moves = await getMovesForUser(userId, input.level);
+			const moves = await getMovesForUser(userId, input.level, input.status);
 			return { moves };
 		} catch {
 			throw new ORPCError("INTERNAL_SERVER_ERROR", {

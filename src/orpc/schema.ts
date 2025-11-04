@@ -109,6 +109,7 @@ export const MoveGetRandomForWheelOutputSchema = z.object({
 
 export const MovesGetForUserInputSchema = z.object({
 	level: z.enum(moveLevelEnum.enumValues).optional(),
+	status: z.enum(moveStatusEnum.enumValues).optional(),
 });
 
 export const MyMoveItemSchema = z.object({
