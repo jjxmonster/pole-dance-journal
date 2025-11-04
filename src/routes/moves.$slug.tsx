@@ -1,4 +1,5 @@
 import { createFileRoute, notFound } from "@tanstack/react-router";
+import { useEffect } from "react";
 import { LEVEL_COLORS, LEVEL_LABELS_POLISH } from "@/utils/constants";
 import { Breadcrumbs } from "../components/moves/breadcrumbs";
 import { MoveDescription } from "../components/moves/move-description";
@@ -85,6 +86,12 @@ function MoveDetailPage() {
 		updateStatus,
 		isLoading: isStatusLoading,
 	} = useMoveStatus(move.id);
+
+	useEffect(() => {
+		if (typeof window !== "undefined") {
+			window.scrollTo(0, 0);
+		}
+	}, []);
 
 	return (
 		<div
