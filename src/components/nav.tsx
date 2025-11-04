@@ -35,15 +35,15 @@ export function Nav() {
 
 	const getNavLinkClass = (path: string) => {
 		const baseClass =
-			"text-xl md:text-sm md:font-medium transition-colors font-semibold hover:text-foreground";
+			"text-xl md:text-base md:font-medium transition-colors font-semibold hover:text-foreground";
 		return isActive(path)
 			? `${baseClass} text-primary font-medium`
 			: `${baseClass} text-muted-foreground`;
 	};
 
 	return (
-		<nav className="border-border/40 border-b bg-background/95 backdrop-blur">
-			<div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-4 sm:px-6 lg:px-8">
+		<nav className="-translate-x-1/2 fixed top-4 left-1/2 z-50 w-[calc(100%-2rem)] max-w-7xl rounded-2xl border border-border/40 bg-background/95 shadow-2xl shadow-black/10 backdrop-blur">
+			<div className="flex items-center justify-between px-4 py-4 sm:px-6 lg:px-8">
 				<motion.div
 					animate={{ opacity: 1, x: 0 }}
 					className="flex items-center gap-0"

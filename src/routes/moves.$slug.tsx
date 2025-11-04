@@ -88,7 +88,7 @@ function MoveDetailPage() {
 
 	return (
 		<div
-			className="container mx-auto max-w-6xl px-4 py-8"
+			className="container mx-auto max-w-7xl px-4 py-8 md:px-0"
 			data-testid="move-details-page"
 		>
 			<Breadcrumbs moveName={move.name} />
