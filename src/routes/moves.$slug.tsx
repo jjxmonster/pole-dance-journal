@@ -1,4 +1,4 @@
-import { createFileRoute, notFound } from "@tanstack/react-router";
+import { createFileRoute, notFound, redirect } from "@tanstack/react-router";
 import { useEffect } from "react";
 import { LEVEL_COLORS, LEVEL_LABELS_POLISH } from "@/utils/constants";
 import { Breadcrumbs } from "../components/moves/breadcrumbs";
@@ -14,6 +14,11 @@ import { orpc } from "../orpc/client";
 
 export const Route = createFileRoute("/moves/$slug")({
 	loader: async ({ params, context }) => {
+		const session = await orpc.auth.getSession.call();
+		if (!session.userId) {
+			throw redirect({ to: "/auth/sign-in" });
+		}
+
 		const move = await context.queryClient.ensureQueryData(
 			orpc.moves.getBySlug.queryOptions({
 				input: { slug: params.slug },
