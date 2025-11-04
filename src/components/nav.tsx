@@ -42,7 +42,7 @@ export function Nav() {
 	};
 
 	return (
-		<nav className="-translate-x-1/2 fixed top-4 left-1/2 z-50 w-[calc(100%-2rem)] max-w-7xl rounded-2xl border border-border/40 bg-background/95 shadow-2xl shadow-black/10 backdrop-blur">
+		<nav className="-translate-x-1/2 fixed top-4 left-1/2 z-50 w-[calc(100%-2rem)] max-w-7xl rounded-2xl border border-border/40 bg-background/95 shadow-md backdrop-blur">
 			<div className="flex items-center justify-between px-4 py-4 sm:px-6 lg:px-8">
 				<motion.div
 					animate={{ opacity: 1, x: 0 }}
