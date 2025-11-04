@@ -1,4 +1,4 @@
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useOptimistic, useTransition } from "react";
 import { toast } from "sonner";
 import { client, orpc } from "@/orpc/client";
@@ -8,6 +8,7 @@ import { useAuth } from "./use-auth";
 export function useMoveStatus(moveId: string) {
 	const { isAuthenticated, userId } = useAuth();
 	const [, startTransition] = useTransition();
+	const queryClient = useQueryClient();
 
 	const {
 		data,
@@ -47,6 +48,7 @@ export function useMoveStatus(moveId: string) {
 		},
 		onSuccess: () => {
 			toast.success("Status zaktualizowany");
+			queryClient.invalidateQueries({ queryKey: ["my-moves"] });
 			refetch();
 		},
 		onError: () => {
