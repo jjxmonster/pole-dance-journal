@@ -126,7 +126,8 @@ export async function getRandomMovesForWheel(limit = 10) {
 
 export async function getMovesForUser(
 	userId: string,
-	level?: "Beginner" | "Intermediate" | "Advanced"
+	level?: "Beginner" | "Intermediate" | "Advanced",
+	status?: "WANT" | "ALMOST" | "DONE"
 ) {
 	const { userMoveStatuses } = await import("../db/schema");
 
@@ -134,6 +135,10 @@ export async function getMovesForUser(
 
 	if (level) {
 		conditions.push(eq(moves.level, level));
+	}
+
+	if (status) {
+		conditions.push(eq(userMoveStatuses.status, status));
 	}
 
 	const result = await db

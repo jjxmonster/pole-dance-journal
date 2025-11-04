@@ -3,16 +3,19 @@ import { PlusIcon } from "lucide-react";
 import { z } from "zod";
 import { EmptyState } from "../components/my-moves/empty-state";
 import { ErrorState } from "../components/my-moves/error-state";
+import { LevelFilterBadges } from "../components/my-moves/level-filter-badges";
 import { LoadingState } from "../components/my-moves/loading-state";
 import { MoveCardMyMoves } from "../components/my-moves/move-card-my-moves";
-import { TabNavigation } from "../components/my-moves/tab-navigation";
+import { StatusFilterBadges } from "../components/my-moves/status-filter-badges";
 import { Button } from "../components/ui/button";
-import { moveLevelEnum } from "../db/schema";
+import { moveLevelEnum, moveStatusEnum } from "../db/schema";
 import { useMyMoves } from "../hooks/use-my-moves";
+import { useMyMovesFilters } from "../hooks/use-my-moves-filters";
 import { orpc } from "../orpc/client";
 
 const myMovesSearchSchema = z.object({
 	level: z.enum([...moveLevelEnum.enumValues, "All"] as const).optional(),
+	status: z.enum([...moveStatusEnum.enumValues, "All"] as const).optional(),
 });
 
 export const Route = createFileRoute("/my-moves")({
@@ -52,8 +55,8 @@ export const Route = createFileRoute("/my-moves")({
 });
 
 function MyMovesView() {
-	const { moves, isLoading, isError, activeFilter, setFilter, refetch } =
-		useMyMoves();
+	const { moves, isLoading, isError, refetch } = useMyMoves();
+	const { filters, updateFilters } = useMyMovesFilters();
 
 	const renderContent = () => {
 		if (isLoading) {
@@ -99,7 +102,28 @@ function MyMovesView() {
 				</Button>
 			</div>
 
-			<TabNavigation activeTab={activeFilter} onTabChange={setFilter} />
+			<div className="mb-6 space-y-4">
+				<div>
+					<h2 className="mb-3 font-semibold text-foreground text-sm">
+						Poziom trudności
+					</h2>
+					<LevelFilterBadges
+						activeLevel={filters.level}
+						onChange={(level) => updateFilters({ level, status: "All" })}
+					/>
+				</div>
+				<div>
+					<h2 className="mb-3 font-semibold text-foreground text-sm">
+						Status figury
+					</h2>
+					<StatusFilterBadges
+						activeStatus={filters.status}
+						onChange={(status) =>
+							updateFilters({ status, level: filters.level })
+						}
+					/>
+				</div>
+			</div>
 
 			{renderContent()}
 		</div>

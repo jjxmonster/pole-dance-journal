@@ -1,5 +1,5 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { useNavigate, useSearch } from "@tanstack/react-router";
+import { useNavigate } from "@tanstack/react-router";
 import { toast } from "sonner";
 import type { moveLevelEnum } from "../db/schema";
 import { client, orpc } from "../orpc/client";
@@ -7,23 +7,23 @@ import type { MoveStatus, MyMoveViewModel } from "../types/my-moves";
 import { mapToViewModel } from "../types/my-moves";
 import { STALE_TIME_MS } from "../utils/constants";
 import { useAuth } from "./use-auth";
+import { useMyMovesFilters } from "./use-my-moves-filters";
 
 type MoveLevel = (typeof moveLevelEnum.enumValues)[number];
 
 export function useMyMoves() {
 	const navigate = useNavigate({ from: "/my-moves" });
-	const searchParams = useSearch({ from: "/my-moves" });
 	const { isAuthenticated, userId } = useAuth();
 	const queryClient = useQueryClient();
-
-	const activeFilter: MoveLevel | "All" = searchParams.level || "All";
+	const { filters } = useMyMovesFilters();
 
 	const queryInput = {
-		level: activeFilter === "All" ? undefined : activeFilter,
+		level: filters.level === "All" ? undefined : filters.level,
+		status: filters.status === "All" ? undefined : filters.status,
 	};
 
 	const { data, isLoading, isError, error, refetch } = useQuery({
-		queryKey: ["my-moves", { level: activeFilter }],
+		queryKey: ["my-moves", { level: filters.level, status: filters.status }],
 		queryFn: async () => {
 			if (!isAuthenticated) {
 				return { moves: [] };
@@ -53,16 +53,19 @@ export function useMyMoves() {
 		},
 		onMutate: async ({ moveId, newStatus }) => {
 			await queryClient.cancelQueries({
-				queryKey: ["my-moves", { level: activeFilter }],
+				queryKey: [
+					"my-moves",
+					{ level: filters.level, status: filters.status },
+				],
 			});
 
 			const previousData = queryClient.getQueryData([
 				"my-moves",
-				{ level: activeFilter },
+				{ level: filters.level, status: filters.status },
 			]);
 
 			queryClient.setQueryData(
-				["my-moves", { level: activeFilter }],
+				["my-moves", { level: filters.level, status: filters.status }],
 				(old: { moves: MyMoveViewModel[] } | undefined) => {
 					if (!old) {
 						return old;
@@ -97,7 +100,7 @@ export function useMyMoves() {
 		onError: (_err, _variables, context) => {
 			if (context?.previousData) {
 				queryClient.setQueryData(
-					["my-moves", { level: activeFilter }],
+					["my-moves", { level: filters.level, status: filters.status }],
 					context.previousData
 				);
 			}
@@ -108,7 +111,10 @@ export function useMyMoves() {
 		},
 		onSettled: () => {
 			queryClient.invalidateQueries({
-				queryKey: ["my-moves", { level: activeFilter }],
+				queryKey: [
+					"my-moves",
+					{ level: filters.level, status: filters.status },
+				],
 			});
 		},
 	});
@@ -136,7 +142,7 @@ export function useMyMoves() {
 		isError,
 		error,
 		updateStatus,
-		activeFilter,
+		activeFilter: filters.level,
 		setFilter,
 		refetch,
 	};
