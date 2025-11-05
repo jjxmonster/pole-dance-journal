@@ -4,6 +4,7 @@ import { z } from "zod";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { SignUpAuthEmailSchema, SignUpPasswordSchema } from "@/utils/schemas";
+import { PasswordInput } from "./password-input";
 import { PasswordRequirementsCheck } from "./password-requirements-check";
 
 type SignUpFormProps = {
@@ -119,10 +120,11 @@ export function SignUpForm({
 				<label className="mb-2 block font-medium text-sm" htmlFor="password">
 					Hasło
 				</label>
-				<Input
-					aria-describedby={passwordError ? "password-error" : undefined}
+				<PasswordInput
 					autoComplete="new-password"
 					disabled={isLoading}
+					error={passwordError}
+					errorId="password-error"
 					id="password"
 					onBlur={() => validatePassword(password)}
 					onChange={(e) => {
@@ -132,7 +134,6 @@ export function SignUpForm({
 						}
 					}}
 					required
-					type="password"
 					value={password}
 				/>
 				{passwordError && (
@@ -149,17 +150,15 @@ export function SignUpForm({
 				>
 					Potwierdź hasło
 				</label>
-				<Input
-					aria-describedby={
-						confirmPasswordError ? "confirm-password-error" : undefined
-					}
+				<PasswordInput
 					autoComplete="new-password"
 					disabled={isLoading}
+					error={confirmPasswordError}
+					errorId="confirm-password-error"
 					id="confirmPassword"
 					onBlur={() => validateConfirmPassword(confirmPassword)}
 					onChange={(e) => setConfirmPassword(e.target.value)}
 					required
-					type="password"
 					value={confirmPassword}
 				/>
 				{confirmPasswordError && (

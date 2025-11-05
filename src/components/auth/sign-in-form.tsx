@@ -4,6 +4,7 @@ import { z } from "zod";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { SignInAuthEmailSchema, SignInPasswordSchema } from "@/utils/schemas";
+import { PasswordInput } from "./password-input";
 
 type SignInFormProps = {
 	onSubmit: (values: { email: string; password: string }) => Promise<void>;
@@ -108,19 +109,19 @@ export function SignInForm({
 						className="text-primary text-xs hover:underline"
 						to="/auth/forgot-password"
 					>
-						Zapomniałeś hasła?
+						Zapomniałeś hasła?
 					</Link>
 				</div>
-				<Input
-					aria-describedby={passwordError ? "password-error" : undefined}
+				<PasswordInput
 					autoComplete="current-password"
 					data-testid="auth-input-password"
 					disabled={isLoading}
+					error={passwordError}
+					errorId="password-error"
 					id="password"
 					onBlur={() => validatePassword(password)}
 					onChange={(e) => setPassword(e.target.value)}
 					required
-					type="password"
 					value={password}
 				/>
 				{passwordError && (
