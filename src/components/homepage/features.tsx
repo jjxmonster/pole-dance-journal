@@ -1,5 +1,6 @@
 import { BookOpen, ListChecks, StickyNote } from "lucide-react";
 import { motion } from "motion/react";
+import { m } from "@/paraglide/messages";
 import { Badge } from "../ui/badge";
 import {
 	Card,
@@ -25,24 +26,21 @@ const staggerContainer = {
 	},
 };
 
-const features = [
+const getFeatures = () => [
 	{
 		icon: BookOpen,
-		title: "Przeglądaj Katalog Figur",
-		description:
-			"Odkryj setki figur pole dance. Każda z opisem, poziomem trudności i instrukcją krok po kroku. Twoja następna ulubiona figura już tu jest.",
+		title: m.homepage_features_1_title(),
+		description: m.homepage_features_1_description(),
 	},
 	{
 		icon: ListChecks,
-		title: "Śledź Swój Progres",
-		description:
-			"Oznaczaj figury jako 'Chcę zrobić', 'Prawie umiem' lub 'Zrobione'. Obserwuj, jak Twoja lista 'Zrobione' rośnie z każdym treningiem!",
+		title: m.homepage_features_2_title(),
+		description: m.homepage_features_2_description(),
 	},
 	{
 		icon: StickyNote,
-		title: "Prywatne Notatki",
-		description:
-			"Zapisuj swoje przemyślenia, triki i uwagi przy każdej figurze. Twoje notatki są tylko dla Ciebie – bezpieczne i zawsze pod ręką.",
+		title: m.homepage_features_3_title(),
+		description: m.homepage_features_3_description(),
 	},
 ];
 
@@ -58,15 +56,13 @@ export function Features() {
 					whileInView={{ opacity: 1, y: 0 }}
 				>
 					<Badge className="mb-4" variant="outline">
-						Dziennik Postępów
+						{m.homepage_features_badge()}
 					</Badge>
 					<h2 className="mb-4 font-bold text-4xl text-foreground tracking-tight sm:text-5xl">
-						Wszystko, czego potrzebujesz, w jednym miejscu
+						{m.homepage_features_title()}
 					</h2>
 					<p className="mx-auto max-w-2xl text-lg text-muted-foreground">
-						Spinella to proste i intuicyjne narzędzie, które zamienia Twój
-						trening w świadomą podróż. Twoje wszystkie figury, notatki i postępy
-						w jednym miejscu.
+						{m.homepage_features_description()}
 					</p>
 				</motion.div>
 
@@ -77,7 +73,7 @@ export function Features() {
 					viewport={{ once: true }}
 					whileInView="animate"
 				>
-					{features.map((feature) => (
+					{getFeatures().map((feature) => (
 						<motion.div key={feature.title} variants={fadeInUp}>
 							<Card className="group relative h-full overflow-hidden border-border/50 transition-all hover:border-primary/50 hover:shadow-lg">
 								<div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-transparent opacity-0 transition-opacity group-hover:opacity-100" />

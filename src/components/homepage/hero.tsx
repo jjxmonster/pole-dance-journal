@@ -1,6 +1,7 @@
 import { Link } from "@tanstack/react-router";
 import { ArrowRight } from "lucide-react";
 import { motion } from "motion/react";
+import { m } from "@/paraglide/messages";
 import { Badge } from "../ui/badge";
 import { Button } from "../ui/button";
 
@@ -36,25 +37,23 @@ export function Hero() {
 					>
 						<motion.div variants={fadeInUp}>
 							<Badge className="mb-4 w-fit" variant="secondary">
-								Opanuj każdą figurę
+								{m.homepage_hero_badge()}
 							</Badge>
 						</motion.div>
 						<motion.h1
 							className="mb-6 font-sans font-semibold text-5xl text-foreground tracking-tight sm:text-6xl lg:text-7xl"
 							variants={fadeInUp}
 						>
-							Śledź swój postęp w{" "}
+							{m.homepage_hero_title()}{" "}
 							<span className="font-borel text-primary leading-1">
-								Pole Dance
+								{m.homepage_hero_title_highlight()}
 							</span>{" "}
 						</motion.h1>
 						<motion.p
 							className="mb-8 text-lg text-muted-foreground sm:text-xl"
 							variants={fadeInUp}
 						>
-							Spinella to najprostszy sposób na monitorowanie Twoich postępów.
-							Odkrywaj nowe figury w katalogu, dodawaj je do swojej kolekcji i
-							patrz, jak status "Chcę zrobić" zmienia się w "Zrobione" 🎉
+							{m.homepage_hero_description()}
 						</motion.p>
 						<motion.div
 							className="flex flex-col gap-4 sm:flex-row"
@@ -62,7 +61,7 @@ export function Hero() {
 						>
 							<Button asChild className="group" size="lg">
 								<Link to="/auth/sign-in">
-									Dołącz teraz
+									{m.homepage_hero_cta()}
 									<ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
 								</Link>
 							</Button>

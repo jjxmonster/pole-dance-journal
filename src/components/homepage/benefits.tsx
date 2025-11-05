@@ -1,16 +1,17 @@
 import { CheckCircle2 } from "lucide-react";
 import { motion } from "motion/react";
+import { m } from "@/paraglide/messages";
 import { Badge } from "../ui/badge";
 
 const ANIMATION_STAGGER_DELAY = 0.1;
 
-const benefits = [
-	"Filtruj figury po poziomie trudności",
-	"Błyskawicznie szukaj w katalogu",
-	"Oznaczaj status każdej figury",
-	"Dodawaj prywatne notatki",
-	"Wszystkie Twoje figury w jednym miejscu",
-	"Obserwuj, jak rośniesz w siłę!",
+const getBenefits = () => [
+	m.homepage_benefits_1(),
+	m.homepage_benefits_2(),
+	m.homepage_benefits_3(),
+	m.homepage_benefits_4(),
+	m.homepage_benefits_5(),
+	m.homepage_benefits_6(),
 ];
 
 export function Benefits() {
@@ -26,18 +27,16 @@ export function Benefits() {
 						whileInView={{ opacity: 1, x: 0 }}
 					>
 						<Badge className="mb-4 w-fit" variant="secondary">
-							Od Chaosu do Perfekcji
+							{m.homepage_benefits_badge()}
 						</Badge>
 						<h2 className="mb-6 font-bold text-4xl text-foreground tracking-tight sm:text-5xl">
-							Uporządkuj swoją naukę pole dance
+							{m.homepage_benefits_title()}
 						</h2>
 						<p className="mb-8 text-lg text-muted-foreground">
-							Koniec z bałaganem w notatkach i zapomnianymi celami. Spinella to
-							Twoja uporządkowana przestrzeń, gdzie każda figura ma swoje
-							miejsce, a każdy postęp jest zauważony.
+							{m.homepage_benefits_description()}
 						</p>
 						<div className="grid gap-4 sm:grid-cols-2">
-							{benefits.map((benefit, benefitIndex) => (
+							{getBenefits().map((benefit, benefitIndex) => (
 								<motion.div
 									className="flex items-start gap-3"
 									initial={{ opacity: 0, x: -20 }}

@@ -37,7 +37,8 @@
       "includes": [
         "src/routeTree.gen.ts",
         "supabase/migrations/**",
-        ".nitro/**"
+        ".nitro/**",
+        "src/paraglide/**"
       ],
       "formatter": {
         "enabled": false
