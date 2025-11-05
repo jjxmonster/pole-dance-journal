@@ -1,8 +1,7 @@
 {
   "$schema": "https://inlang.com/schema/inlang-message-format",
   "homepage_hero_badge": "Master every move",
-  "homepage_hero_title": "Track your pole dance progress",
-  "homepage_hero_title_highlight": "Pole Dance",
+  "homepage_hero_title": "Track your <span className=\"font-borel text-primary leading-1\">Pole Dance</span> progress",
   "homepage_hero_description": "Spinella is the simplest way to monitor your progress. Discover new moves in the catalog, add them to your collection, and watch as your 'Want to do' status transforms into 'Done' 🎉",
   "homepage_hero_cta": "Join now",
   "homepage_features_badge": "Progress Journal",

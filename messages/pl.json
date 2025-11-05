@@ -1,8 +1,7 @@
 {
   "$schema": "https://inlang.com/schema/inlang-message-format",
   "homepage_hero_badge": "Opanuj każdą figurę",
-  "homepage_hero_title": "Śledź swój postęp w",
-  "homepage_hero_title_highlight": "Pole Dance",
+  "homepage_hero_title": "Śledź swój postęp w <span className=\"font-borel text-primary leading-1\">Pole Dance</span>",
   "homepage_hero_description": "Spinella to najprostszy sposób na monitorowanie Twoich postępów. Odkrywaj nowe figury w katalogu, dodawaj je do swojej kolekcji i patrz, jak status \"Chcę zrobić\" zmienia się w \"Zrobione\" 🎉",
   "homepage_hero_cta": "Dołącz teraz",
   "homepage_features_badge": "Dziennik Postępów",

@@ -6,6 +6,7 @@ import { Badge } from "../ui/badge";
 import { Button } from "../ui/button";
 
 const ANIMATION_STAGGER_DELAY = 0.1;
+const HERO_TITLE_REGEX = /^(.*?)<span className="([^"]*)">(.*?)<\/span>(.*)$/;
 
 const fadeInUp = {
 	initial: { opacity: 0, y: 60 },
@@ -19,6 +20,20 @@ const staggerContainer = {
 			staggerChildren: ANIMATION_STAGGER_DELAY,
 		},
 	},
+};
+
+const parseHeroTitle = (titleText: string) => {
+	const spanMatch = titleText.match(HERO_TITLE_REGEX);
+	if (spanMatch) {
+		const [, before, className, highlighted, after] = spanMatch;
+		return (
+			<>
+				{before} <span className={className}>{highlighted}</span>
+				{after}
+			</>
+		);
+	}
+	return titleText;
 };
 
 export function Hero() {
@@ -44,10 +59,7 @@ export function Hero() {
 							className="mb-6 font-sans font-semibold text-5xl text-foreground tracking-tight sm:text-6xl lg:text-7xl"
 							variants={fadeInUp}
 						>
-							{m.homepage_hero_title()}{" "}
-							<span className="font-borel text-primary leading-1">
-								{m.homepage_hero_title_highlight()}
-							</span>{" "}
+							{parseHeroTitle(m.homepage_hero_title())}
 						</motion.h1>
 						<motion.p
 							className="mb-8 text-lg text-muted-foreground sm:text-xl"
