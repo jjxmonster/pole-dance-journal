@@ -68,3 +68,20 @@ export const LEVEL_LABELS_POLISH: Record<MoveLevel | "All", string> = {
 	Intermediate: "Średnio zaawansowany",
 	Advanced: "Zaawansowany",
 };
+
+export const ERROR_MESSAGE_KEYS = {
+	EMAIL_ALREADY_REGISTERED: "auth_error_email_already_registered",
+	REGISTER_FAILED: "auth_error_register_failed",
+	REGISTRATION_FAILED: "auth_error_registration_failed",
+	EMAIL_NOT_CONFIRMED: "auth_error_email_not_confirmed",
+	INVALID_CREDENTIALS: "auth_error_invalid_credentials",
+	SIGNIN_FAILED: "auth_error_signin_failed",
+	SIGNOUT_FAILED: "auth_error_signout_failed",
+	OAUTH_START_FAILED: "auth_error_oauth_start_failed",
+	OAUTH_LINK_INVALID: "auth_error_oauth_link_invalid",
+	USER_INFO_FAILED: "auth_error_user_info_failed",
+	OAUTH_FAILED: "auth_error_oauth_failed",
+	RESET_LINK_INVALID: "auth_error_reset_link_invalid",
+	PASSWORD_UPDATE_FAILED: "auth_error_password_update_failed",
+	RESET_PASSWORD_FAILED: "auth_error_reset_password_failed",
+} as const;

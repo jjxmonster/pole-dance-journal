@@ -3,9 +3,22 @@ import { useState } from "react";
 import { AuthFormWrapper } from "@/components/auth/auth-form-wrapper";
 import { SignUpForm } from "@/components/auth/sign-up-form";
 import { orpc } from "@/orpc/client";
+import { m } from "@/paraglide/messages";
+import { translateErrorMessage } from "@/utils/error-messages";
 
 export const Route = createFileRoute("/auth/sign-up")({
 	component: SignUpPage,
+	head: () => ({
+		meta: [
+			{
+				title: m.auth_signup_meta_title(),
+			},
+			{
+				name: "description",
+				content: m.auth_signup_meta_description(),
+			},
+		],
+	}),
 });
 
 function SignUpPage() {
@@ -21,17 +34,13 @@ function SignUpPage() {
 		try {
 			await orpc.auth.register.call(values);
 
-			setSuccess(
-				"Konto zostało utworzone pomyślnie! Sprawdź swoją pocztę i kliknij w link w celu potwierdzenia konta."
-			);
+			setSuccess(m.auth_signup_success());
 		} catch (err) {
-			if (err instanceof Error && err.message.includes("already registered")) {
-				setError("Ten e-mail jest już zarejestrowany.");
-			} else if (err instanceof Error && err.message.includes("password")) {
-				setError("Hasło nie spełnia wymagań.");
-			} else {
-				setError("Wystąpił błąd podczas rejestracji. Spróbuj ponownie.");
-			}
+			const errorMessage =
+				err instanceof Error
+					? translateErrorMessage(err.message)
+					: m.auth_error_registration_failed();
+			setError(errorMessage);
 		} finally {
 			setIsLoading(false);
 		}
@@ -39,10 +48,10 @@ function SignUpPage() {
 
 	return (
 		<AuthFormWrapper
-			description="Wprowadź swoje dane poniżej, aby utworzyć swoje konto"
+			description={m.auth_signup_description()}
 			error={error}
 			success={success}
-			title="Utwórz konto"
+			title={m.auth_signup_title()}
 		>
 			<SignUpForm isLoading={isLoading} onSubmit={handleSubmit} />
 		</AuthFormWrapper>

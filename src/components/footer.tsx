@@ -1,3 +1,5 @@
+import { m } from "@/paraglide/messages";
+
 export function Footer() {
 	return (
 		<footer className="border-border border-t bg-muted/30 px-4 py-6 sm:px-6 lg:px-8">
@@ -11,7 +13,7 @@ export function Footer() {
 							<span className="font-bold text-foreground">Spinella</span>
 						</div>
 						<p className="text-muted-foreground text-sm">
-							Opanuj każdą figurę, śledź swój postęp.
+							{m.footer_description()}
 						</p>
 					</div>
 				</div>

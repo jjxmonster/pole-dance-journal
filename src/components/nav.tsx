@@ -4,6 +4,7 @@ import { motion } from "motion/react";
 import { useState } from "react";
 import { useAuth } from "@/hooks/use-auth";
 import { orpc } from "@/orpc/client";
+import { m } from "@/paraglide/messages";
 import { Button } from "./ui/button";
 import {
 	DropdownMenu,
@@ -69,14 +70,14 @@ export function Nav() {
 					{isAuthenticated && (
 						<>
 							<Link className={getNavLinkClass("/catalog")} to="/catalog">
-								Katalog
+								{m.nav_catalog()}
 							</Link>
 							<Link className={getNavLinkClass("/my-moves")} to="/my-moves">
-								Moje Figury
+								{m.nav_my_moves()}
 							</Link>
 							{isAdmin && (
 								<Link className={getNavLinkClass("/admin")} to="/admin">
-									Admin
+									{m.nav_admin()}
 								</Link>
 							)}
 						</>
@@ -103,7 +104,7 @@ export function Nav() {
 										to="/catalog"
 										type="button"
 									>
-										Katalog
+										{m.nav_catalog()}
 									</Link>
 									<Link
 										className={getNavLinkClass("/my-moves")}
@@ -111,7 +112,7 @@ export function Nav() {
 										to="/my-moves"
 										type="button"
 									>
-										Moje Figury
+										{m.nav_my_moves()}
 									</Link>
 									{isAdmin && (
 										<Link
@@ -120,11 +121,11 @@ export function Nav() {
 											to="/admin"
 											type="button"
 										>
-											Admin
+											{m.nav_admin()}
 										</Link>
 									)}
 									<Button onClick={handleSignOut} size="sm">
-										Wyloguj
+										{m.nav_sign_out()}
 									</Button>
 								</div>
 							</SheetContent>
@@ -151,17 +152,17 @@ export function Nav() {
 									onClick={handleSignOut}
 									variant="default"
 								>
-									Wyloguj
+									{m.nav_sign_out()}
 								</DropdownMenuItem>
 							</DropdownMenuContent>
 						</DropdownMenu>
 					) : (
 						<>
 							<Button asChild size="sm" variant="ghost">
-								<Link to="/auth/sign-in">Zaloguj się</Link>
+								<Link to="/auth/sign-in">{m.nav_sign_in()}</Link>
 							</Button>
 							<Button asChild size="sm" variant="default">
-								<Link to="/auth/sign-up">Stwórz konto</Link>
+								<Link to="/auth/sign-up">{m.nav_create_account()}</Link>
 							</Button>
 						</>
 					)}

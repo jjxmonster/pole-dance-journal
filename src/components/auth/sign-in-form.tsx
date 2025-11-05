@@ -3,6 +3,7 @@ import { useState } from "react";
 import { z } from "zod";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { m } from "@/paraglide/messages";
 import { SignInAuthEmailSchema, SignInPasswordSchema } from "@/utils/schemas";
 import { PasswordInput } from "./password-input";
 
@@ -78,7 +79,7 @@ export function SignInForm({
 		<form className="space-y-4" onSubmit={handleSubmit}>
 			<div>
 				<label className="mb-2 block font-medium text-sm" htmlFor="email">
-					Email
+					{m.auth_signin_email_label()}
 				</label>
 				<Input
 					aria-describedby={emailError ? "email-error" : undefined}
@@ -103,13 +104,13 @@ export function SignInForm({
 			<div>
 				<div className="mb-2 flex items-center justify-between">
 					<label className="font-medium text-sm" htmlFor="password">
-						Hasło
+						{m.auth_signin_password_label()}
 					</label>
 					<Link
 						className="text-primary text-xs hover:underline"
 						to="/auth/forgot-password"
 					>
-						Zapomniałeś hasła?
+						{m.auth_signin_forgot_password()}
 					</Link>
 				</div>
 				<PasswordInput
@@ -142,7 +143,7 @@ export function SignInForm({
 				disabled={isLoading || !isFormValid}
 				type="submit"
 			>
-				{isLoading ? "Logowanie..." : "Zaloguj się"}
+				{isLoading ? m.auth_signin_loading() : m.auth_signin_button()}
 			</Button>
 
 			{onGoogleSignIn && (
@@ -153,7 +154,7 @@ export function SignInForm({
 						</div>
 						<div className="relative flex justify-center text-xs uppercase">
 							<span className="bg-card px-2 text-muted-foreground">
-								Lub zaloguj się za pomocą
+								{m.auth_signin_divider()}
 							</span>
 						</div>
 					</div>
@@ -188,15 +189,15 @@ export function SignInForm({
 								fill="#EA4335"
 							/>
 						</svg>
-						Zaloguj się z Google
+						{m.auth_signin_google_button()}
 					</Button>
 				</>
 			)}
 
 			<div className="mt-6 text-center text-sm">
-				Nie masz jeszcze konta?{" "}
+				{m.auth_signin_no_account()}{" "}
 				<Link className="text-primary hover:underline" to="/auth/sign-up">
-					Stwórz konto
+					{m.auth_signin_create_account_link()}
 				</Link>
 			</div>
 		</form>
