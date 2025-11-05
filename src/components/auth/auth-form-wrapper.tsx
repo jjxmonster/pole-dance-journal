@@ -17,7 +17,7 @@ export function AuthFormWrapper({
 	success,
 }: AuthFormWrapperProps) {
 	return (
-		<div className="flex min-h-[70vh] items-center justify-center p-4">
+		<div className="flex min-h-[70vh] items-center justify-center p-4 py-8">
 			<Card className="w-full max-w-md p-6 shadow-sm">
 				<div className="mb-6 text-center">
 					<h1 className="font-bold text-2xl tracking-tight">{title}</h1>
