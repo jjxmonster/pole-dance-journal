@@ -11,6 +11,7 @@ import {
 	DropdownMenuItem,
 	DropdownMenuTrigger,
 } from "./ui/dropdown-menu";
+import { LanguageSwitcher } from "./ui/language-switcher";
 import { Sheet, SheetContent, SheetTrigger } from "./ui/sheet";
 
 export function Nav() {
@@ -129,6 +130,7 @@ export function Nav() {
 							</SheetContent>
 						</Sheet>
 					)}
+					<LanguageSwitcher />
 					{isAuthenticated ? (
 						<DropdownMenu>
 							<DropdownMenuTrigger asChild>

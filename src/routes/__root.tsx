@@ -6,6 +6,7 @@ import {
 } from "@tanstack/react-router";
 import { useEffect } from "react";
 import { Toaster } from "sonner";
+import { getLocale } from "@/paraglide/runtime";
 import { Footer } from "../components/footer";
 import { Nav } from "../components/nav";
 import { NotFound } from "../components/not-found";
@@ -101,7 +102,7 @@ function RootDocument({ children }: { children: React.ReactNode }) {
 	}, [setAuth]);
 
 	return (
-		<html lang="en">
+		<html lang={getLocale()}>
 			<head>
 				<HeadContent />
 			</head>
