@@ -1,4 +1,5 @@
 import { Link } from "@tanstack/react-router";
+import { Eye, EyeOff } from "lucide-react";
 import { useState } from "react";
 import { z } from "zod";
 import { Button } from "@/components/ui/button";
@@ -21,6 +22,7 @@ export function SignInForm({
 	const [password, setPassword] = useState("");
 	const [emailError, setEmailError] = useState<string | null>(null);
 	const [passwordError, setPasswordError] = useState<string | null>(null);
+	const [showPassword, setShowPassword] = useState(false);
 
 	const validateEmail = (value: string) => {
 		try {
@@ -108,21 +110,37 @@ export function SignInForm({
 						className="text-primary text-xs hover:underline"
 						to="/auth/forgot-password"
 					>
-						Zapomniałeś hasła?
+						Zapomniałeś hasła?
 					</Link>
 				</div>
-				<Input
-					aria-describedby={passwordError ? "password-error" : undefined}
-					autoComplete="current-password"
-					data-testid="auth-input-password"
-					disabled={isLoading}
-					id="password"
-					onBlur={() => validatePassword(password)}
-					onChange={(e) => setPassword(e.target.value)}
-					required
-					type="password"
-					value={password}
-				/>
+				<div className="relative">
+					<Input
+						aria-describedby={passwordError ? "password-error" : undefined}
+						autoComplete="current-password"
+						data-testid="auth-input-password"
+						disabled={isLoading}
+						id="password"
+						onBlur={() => validatePassword(password)}
+						onChange={(e) => setPassword(e.target.value)}
+						required
+						type={showPassword ? "text" : "password"}
+						value={password}
+					/>
+					<button
+						aria-label={showPassword ? "Hide password" : "Show password"}
+						className="-translate-y-1/2 absolute top-1/2 right-3 text-muted-foreground transition-colors hover:text-foreground"
+						disabled={isLoading}
+						onClick={() => setShowPassword(!showPassword)}
+						tabIndex={-1}
+						type="button"
+					>
+						{showPassword ? (
+							<EyeOff className="h-4 w-4" />
+						) : (
+							<Eye className="h-4 w-4" />
+						)}
+					</button>
+				</div>
 				{passwordError && (
 					<div className="mt-1 text-destructive text-sm" id="password-error">
 						{passwordError}
