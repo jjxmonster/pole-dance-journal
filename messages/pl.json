@@ -79,5 +79,6 @@
   "validation_password_min_length": "Hasło musi mieć co najmniej {minLength} znaków",
   "validation_password_max_length": "Hasło musi mieć co najwyżej {maxLength} znaków",
   "validation_password_requirements": "Hasło musi zawierać co najmniej 1 literę i 1 cyfrę",
-  "footer_description": "Opanuj każdą figurę 🎉"
+  "footer_description": "Opanuj każdą figurę 🎉",
+  "footer_created_by": "Stworzone z ❤️ dla"
 }

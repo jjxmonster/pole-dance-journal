@@ -79,5 +79,6 @@
   "validation_password_min_length": "Password must be at least {minLength} characters",
   "validation_password_max_length": "Password must be at most {maxLength} characters",
   "validation_password_requirements": "Password must contain at least 1 letter and 1 digit",
-  "footer_description": "Master every move 🎉"
+  "footer_description": "Master every move 🎉",
+  "footer_created_by": "Created with ❤️ for"
 }

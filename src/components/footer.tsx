@@ -17,8 +17,17 @@ export function Footer() {
 						</p>
 					</div>
 				</div>
+
 				<div className="mt-8 border-border border-t pt-8 text-center text-muted-foreground text-sm">
-					© 2025 Spinella
+					{m.footer_created_by()}{" "}
+					<a
+						href="https://www.instagram.com/wiktoriv_ke/"
+						rel="noopener noreferrer"
+						target="_blank"
+					>
+						@wiktoria_ke
+					</a>{" "}
+					| {new Date().getFullYear()} Spinella
 				</div>
 			</div>
 		</footer>

@@ -53,7 +53,7 @@ export function Nav() {
 					transition={{ duration: 0.5 }}
 				>
 					<Link className="flex items-center gap-0" to="/">
-						<div className="flex h-10 w-10 items-center justify-center rounded-lg bg-praimary text-primary-foreground">
+						<div className="mr-1 flex h-7 w-7 items-center justify-center rounded-lg bg-praimary text-primary-foreground">
 							<img alt="Spinella logo" src="/logo.svg" />
 						</div>
 						<span className="font-sans font-semibold text-foreground text-xl">
