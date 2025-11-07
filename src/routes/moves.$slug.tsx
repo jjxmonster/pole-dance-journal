@@ -1,6 +1,6 @@
 import { createFileRoute, notFound, redirect } from "@tanstack/react-router";
 import { useEffect } from "react";
-import { LEVEL_COLORS, LEVEL_LABELS_POLISH } from "@/utils/constants";
+import { LEVEL_COLORS } from "@/utils/constants";
 import { Breadcrumbs } from "../components/moves/breadcrumbs";
 import { MoveDescription } from "../components/moves/move-description";
 import { MoveImage } from "../components/moves/move-image";
@@ -11,6 +11,20 @@ import { Badge } from "../components/ui/badge";
 import { useAuth } from "../hooks/use-auth";
 import { useMoveStatus } from "../hooks/use-move-status";
 import { orpc } from "../orpc/client";
+import { m } from "../paraglide/messages";
+
+const getLevelLabel = (level: string): string => {
+	switch (level) {
+		case "Beginner":
+			return m.catalog_level_beginner();
+		case "Intermediate":
+			return m.catalog_level_intermediate();
+		case "Advanced":
+			return m.catalog_level_advanced();
+		default:
+			return level;
+	}
+};
 
 export const Route = createFileRoute("/moves/$slug")({
 	loader: async ({ params, context }) => {
@@ -116,7 +130,7 @@ function MoveDetailPage() {
 								{move.name}
 							</h1>
 							<Badge className={LEVEL_COLORS[move.level]} variant="secondary">
-								{LEVEL_LABELS_POLISH[move.level]}
+								{getLevelLabel(move.level)}
 							</Badge>
 						</header>
 						<MoveDescription description={move.description} />

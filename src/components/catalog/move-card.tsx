@@ -1,5 +1,6 @@
 import { Link } from "@tanstack/react-router";
 import type { z } from "zod";
+import { m } from "@/paraglide/messages";
 import { LEVEL_COLORS } from "@/utils/constants";
 import type { MoveListItemSchema } from "../../orpc/schema";
 import { Badge } from "../ui/badge";
@@ -11,10 +12,17 @@ type MoveCardProps = {
 	move: MoveDTO;
 };
 
-const LEVEL_LABELS: Record<MoveDTO["level"], string> = {
-	Beginner: "Początkujący",
-	Intermediate: "Średnio zaawansowany",
-	Advanced: "Zaawansowany",
+const getLevelLabel = (level: MoveDTO["level"]): string => {
+	switch (level) {
+		case "Beginner":
+			return m.catalog_level_beginner();
+		case "Intermediate":
+			return m.catalog_level_intermediate();
+		case "Advanced":
+			return m.catalog_level_advanced();
+		default:
+			return level;
+	}
 };
 
 const FALLBACK_IMAGE = "/move.jpg";
@@ -46,7 +54,7 @@ export function MoveCard({ move }: MoveCardProps) {
 					</h3>
 
 					<Badge className={LEVEL_COLORS[move.level]} variant="secondary">
-						{LEVEL_LABELS[move.level]}
+						{getLevelLabel(move.level)}
 					</Badge>
 				</CardContent>
 			</Card>

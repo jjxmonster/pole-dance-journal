@@ -1,6 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useNavigate } from "@tanstack/react-router";
 import { toast } from "sonner";
+import { m } from "@/paraglide/messages";
 import type { moveLevelEnum } from "../db/schema";
 import { client, orpc } from "../orpc/client";
 import type { MoveStatus, MyMoveViewModel } from "../types/my-moves";
@@ -71,23 +72,12 @@ export function useMyMoves() {
 						return old;
 					}
 
-					const getStatusPolish = (status: MoveStatus): string => {
-						if (status === "WANT") {
-							return "Chcę zrobić";
-						}
-						if (status === "ALMOST") {
-							return "Prawie";
-						}
-						return "Zrobione";
-					};
-
 					return {
 						moves: old.moves.map((move) =>
 							move.id === moveId
 								? {
 										...move,
 										status: newStatus,
-										statusPolish: getStatusPolish(newStatus),
 									}
 								: move
 						),
@@ -104,10 +94,10 @@ export function useMyMoves() {
 					context.previousData
 				);
 			}
-			toast.error("Nie udało się zaktualizować statusu. Spróbuj ponownie.");
+			toast.error(m.my_moves_update_status_error());
 		},
 		onSuccess: () => {
-			toast.success("Status zaktualizowany");
+			toast.success(m.my_moves_update_status_success());
 		},
 		onSettled: () => {
 			queryClient.invalidateQueries({
@@ -121,7 +111,7 @@ export function useMyMoves() {
 
 	const updateStatus = (moveId: string, newStatus: MoveStatus) => {
 		if (!isAuthenticated) {
-			toast.error("Musisz być zalogowany, aby zaktualizować status");
+			toast.error(m.my_moves_must_be_logged_in());
 			return;
 		}
 

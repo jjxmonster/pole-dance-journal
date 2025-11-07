@@ -1,4 +1,4 @@
-import type { MoveLevel, StatusOption } from "@/types/move";
+import type { StatusOption } from "@/types/move";
 
 export const PAGE_SIZE = 20;
 export const DEBOUNCE_DELAY_MS = 250;
@@ -61,13 +61,6 @@ export const LEVEL_COLORS = {
 	Intermediate: "bg-blue-100 text-blue-800 hover:bg-blue-100",
 	Advanced: "bg-red-100 text-red-800 hover:bg-red-100",
 } as const;
-
-export const LEVEL_LABELS_POLISH: Record<MoveLevel | "All", string> = {
-	All: "Wszystkie",
-	Beginner: "Początkujący",
-	Intermediate: "Średnio zaawansowany",
-	Advanced: "Zaawansowany",
-};
 
 export const ERROR_MESSAGE_KEYS = {
 	EMAIL_ALREADY_REGISTERED: "auth_error_email_already_registered",

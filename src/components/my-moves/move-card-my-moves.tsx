@@ -1,5 +1,6 @@
 import { Link } from "@tanstack/react-router";
 import { FileTextIcon } from "lucide-react";
+import { m } from "@/paraglide/messages";
 import { LEVEL_COLORS } from "@/utils/constants";
 import type { MyMoveViewModel } from "../../types/my-moves";
 import { Badge } from "../ui/badge";
@@ -9,10 +10,30 @@ type MoveCardMyMovesProps = {
 	move: MyMoveViewModel;
 };
 
-const LEVEL_LABELS: Record<MyMoveViewModel["level"], string> = {
-	Beginner: "Początkujący",
-	Intermediate: "Średnio zaawansowany",
-	Advanced: "Zaawansowany",
+const getLevelLabel = (level: MyMoveViewModel["level"]): string => {
+	switch (level) {
+		case "Beginner":
+			return m.catalog_level_beginner();
+		case "Intermediate":
+			return m.catalog_level_intermediate();
+		case "Advanced":
+			return m.catalog_level_advanced();
+		default:
+			return level;
+	}
+};
+
+const getStatusLabel = (status: MyMoveViewModel["status"]): string => {
+	switch (status) {
+		case "WANT":
+			return m.my_moves_status_want();
+		case "ALMOST":
+			return m.my_moves_status_almost();
+		case "DONE":
+			return m.my_moves_status_done();
+		default:
+			return status;
+	}
 };
 
 const FALLBACK_IMAGE = "/move.jpg";
@@ -40,7 +61,7 @@ export function MoveCardMyMoves({ move }: MoveCardMyMovesProps) {
 						{move.isArchived && (
 							<div className="absolute inset-0 flex items-center justify-center bg-black/50">
 								<Badge className="text-xs" variant="secondary">
-									Zarchiwizowany
+									{m.my_moves_card_archived_badge()}
 								</Badge>
 							</div>
 						)}
@@ -61,7 +82,7 @@ export function MoveCardMyMoves({ move }: MoveCardMyMovesProps) {
 					</Link>
 					{move.hasNote && (
 						<Link
-							aria-label="Posiada notatki"
+							aria-label={m.my_moves_card_has_note_aria_label()}
 							className="shrink-0 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
 							params={{ slug: move.slug }}
 							to="/moves/$slug"
@@ -72,12 +93,16 @@ export function MoveCardMyMoves({ move }: MoveCardMyMovesProps) {
 				</div>
 				<div className="flex flex-col gap-2">
 					<Badge className={LEVEL_COLORS[move.level]} variant="secondary">
-						{LEVEL_LABELS[move.level]}
+						{getLevelLabel(move.level)}
 					</Badge>
 					<Badge variant="default">
 						{move.status === "DONE"
-							? `${move.statusPolish} 🎉`
-							: `${move.statusPolish} 🤞`}
+							? m.my_moves_card_status_done_celebration({
+									status: getStatusLabel(move.status),
+								})
+							: m.my_moves_card_status_in_progress({
+									status: getStatusLabel(move.status),
+								})}
 					</Badge>
 				</div>
 			</CardContent>
