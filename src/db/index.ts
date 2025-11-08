@@ -4,9 +4,11 @@ import { env } from "@/env";
 import {
 	moves,
 	movesRelations,
+	moveTranslations,
 	profiles,
 	steps,
 	stepsRelations,
+	stepTranslations,
 	userMoveStatuses,
 } from "./schema";
 
@@ -22,5 +24,7 @@ export const db = drizzle({
 		steps,
 		stepsRelations,
 		userMoveStatuses,
+		moveTranslations,
+		stepTranslations,
 	},
 });

@@ -20,6 +20,7 @@ export const moveLevelEnum = pgEnum("move_level", [
 	"Advanced",
 ]);
 export const moveStatusEnum = pgEnum("move_status", ["WANT", "ALMOST", "DONE"]);
+export const languageEnum = pgEnum("language", ["en", "pl"]);
 
 export const profiles = pgTable("profiles", {
 	id: uuid("id").defaultRandom().primaryKey(),
@@ -157,13 +158,15 @@ export const moveNotes = pgTable(
 export const movesRelations = relations(moves, ({ many }) => ({
 	steps: many(steps),
 	userMoveStatuses: many(userMoveStatuses),
+	translations: many(moveTranslations),
 }));
 
-export const stepsRelations = relations(steps, ({ one }) => ({
+export const stepsRelations = relations(steps, ({ one, many }) => ({
 	move: one(moves, {
 		fields: [steps.moveId],
 		references: [moves.id],
 	}),
+	translations: many(stepTranslations),
 }));
 
 export const userMoveStatusesRelations = relations(
@@ -183,3 +186,103 @@ export const moveNotesRelations = relations(moveNotes, ({ one }) => ({
 		references: [userMoveStatuses.userId, userMoveStatuses.moveId],
 	}),
 }));
+
+export const moveTranslations = pgTable(
+	"move_translations",
+	{
+		id: uuid("id").defaultRandom().primaryKey(),
+		moveId: uuid("move_id")
+			.notNull()
+			.references(() => moves.id, { onDelete: "cascade" }),
+		language: languageEnum("language").notNull(),
+		name: text("name").notNull(),
+		description: text("description").notNull(),
+		slug: text("slug").notNull(),
+		level: moveLevelEnum("level").notNull(),
+		createdAt: timestamp("created_at", { withTimezone: true })
+			.defaultNow()
+			.notNull(),
+		updatedAt: timestamp("updated_at", { withTimezone: true })
+			.defaultNow()
+			.notNull(),
+	},
+	(table) => ({
+		moveLanguageUnique: unique("move_language_unique").on(
+			table.moveId,
+			table.language
+		),
+		slugLanguageUnique: uniqueIndex("idx_move_trans_slug_language").on(
+			table.slug,
+			table.language
+		),
+		nameIdx: uniqueIndex("idx_move_trans_name_active").on(
+			sql`lower(${table.name})`,
+			table.language
+		),
+		nameLengthCheck: check(
+			"move_trans_name_length_check",
+			sql`char_length(${table.name}) between 3 and 100`
+		),
+		descriptionLengthCheck: check(
+			"move_trans_description_length_check",
+			sql`char_length(${table.description}) between 10 and 1000`
+		),
+		slugLengthCheck: check(
+			"move_trans_slug_length_check",
+			sql`char_length(${table.slug}) between 3 and 100`
+		),
+	})
+);
+
+export const stepTranslations = pgTable(
+	"step_translations",
+	{
+		id: uuid("id").defaultRandom().primaryKey(),
+		stepId: uuid("step_id")
+			.notNull()
+			.references(() => steps.id, { onDelete: "cascade" }),
+		language: languageEnum("language").notNull(),
+		title: text("title").notNull(),
+		description: text("description").notNull(),
+		createdAt: timestamp("created_at", { withTimezone: true })
+			.defaultNow()
+			.notNull(),
+		updatedAt: timestamp("updated_at", { withTimezone: true })
+			.defaultNow()
+			.notNull(),
+	},
+	(table) => ({
+		stepLanguageUnique: unique("step_language_unique").on(
+			table.stepId,
+			table.language
+		),
+		titleLengthCheck: check(
+			"step_trans_title_length_check",
+			sql`char_length(${table.title}) between 3 and 350`
+		),
+		descriptionLengthCheck: check(
+			"step_trans_description_length_check",
+			sql`char_length(${table.description}) between 10 and 350`
+		),
+	})
+);
+
+export const moveTranslationsRelations = relations(
+	moveTranslations,
+	({ one }) => ({
+		move: one(moves, {
+			fields: [moveTranslations.moveId],
+			references: [moves.id],
+		}),
+	})
+);
+
+export const stepTranslationsRelations = relations(
+	stepTranslations,
+	({ one }) => ({
+		step: one(steps, {
+			fields: [stepTranslations.stepId],
+			references: [steps.id],
+		}),
+	})
+);
