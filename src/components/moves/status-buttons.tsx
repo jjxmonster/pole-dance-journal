@@ -2,8 +2,10 @@ import { Loader2 } from "lucide-react";
 import { useRef, useState } from "react";
 import Confetti from "react-canvas-confetti";
 import { createPortal } from "react-dom";
+import { m } from "@/paraglide/messages";
 import type { MoveStatus } from "@/types/move";
 import { STATUS_OPTIONS } from "@/utils/constants";
+import { translateStatusMessage } from "@/utils/status-messages";
 import { Button } from "../ui/button";
 
 type StatusButtonsProps = {
@@ -73,7 +75,7 @@ export function StatusButtons({
 			className="flex w-full flex-col gap-2"
 			data-testid="status-buttons-container"
 		>
-			<h2 className="font-medium text-lg">Mój Status</h2>
+			<h2 className="font-medium text-lg">{m.move_status_label()}</h2>
 			<div className="flex flex-col gap-2">
 				{STATUS_OPTIONS.map((option) => {
 					const isSelected = option.value === value;
@@ -93,7 +95,7 @@ export function StatusButtons({
 							type="button"
 							variant={buttonVariant}
 						>
-							{option.label}
+							{translateStatusMessage(option.messageKey)}
 							{disabled && <Loader2 className="size-4 animate-spin" />}
 						</Button>
 					);

@@ -1,6 +1,7 @@
 import { Link } from "@tanstack/react-router";
 import { ArrowRight } from "lucide-react";
 import { motion } from "motion/react";
+import { m } from "@/paraglide/messages";
 import { Button } from "../ui/button";
 
 export function Cta() {
@@ -15,11 +16,10 @@ export function Cta() {
 					whileInView={{ opacity: 1, y: 0 }}
 				>
 					<h2 className="mb-6 font-bold text-4xl tracking-tight sm:text-5xl">
-						Śledź swoje postępy w pole dance – prosto i skutecznie
+						{m.homepage_cta_title()}
 					</h2>
 					<p className="mb-8 text-lg opacity-90">
-						Odkrywaj katalog figur, zmieniaj status i dodawaj prywatne notatki.
-						Spinella pomaga Ci wracać do treningów z jasnym planem.
+						{m.homepage_cta_description()}
 					</p>
 					<Button
 						asChild
@@ -28,7 +28,7 @@ export function Cta() {
 						variant="secondary"
 					>
 						<Link to="/auth/sign-in">
-							Zacznij za darmo
+							{m.homepage_cta_button()}
 							<ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
 						</Link>
 					</Button>

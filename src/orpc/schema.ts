@@ -16,11 +16,6 @@ import {
 	NOTE_MAX_LENGTH,
 } from "../utils/constants";
 
-export const TodoSchema = z.object({
-	id: z.number().int().min(1),
-	name: z.string(),
-});
-
 const DEFAULT_LIMIT = 20;
 const MAX_LIMIT = 100;
 const DEFAULT_OFFSET = 0;
@@ -73,6 +68,7 @@ export const MoveDetailSchema = z.object({
 	slug: z.string(),
 	imageUrl: z.string().nullable(),
 	steps: z.array(MoveStepSchema),
+	translationFallback: z.boolean().optional(),
 });
 
 export const MoveGetBySlugOutputSchema = MoveDetailSchema;
@@ -365,39 +361,69 @@ export const AdminCreateMoveInputSchema = z.object({
 			MOVE_NAME_MAX_LENGTH,
 			`Name must be at most ${MOVE_NAME_MAX_LENGTH} characters`
 		),
-	description: z
+	descriptionEn: z
 		.string()
 		.min(
 			MOVE_DESCRIPTION_MIN_LENGTH,
-			`Description must be at least ${MOVE_DESCRIPTION_MIN_LENGTH} characters`
+			`English description must be at least ${MOVE_DESCRIPTION_MIN_LENGTH} characters`
 		)
 		.max(
 			MOVE_DESCRIPTION_MAX_LENGTH,
-			`Description must be at most ${MOVE_DESCRIPTION_MAX_LENGTH} characters`
+			`English description must be at most ${MOVE_DESCRIPTION_MAX_LENGTH} characters`
+		),
+	descriptionPl: z
+		.string()
+		.min(
+			MOVE_DESCRIPTION_MIN_LENGTH,
+			`Polish description must be at least ${MOVE_DESCRIPTION_MIN_LENGTH} characters`
+		)
+		.max(
+			MOVE_DESCRIPTION_MAX_LENGTH,
+			`Polish description must be at most ${MOVE_DESCRIPTION_MAX_LENGTH} characters`
 		),
 	level: z.enum(moveLevelEnum.enumValues),
 	steps: z
 		.array(
 			z.object({
-				title: z
+				titleEn: z
 					.string()
 					.min(
 						MOVE_STEP_TITLE_MIN_LENGTH,
-						`Step title must be at least ${MOVE_STEP_TITLE_MIN_LENGTH} characters`
+						`English step title must be at least ${MOVE_STEP_TITLE_MIN_LENGTH} characters`
 					)
 					.max(
 						MOVE_STEP_TITLE_MAX_LENGTH,
-						`Step title must be at most ${MOVE_STEP_TITLE_MAX_LENGTH} characters`
+						`English step title must be at most ${MOVE_STEP_TITLE_MAX_LENGTH} characters`
 					),
-				description: z
+				titlePl: z
+					.string()
+					.min(
+						MOVE_STEP_TITLE_MIN_LENGTH,
+						`Polish step title must be at least ${MOVE_STEP_TITLE_MIN_LENGTH} characters`
+					)
+					.max(
+						MOVE_STEP_TITLE_MAX_LENGTH,
+						`Polish step title must be at most ${MOVE_STEP_TITLE_MAX_LENGTH} characters`
+					),
+				descriptionEn: z
 					.string()
 					.min(
 						MOVE_STEP_DESCRIPTION_MIN_LENGTH,
-						`Step description must be at least ${MOVE_STEP_DESCRIPTION_MIN_LENGTH} characters`
+						`English step description must be at least ${MOVE_STEP_DESCRIPTION_MIN_LENGTH} characters`
 					)
 					.max(
 						MOVE_STEP_DESCRIPTION_MAX_LENGTH,
-						`Step description must be at most ${MOVE_STEP_DESCRIPTION_MAX_LENGTH} characters`
+						`English step description must be at most ${MOVE_STEP_DESCRIPTION_MAX_LENGTH} characters`
+					),
+				descriptionPl: z
+					.string()
+					.min(
+						MOVE_STEP_DESCRIPTION_MIN_LENGTH,
+						`Polish step description must be at least ${MOVE_STEP_DESCRIPTION_MIN_LENGTH} characters`
+					)
+					.max(
+						MOVE_STEP_DESCRIPTION_MAX_LENGTH,
+						`Polish step description must be at most ${MOVE_STEP_DESCRIPTION_MAX_LENGTH} characters`
 					),
 			})
 		)
@@ -444,39 +470,69 @@ export const AdminEditMoveInputSchema = z.object({
 			MOVE_NAME_MAX_LENGTH,
 			`Name must be at most ${MOVE_NAME_MAX_LENGTH} characters`
 		),
-	description: z
+	descriptionEn: z
 		.string()
 		.min(
 			MOVE_DESCRIPTION_MIN_LENGTH,
-			`Description must be at least ${MOVE_DESCRIPTION_MIN_LENGTH} characters`
+			`English description must be at least ${MOVE_DESCRIPTION_MIN_LENGTH} characters`
 		)
 		.max(
 			MOVE_DESCRIPTION_MAX_LENGTH,
-			`Description must be at most ${MOVE_DESCRIPTION_MAX_LENGTH} characters`
+			`English description must be at most ${MOVE_DESCRIPTION_MAX_LENGTH} characters`
+		),
+	descriptionPl: z
+		.string()
+		.min(
+			MOVE_DESCRIPTION_MIN_LENGTH,
+			`Polish description must be at least ${MOVE_DESCRIPTION_MIN_LENGTH} characters`
+		)
+		.max(
+			MOVE_DESCRIPTION_MAX_LENGTH,
+			`Polish description must be at most ${MOVE_DESCRIPTION_MAX_LENGTH} characters`
 		),
 	level: z.enum(moveLevelEnum.enumValues),
 	steps: z
 		.array(
 			z.object({
-				title: z
+				titleEn: z
 					.string()
 					.min(
 						MOVE_STEP_TITLE_MIN_LENGTH,
-						`Step title must be at least ${MOVE_STEP_TITLE_MIN_LENGTH} characters`
+						`English step title must be at least ${MOVE_STEP_TITLE_MIN_LENGTH} characters`
 					)
 					.max(
 						MOVE_STEP_TITLE_MAX_LENGTH,
-						`Step title must be at most ${MOVE_STEP_TITLE_MAX_LENGTH} characters`
+						`English step title must be at most ${MOVE_STEP_TITLE_MAX_LENGTH} characters`
 					),
-				description: z
+				titlePl: z
+					.string()
+					.min(
+						MOVE_STEP_TITLE_MIN_LENGTH,
+						`Polish step title must be at least ${MOVE_STEP_TITLE_MIN_LENGTH} characters`
+					)
+					.max(
+						MOVE_STEP_TITLE_MAX_LENGTH,
+						`Polish step title must be at most ${MOVE_STEP_TITLE_MAX_LENGTH} characters`
+					),
+				descriptionEn: z
 					.string()
 					.min(
 						MOVE_STEP_DESCRIPTION_MIN_LENGTH,
-						`Step description must be at least ${MOVE_STEP_DESCRIPTION_MIN_LENGTH} characters`
+						`English step description must be at least ${MOVE_STEP_DESCRIPTION_MIN_LENGTH} characters`
 					)
 					.max(
 						MOVE_STEP_DESCRIPTION_MAX_LENGTH,
-						`Step description must be at most ${MOVE_STEP_DESCRIPTION_MAX_LENGTH} characters`
+						`English step description must be at most ${MOVE_STEP_DESCRIPTION_MAX_LENGTH} characters`
+					),
+				descriptionPl: z
+					.string()
+					.min(
+						MOVE_STEP_DESCRIPTION_MIN_LENGTH,
+						`Polish step description must be at least ${MOVE_STEP_DESCRIPTION_MIN_LENGTH} characters`
+					)
+					.max(
+						MOVE_STEP_DESCRIPTION_MAX_LENGTH,
+						`Polish step description must be at most ${MOVE_STEP_DESCRIPTION_MAX_LENGTH} characters`
 					),
 			})
 		)
@@ -503,7 +559,24 @@ export const AdminGetMoveInputSchema = z.object({
 export type AdminGetMoveInput = z.infer<typeof AdminGetMoveInputSchema>;
 
 export const AdminGetMoveOutputSchema = z.object({
-	move: MoveDetailSchema,
+	move: z.object({
+		id: z.string().uuid(),
+		name: z.string(),
+		descriptionEn: z.string(),
+		descriptionPl: z.string(),
+		level: z.enum(moveLevelEnum.enumValues),
+		slug: z.string(),
+		imageUrl: z.string().nullable(),
+		steps: z.array(
+			z.object({
+				orderIndex: z.number().int().positive(),
+				titleEn: z.string(),
+				titlePl: z.string(),
+				descriptionEn: z.string(),
+				descriptionPl: z.string(),
+			})
+		),
+	}),
 });
 
 export type AdminGetMoveOutput = z.infer<typeof AdminGetMoveOutputSchema>;

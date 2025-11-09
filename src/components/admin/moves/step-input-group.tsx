@@ -2,7 +2,6 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import {
-	MOVE_DESCRIPTION_MAX_LENGTH,
 	MOVE_STEP_DESCRIPTION_MAX_LENGTH,
 	MOVE_STEP_TITLE_MAX_LENGTH,
 } from "@/utils/constants";
@@ -10,17 +9,24 @@ import {
 type StepInputGroupProps = {
 	step: {
 		id: string;
-		title: string;
-		description: string;
+		titleEn: string;
+		titlePl: string;
+		descriptionEn: string;
+		descriptionPl: string;
 	};
 	index: number;
 	onRemove: (index: number) => void;
 	onChange: (
 		index: number,
-		field: "title" | "description",
+		field: "titleEn" | "titlePl" | "descriptionEn" | "descriptionPl",
 		value: string
 	) => void;
-	error: { title?: string; description?: string } | null;
+	error: {
+		titleEn?: string;
+		titlePl?: string;
+		descriptionEn?: string;
+		descriptionPl?: string;
+	} | null;
 };
 
 export function StepInputGroup({
@@ -31,8 +37,10 @@ export function StepInputGroup({
 	error,
 }: StepInputGroupProps) {
 	const stepNumber = index + 1;
-	const titleLength = step.title.length;
-	const descriptionLength = step.description.length;
+	const titleEnLength = step.titleEn.length;
+	const titlePlLength = step.titlePl.length;
+	const descriptionEnLength = step.descriptionEn.length;
+	const descriptionPlLength = step.descriptionPl.length;
 
 	return (
 		<div className="space-y-4 rounded-lg border border-input bg-card p-4">
@@ -52,38 +60,38 @@ export function StepInputGroup({
 			<div>
 				<label
 					className="mb-2 block font-medium text-sm"
-					htmlFor={`step-title-${index}`}
+					htmlFor={`step-title-en-${index}`}
 				>
-					Step Title
+					Step Title (English)
 				</label>
 				<Input
 					aria-describedby={
-						error?.title ? `step-title-${index}-error` : undefined
+						error?.titleEn ? `step-title-en-${index}-error` : undefined
 					}
 					className="max-w-2xl"
-					id={`step-title-${index}`}
+					id={`step-title-en-${index}`}
 					maxLength={MOVE_STEP_TITLE_MAX_LENGTH}
-					onChange={(e) => onChange(index, "title", e.target.value)}
+					onChange={(e) => onChange(index, "titleEn", e.target.value)}
 					placeholder="e.g., Mount the pole"
-					value={step.title}
+					value={step.titleEn}
 				/>
 				<div className="mt-1 flex items-center justify-between">
-					{error?.title && (
+					{error?.titleEn && (
 						<div
 							className="text-destructive text-sm"
-							id={`step-title-${index}-error`}
+							id={`step-title-en-${index}-error`}
 						>
-							{error.title}
+							{error.titleEn}
 						</div>
 					)}
 					<span
 						className={`text-xs ${
-							titleLength > MOVE_STEP_TITLE_MAX_LENGTH
+							titleEnLength > MOVE_STEP_TITLE_MAX_LENGTH
 								? "text-amber-600"
 								: "text-muted-foreground"
 						}`}
 					>
-						{titleLength}/{MOVE_STEP_TITLE_MAX_LENGTH}
+						{titleEnLength}/{MOVE_STEP_TITLE_MAX_LENGTH}
 					</span>
 				</div>
 			</div>
@@ -91,39 +99,122 @@ export function StepInputGroup({
 			<div>
 				<label
 					className="mb-2 block font-medium text-sm"
-					htmlFor={`step-description-${index}`}
+					htmlFor={`step-title-pl-${index}`}
 				>
-					Step Description
+					Step Title (Polish)
 				</label>
-				<Textarea
+				<Input
 					aria-describedby={
-						error?.description ? `step-description-${index}-error` : undefined
+						error?.titlePl ? `step-title-pl-${index}-error` : undefined
 					}
 					className="max-w-2xl"
-					id={`step-description-${index}`}
-					maxLength={MOVE_STEP_DESCRIPTION_MAX_LENGTH}
-					onChange={(e) => onChange(index, "description", e.target.value)}
-					placeholder="Describe how to perform this step..."
-					rows={3}
-					value={step.description}
+					id={`step-title-pl-${index}`}
+					maxLength={MOVE_STEP_TITLE_MAX_LENGTH}
+					onChange={(e) => onChange(index, "titlePl", e.target.value)}
+					placeholder="np., Wejdź na drążek"
+					value={step.titlePl}
 				/>
 				<div className="mt-1 flex items-center justify-between">
-					{error?.description && (
+					{error?.titlePl && (
 						<div
 							className="text-destructive text-sm"
-							id={`step-description-${index}-error`}
+							id={`step-title-pl-${index}-error`}
 						>
-							{error.description}
+							{error.titlePl}
 						</div>
 					)}
 					<span
 						className={`text-xs ${
-							descriptionLength > MOVE_DESCRIPTION_MAX_LENGTH
+							titlePlLength > MOVE_STEP_TITLE_MAX_LENGTH
 								? "text-amber-600"
 								: "text-muted-foreground"
 						}`}
 					>
-						{descriptionLength}/{MOVE_STEP_DESCRIPTION_MAX_LENGTH}
+						{titlePlLength}/{MOVE_STEP_TITLE_MAX_LENGTH}
+					</span>
+				</div>
+			</div>
+
+			<div>
+				<label
+					className="mb-2 block font-medium text-sm"
+					htmlFor={`step-description-en-${index}`}
+				>
+					Step Description (English)
+				</label>
+				<Textarea
+					aria-describedby={
+						error?.descriptionEn
+							? `step-description-en-${index}-error`
+							: undefined
+					}
+					className="max-w-2xl"
+					id={`step-description-en-${index}`}
+					maxLength={MOVE_STEP_DESCRIPTION_MAX_LENGTH}
+					onChange={(e) => onChange(index, "descriptionEn", e.target.value)}
+					placeholder="Describe how to perform this step..."
+					rows={3}
+					value={step.descriptionEn}
+				/>
+				<div className="mt-1 flex items-center justify-between">
+					{error?.descriptionEn && (
+						<div
+							className="text-destructive text-sm"
+							id={`step-description-en-${index}-error`}
+						>
+							{error.descriptionEn}
+						</div>
+					)}
+					<span
+						className={`text-xs ${
+							descriptionEnLength > MOVE_STEP_DESCRIPTION_MAX_LENGTH
+								? "text-amber-600"
+								: "text-muted-foreground"
+						}`}
+					>
+						{descriptionEnLength}/{MOVE_STEP_DESCRIPTION_MAX_LENGTH}
+					</span>
+				</div>
+			</div>
+
+			<div>
+				<label
+					className="mb-2 block font-medium text-sm"
+					htmlFor={`step-description-pl-${index}`}
+				>
+					Step Description (Polish)
+				</label>
+				<Textarea
+					aria-describedby={
+						error?.descriptionPl
+							? `step-description-pl-${index}-error`
+							: undefined
+					}
+					className="max-w-2xl"
+					id={`step-description-pl-${index}`}
+					maxLength={MOVE_STEP_DESCRIPTION_MAX_LENGTH}
+					onChange={(e) => onChange(index, "descriptionPl", e.target.value)}
+					placeholder="Opisz, jak wykonać ten krok..."
+					rows={3}
+					value={step.descriptionPl}
+				/>
+				<div className="mt-1 flex items-center justify-between">
+					{error?.descriptionPl && (
+						<div
+							className="text-destructive text-sm"
+							id={`step-description-pl-${index}-error`}
+						>
+							{error.descriptionPl}
+						</div>
+					)}
+					<span
+						className={`text-xs ${
+							descriptionPlLength > MOVE_STEP_DESCRIPTION_MAX_LENGTH
+								? "text-amber-600"
+								: "text-muted-foreground"
+						}`}
+					>
+						{descriptionPlLength}/{MOVE_STEP_DESCRIPTION_MAX_LENGTH}
 					</span>
 				</div>
 			</div>

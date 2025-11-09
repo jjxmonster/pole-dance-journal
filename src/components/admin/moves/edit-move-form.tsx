@@ -91,7 +91,7 @@ export function EditMoveForm({ move: moveData }: EditMoveFormProps) {
 	};
 
 	const handleInputChangeWithTracking = (
-		field: "name" | "description" | "level",
+		field: "name" | "descriptionEn" | "descriptionPl" | "level",
 		value: string
 	) => {
 		setHasFormChanged(true);
@@ -100,7 +100,7 @@ export function EditMoveForm({ move: moveData }: EditMoveFormProps) {
 
 	const handleStepChangeWithTracking = (
 		index: number,
-		field: "title" | "description",
+		field: "titleEn" | "titlePl" | "descriptionEn" | "descriptionPl",
 		value: string
 	) => {
 		setHasFormChanged(true);
@@ -131,14 +131,19 @@ export function EditMoveForm({ move: moveData }: EditMoveFormProps) {
 	};
 
 	const nameLength = formState.name.length;
-	const descriptionLength = formState.description.length;
+	const descriptionEnLength = formState.descriptionEn.length;
+	const descriptionPlLength = formState.descriptionPl.length;
 
 	const nameError = errors?.issues.find(
 		(issue) => Array.isArray(issue.path) && issue.path[0] === "name"
 	)?.message;
 
-	const descriptionError = errors?.issues.find(
-		(issue) => Array.isArray(issue.path) && issue.path[0] === "description"
+	const descriptionEnError = errors?.issues.find(
+		(issue) => Array.isArray(issue.path) && issue.path[0] === "descriptionEn"
+	)?.message;
+
+	const descriptionPlError = errors?.issues.find(
+		(issue) => Array.isArray(issue.path) && issue.path[0] === "descriptionPl"
 	)?.message;
 
 	const levelError = errors?.issues.find(
@@ -151,8 +156,10 @@ export function EditMoveForm({ move: moveData }: EditMoveFormProps) {
 
 	const isFormDisabled = isSubmitting || editMoveMutation.isPending;
 	const isLoadingName = nameLength > MOVE_NAME_WARNING_THRESHOLD;
-	const isLoadingDescription =
-		descriptionLength > MOVE_DESCRIPTION_WARNING_THRESHOLD;
+	const isLoadingDescriptionEn =
+		descriptionEnLength > MOVE_DESCRIPTION_WARNING_THRESHOLD;
+	const isLoadingDescriptionPl =
+		descriptionPlLength > MOVE_DESCRIPTION_WARNING_THRESHOLD;
 
 	return (
 		<>
@@ -193,39 +200,83 @@ export function EditMoveForm({ move: moveData }: EditMoveFormProps) {
 					<div>
 						<Label
 							className="mb-2 block font-medium text-sm"
-							htmlFor="description"
+							htmlFor="description-en"
 						>
-							Description
+							Description (English)
 						</Label>
 						<Textarea
 							aria-describedby={
-								descriptionError ? "description-error" : undefined
+								descriptionEnError ? "description-en-error" : undefined
 							}
-							id="description"
+							className="max-w-2xl"
+							id="description-en"
 							maxLength={MOVE_DESCRIPTION_MAX_LENGTH}
 							onChange={(e) =>
-								handleInputChangeWithTracking("description", e.target.value)
+								handleInputChangeWithTracking("descriptionEn", e.target.value)
 							}
 							placeholder="Describe the move and its key characteristics..."
-							value={formState.description}
+							rows={4}
+							value={formState.descriptionEn}
 						/>
 						<div className="mt-1 flex items-center justify-between">
-							{descriptionError && (
+							{descriptionEnError && (
 								<div
 									className="text-destructive text-sm"
-									id="description-error"
+									id="description-en-error"
 								>
-									{descriptionError}
+									{descriptionEnError}
 								</div>
 							)}
 							<span
 								className={
-									isLoadingDescription
+									isLoadingDescriptionEn
 										? "text-amber-600 text-xs"
 										: "text-muted-foreground text-xs"
 								}
 							>
-								{descriptionLength}/{MOVE_DESCRIPTION_MAX_LENGTH}
+								{descriptionEnLength}/{MOVE_DESCRIPTION_MAX_LENGTH}
+							</span>
+						</div>
+					</div>
+
+					<div>
+						<Label
+							className="mb-2 block font-medium text-sm"
+							htmlFor="description-pl"
+						>
+							Description (Polish)
+						</Label>
+						<Textarea
+							aria-describedby={
+								descriptionPlError ? "description-pl-error" : undefined
+							}
+							className="max-w-2xl"
+							id="description-pl"
+							maxLength={MOVE_DESCRIPTION_MAX_LENGTH}
+							onChange={(e) =>
+								handleInputChangeWithTracking("descriptionPl", e.target.value)
+							}
+							placeholder="Opisz ruch i jego kluczowe cechy..."
+							rows={4}
+							value={formState.descriptionPl}
+						/>
+						<div className="mt-1 flex items-center justify-between">
+							{descriptionPlError && (
+								<div
+									className="text-destructive text-sm"
+									id="description-pl-error"
+								>
+									{descriptionPlError}
+								</div>
+							)}
+							<span
+								className={
+									isLoadingDescriptionPl
+										? "text-amber-600 text-xs"
+										: "text-muted-foreground text-xs"
+								}
+							>
+								{descriptionPlLength}/{MOVE_DESCRIPTION_MAX_LENGTH}
 							</span>
 						</div>
 					</div>

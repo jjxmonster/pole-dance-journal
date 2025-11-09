@@ -3,27 +3,26 @@ import { Benefits } from "../components/homepage/benefits";
 import { Cta } from "../components/homepage/cta";
 import { Features } from "../components/homepage/features";
 import { Hero } from "../components/homepage/hero";
+import { m } from "../paraglide/messages";
 
 export const Route = createFileRoute("/")({
 	component: HomePage,
 	head: () => ({
 		meta: [
 			{
-				title: "Spinella: Śledź swój postęp w Pole Dance",
+				title: m.homepage_meta_title(),
 			},
 			{
 				name: "description",
-				content:
-					"Zmień chaos w progres. Spinella to Twoje miejsce, gdzie śledzisz naukę figur pole dance, notujesz triki i świętujesz postępy. Dołącz i zobacz, jak szybko rośniesz w siłę!",
+				content: m.homepage_meta_description(),
 			},
 			{
 				property: "og:title",
-				content: "Spinella: Twój Dziennik Pole Dance - Opanuj Każdą Figurę",
+				content: m.homepage_meta_og_title(),
 			},
 			{
 				property: "og:description",
-				content:
-					"Zmień chaos w progres. Spinella to Twoje miejsce, gdzie śledzisz naukę figur pole dance, notujesz triki i świętujesz postępy. Dołącz i zobacz, jak szybko rośniesz w siłę!",
+				content: m.homepage_meta_og_description(),
 			},
 			{
 				name: "twitter:card",

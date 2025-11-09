@@ -3,6 +3,7 @@ import { useNavigate } from "@tanstack/react-router";
 import { Dices } from "lucide-react";
 import { useState } from "react";
 import { orpc } from "@/orpc/client";
+import { m } from "@/paraglide/messages";
 import { Button } from "../ui/button";
 import {
 	Dialog,
@@ -47,11 +48,9 @@ export function CatalogHeader() {
 			>
 				<div>
 					<h1 className="mb-2 font-semibold text-5xl text-foreground">
-						Figury Pole Dance
+						{m.catalog_header_title()}
 					</h1>
-					<p className="text-muted-foreground">
-						Przeglądaj i śledź swoje postępy dzięki katalogowi figur.
-					</p>
+					<p className="text-muted-foreground">{m.catalog_header_subtitle()}</p>
 				</div>
 				<Button
 					className="hidden md:flex"
@@ -59,7 +58,7 @@ export function CatalogHeader() {
 					variant="default"
 				>
 					<Dices className="mr-2 h-4 w-4" />
-					Losuj figurę
+					{m.catalog_wheel_button()}
 				</Button>
 				<Button
 					className="fixed right-10 bottom-10 z-50 shadow-lg md:hidden"
@@ -68,16 +67,16 @@ export function CatalogHeader() {
 					variant="default"
 				>
 					<Dices className="mr-1 h-4 w-4" />
-					Losuj figurę
+					{m.catalog_wheel_button()}
 				</Button>
 			</div>
 
 			<Dialog onOpenChange={setIsWheelOpen} open={isWheelOpen}>
 				<DialogContent className="max-w-[90vw] md:max-w-2xl">
 					<DialogHeader>
-						<DialogTitle>Losowa Figura</DialogTitle>
+						<DialogTitle>{m.catalog_wheel_title()}</DialogTitle>
 						<DialogDescription>
-							Zakręć kołem, aby wylosować figurę!
+							{m.catalog_wheel_description()}
 						</DialogDescription>
 					</DialogHeader>
 
@@ -89,7 +88,9 @@ export function CatalogHeader() {
 						/>
 					) : (
 						<div className="flex items-center justify-center py-12">
-							<p className="text-muted-foreground">Ładowanie...</p>
+							<p className="text-muted-foreground">
+								{m.catalog_wheel_loading()}
+							</p>
 						</div>
 					)}
 				</DialogContent>

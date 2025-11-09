@@ -1,4 +1,5 @@
 import { ChevronLeft, ChevronRight } from "lucide-react";
+import { m } from "@/paraglide/messages";
 import { Button } from "../ui/button";
 
 type CatalogPaginationProps = {
@@ -33,28 +34,31 @@ export function CatalogPagination({
 	return (
 		<div className="mt-8 flex items-center justify-center gap-4">
 			<Button
-				aria-label="Previous page"
+				aria-label={m.catalog_pagination_previous_aria_label()}
 				disabled={currentPage === 1}
 				onClick={handlePrevious}
 				size="sm"
 				variant="outline"
 			>
 				<ChevronLeft className="h-4 w-4" />
-				Previous
+				{m.catalog_pagination_previous()}
 			</Button>
 
 			<span className="text-muted-foreground text-sm">
-				Page {currentPage} of {totalPages}
+				{m.catalog_pagination_page_info({
+					current: currentPage.toString(),
+					total: totalPages.toString(),
+				})}
 			</span>
 
 			<Button
-				aria-label="Next page"
+				aria-label={m.catalog_pagination_next_aria_label()}
 				disabled={currentPage === totalPages}
 				onClick={handleNext}
 				size="sm"
 				variant="outline"
 			>
-				Next
+				{m.catalog_pagination_next()}
 				<ChevronRight className="h-4 w-4" />
 			</Button>
 		</div>

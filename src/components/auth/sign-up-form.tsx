@@ -3,6 +3,7 @@ import { useState } from "react";
 import { z } from "zod";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { m } from "@/paraglide/messages";
 import { SignUpAuthEmailSchema, SignUpPasswordSchema } from "@/utils/schemas";
 import { PasswordInput } from "./password-input";
 import { PasswordRequirementsCheck } from "./password-requirements-check";
@@ -56,7 +57,7 @@ export function SignUpForm({
 
 	const validateConfirmPassword = (value: string) => {
 		if (value !== password) {
-			setConfirmPasswordError("Hasła nie pasują do siebie");
+			setConfirmPasswordError(m.auth_signup_password_mismatch());
 			return false;
 		}
 		setConfirmPasswordError(null);
@@ -95,7 +96,7 @@ export function SignUpForm({
 		<form className="space-y-4" onSubmit={handleSubmit}>
 			<div>
 				<label className="mb-2 block font-medium text-sm" htmlFor="email">
-					Email
+					{m.auth_signup_email_label()}
 				</label>
 				<Input
 					aria-describedby={emailError ? "email-error" : undefined}
@@ -118,7 +119,7 @@ export function SignUpForm({
 
 			<div>
 				<label className="mb-2 block font-medium text-sm" htmlFor="password">
-					Hasło
+					{m.auth_signup_password_label()}
 				</label>
 				<PasswordInput
 					autoComplete="new-password"
@@ -148,7 +149,7 @@ export function SignUpForm({
 					className="mb-2 block font-medium text-sm"
 					htmlFor="confirmPassword"
 				>
-					Potwierdź hasło
+					{m.auth_signup_confirm_password_label()}
 				</label>
 				<PasswordInput
 					autoComplete="new-password"
@@ -184,13 +185,13 @@ export function SignUpForm({
 				disabled={isLoading || !isFormValid}
 				type="submit"
 			>
-				{isLoading ? "Tworzenie konta..." : "Utwórz konto"}
+				{isLoading ? m.auth_signup_loading() : m.auth_signup_button()}
 			</Button>
 
 			<div className="mt-6 text-center text-sm">
-				Masz już konto?{" "}
+				{m.auth_signup_have_account()}{" "}
 				<Link className="text-primary hover:underline" to="/auth/sign-in">
-					Zaloguj się
+					{m.auth_signup_signin_link()}
 				</Link>
 			</div>
 

@@ -5,8 +5,10 @@ import { StepInputGroup } from "./step-input-group";
 
 type StepViewModel = {
 	id: string;
-	title: string;
-	description: string;
+	titleEn: string;
+	titlePl: string;
+	descriptionEn: string;
+	descriptionPl: string;
 };
 
 type StepEditorProps = {
@@ -15,13 +17,16 @@ type StepEditorProps = {
 	onRemoveStep: (index: number) => void;
 	onStepChange: (
 		index: number,
-		field: "title" | "description",
+		field: "titleEn" | "titlePl" | "descriptionEn" | "descriptionPl",
 		value: string
 	) => void;
 	errors: z.ZodError | null;
-	getStepErrors: (
-		index: number
-	) => { title?: string; description?: string } | null;
+	getStepErrors: (index: number) => {
+		titleEn?: string;
+		titlePl?: string;
+		descriptionEn?: string;
+		descriptionPl?: string;
+	} | null;
 };
 
 export function StepEditor({

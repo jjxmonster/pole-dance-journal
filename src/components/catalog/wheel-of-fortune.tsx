@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from "react";
+import { m } from "@/paraglide/messages";
 import { Button } from "../ui/button";
 
 type WheelSegment = {
@@ -177,13 +178,17 @@ export function WheelOfFortune({
 				onClick={spinWheel}
 				size="lg"
 			>
-				{isSpinning ? "Losowanie..." : "Zakręć Kołem!"}
+				{isSpinning
+					? m.catalog_wheel_spinning()
+					: m.catalog_wheel_spin_button()}
 			</Button>
 
 			{selectedIndex !== null && !isSpinning && (
 				<div className="text-center">
-					<p className="font-semibold text-lg">Wylosowano:</p>
-					<p className="font-bold text-2xl">{segments[selectedIndex].name}</p>
+					<p className="font-semibold text-lg">
+						{m.catalog_wheel_selected_label()}
+					</p>
+					<h3 className="font-bold text-2xl">{segments[selectedIndex].name}</h3>
 				</div>
 			)}
 		</div>

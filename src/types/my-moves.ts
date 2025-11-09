@@ -14,18 +14,11 @@ export type MyMoveViewModel = {
 	slug: string;
 	imageUrl: string | null;
 	status: MoveStatus;
-	statusPolish: string;
 	hasNote: boolean;
 	isArchived: boolean;
 };
 
 export function mapToViewModel(dto: MyMoveDTO): MyMoveViewModel {
-	const statusPolishMap: Record<MoveStatus, string> = {
-		WANT: "Chcę zrobić",
-		ALMOST: "Prawie",
-		DONE: "Zrobione",
-	};
-
 	return {
 		id: dto.id,
 		name: dto.name,
@@ -33,7 +26,6 @@ export function mapToViewModel(dto: MyMoveDTO): MyMoveViewModel {
 		slug: dto.slug,
 		imageUrl: dto.imageUrl,
 		status: dto.status,
-		statusPolish: statusPolishMap[dto.status],
 		hasNote: dto.note !== null && dto.note.trim().length > 0,
 		isArchived: dto.isDeleted,
 	};

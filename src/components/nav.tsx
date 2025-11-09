@@ -4,13 +4,16 @@ import { motion } from "motion/react";
 import { useState } from "react";
 import { useAuth } from "@/hooks/use-auth";
 import { orpc } from "@/orpc/client";
+import { m } from "@/paraglide/messages";
 import { Button } from "./ui/button";
 import {
 	DropdownMenu,
 	DropdownMenuContent,
 	DropdownMenuItem,
+	DropdownMenuSeparator,
 	DropdownMenuTrigger,
 } from "./ui/dropdown-menu";
+import { LanguageSwitcher } from "./ui/language-switcher";
 import { Sheet, SheetContent, SheetTrigger } from "./ui/sheet";
 
 export function Nav() {
@@ -51,10 +54,10 @@ export function Nav() {
 					transition={{ duration: 0.5 }}
 				>
 					<Link className="flex items-center gap-0" to="/">
-						<div className="flex h-10 w-10 items-center justify-center rounded-lg bg-praimary text-primary-foreground">
+						<div className="mr-1 flex h-6 w-6 items-center justify-center rounded-lg bg-praimary text-primary-foreground md:h-7 md:w-7">
 							<img alt="Spinella logo" src="/logo.svg" />
 						</div>
-						<span className="font-sans font-semibold text-foreground text-xl">
+						<span className="font-sans font-semibold text-base text-foreground md:text-xl">
 							Spinella
 						</span>
 					</Link>
@@ -68,14 +71,14 @@ export function Nav() {
 					{isAuthenticated && (
 						<>
 							<Link className={getNavLinkClass("/catalog")} to="/catalog">
-								Katalog
+								{m.nav_catalog()}
 							</Link>
 							<Link className={getNavLinkClass("/my-moves")} to="/my-moves">
-								Moje Figury
+								{m.nav_my_moves()}
 							</Link>
 							{isAdmin && (
 								<Link className={getNavLinkClass("/admin")} to="/admin">
-									Admin
+									{m.nav_admin()}
 								</Link>
 							)}
 						</>
@@ -94,7 +97,7 @@ export function Nav() {
 									<Menu className="size-5" />
 								</Button>
 							</SheetTrigger>
-							<SheetContent className="w-full" side="right">
+							<SheetContent className="w-4/5" side="right">
 								<div className="flex h-full flex-col items-start justify-start gap-4 px-4 pt-32">
 									<Link
 										className={getNavLinkClass("/catalog")}
@@ -102,7 +105,7 @@ export function Nav() {
 										to="/catalog"
 										type="button"
 									>
-										Katalog
+										{m.nav_catalog()}
 									</Link>
 									<Link
 										className={getNavLinkClass("/my-moves")}
@@ -110,7 +113,7 @@ export function Nav() {
 										to="/my-moves"
 										type="button"
 									>
-										Moje Figury
+										{m.nav_my_moves()}
 									</Link>
 									{isAdmin && (
 										<Link
@@ -119,16 +122,21 @@ export function Nav() {
 											to="/admin"
 											type="button"
 										>
-											Admin
+											{m.nav_admin()}
 										</Link>
 									)}
+									<hr className="my-1" />
+									<div>
+										<LanguageSwitcher />
+									</div>
 									<Button onClick={handleSignOut} size="sm">
-										Wyloguj
+										{m.nav_sign_out()}
 									</Button>
 								</div>
 							</SheetContent>
 						</Sheet>
 					)}
+
 					{isAuthenticated ? (
 						<DropdownMenu>
 							<DropdownMenuTrigger asChild>
@@ -149,17 +157,22 @@ export function Nav() {
 									onClick={handleSignOut}
 									variant="default"
 								>
-									Wyloguj
+									{m.nav_sign_out()}
+								</DropdownMenuItem>
+								<DropdownMenuSeparator className="hidden md:block" />
+								<DropdownMenuItem className="hover:!bg-transparent hidden cursor-pointer text-primary md:block">
+									<LanguageSwitcher />
 								</DropdownMenuItem>
 							</DropdownMenuContent>
 						</DropdownMenu>
 					) : (
 						<>
+							<LanguageSwitcher />
 							<Button asChild size="sm" variant="ghost">
-								<Link to="/auth/sign-in">Zaloguj się</Link>
+								<Link to="/auth/sign-in">{m.nav_sign_in()}</Link>
 							</Button>
 							<Button asChild size="sm" variant="default">
-								<Link to="/auth/sign-up">Stwórz konto</Link>
+								<Link to="/auth/sign-up">{m.nav_create_account()}</Link>
 							</Button>
 						</>
 					)}

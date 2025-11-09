@@ -1,17 +1,10 @@
-import { LEVEL_LABELS_POLISH } from "@/utils/constants";
-import type { MoveLevel } from "../../types/move";
-import { Badge } from "../ui/badge";
+import { m } from "@/paraglide/messages";
+import type { MoveLevel } from "../../../types/move";
+import { Badge } from "../../ui/badge";
 
 type LevelFilterBadgesProps = {
 	activeLevel: MoveLevel | "All";
 	onChange: (level: MoveLevel | "All") => void;
-};
-
-const LEVEL_LABELS: Record<MoveLevel | "All", string> = {
-	All: "All",
-	Beginner: "Beginner",
-	Intermediate: "Intermediate",
-	Advanced: "Advanced",
 };
 
 const LEVELS: Array<MoveLevel | "All"> = [
@@ -21,6 +14,21 @@ const LEVELS: Array<MoveLevel | "All"> = [
 	"Advanced",
 ];
 
+const getLevelLabel = (level: MoveLevel | "All"): string => {
+	switch (level) {
+		case "All":
+			return m.catalog_level_all();
+		case "Beginner":
+			return m.catalog_level_beginner();
+		case "Intermediate":
+			return m.catalog_level_intermediate();
+		case "Advanced":
+			return m.catalog_level_advanced();
+		default:
+			return level;
+	}
+};
+
 export function LevelFilterBadges({
 	activeLevel,
 	onChange,
@@ -29,9 +37,10 @@ export function LevelFilterBadges({
 		<div className="flex flex-wrap items-center gap-3">
 			{LEVELS.map((level) => {
 				const isActive = activeLevel === level;
+				const label = getLevelLabel(level);
 				return (
 					<button
-						aria-label={`Filtruj według poziomu: ${LEVEL_LABELS[level]}`}
+						aria-label={m.catalog_level_filter_aria_label({ level: label })}
 						aria-pressed={isActive}
 						className="rounded-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
 						data-testid="level-filter-badge"
@@ -47,7 +56,7 @@ export function LevelFilterBadges({
 							}`}
 							variant={isActive ? "default" : "outline"}
 						>
-							{LEVEL_LABELS_POLISH[level as MoveLevel]}
+							{label}
 						</Badge>
 					</button>
 				);

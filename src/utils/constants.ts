@@ -1,4 +1,4 @@
-import type { MoveLevel, StatusOption } from "@/types/move";
+import type { StatusOption } from "@/types/move";
 
 export const PAGE_SIZE = 20;
 export const DEBOUNCE_DELAY_MS = 250;
@@ -32,9 +32,9 @@ export const DEFAULT_FILE_EXTENSION = "jpg";
 export const BASE_36_RADIX = 36;
 
 export const STATUS_OPTIONS: StatusOption[] = [
-	{ value: "WANT", label: "Chcę zrobić" },
-	{ value: "ALMOST", label: "Prawie" },
-	{ value: "DONE", label: "Zrobione" },
+	{ value: "WANT", messageKey: "move_status_want" },
+	{ value: "ALMOST", messageKey: "move_status_almost" },
+	{ value: "DONE", messageKey: "move_status_done" },
 ];
 
 export const NOTE_MAX_LENGTH = 2000;
@@ -62,9 +62,19 @@ export const LEVEL_COLORS = {
 	Advanced: "bg-red-100 text-red-800 hover:bg-red-100",
 } as const;
 
-export const LEVEL_LABELS_POLISH: Record<MoveLevel | "All", string> = {
-	All: "Wszystkie",
-	Beginner: "Początkujący",
-	Intermediate: "Średnio zaawansowany",
-	Advanced: "Zaawansowany",
-};
+export const ERROR_MESSAGE_KEYS = {
+	EMAIL_ALREADY_REGISTERED: "auth_error_email_already_registered",
+	REGISTER_FAILED: "auth_error_register_failed",
+	REGISTRATION_FAILED: "auth_error_registration_failed",
+	EMAIL_NOT_CONFIRMED: "auth_error_email_not_confirmed",
+	INVALID_CREDENTIALS: "auth_error_invalid_credentials",
+	SIGNIN_FAILED: "auth_error_signin_failed",
+	SIGNOUT_FAILED: "auth_error_signout_failed",
+	OAUTH_START_FAILED: "auth_error_oauth_start_failed",
+	OAUTH_LINK_INVALID: "auth_error_oauth_link_invalid",
+	USER_INFO_FAILED: "auth_error_user_info_failed",
+	OAUTH_FAILED: "auth_error_oauth_failed",
+	RESET_LINK_INVALID: "auth_error_reset_link_invalid",
+	PASSWORD_UPDATE_FAILED: "auth_error_password_update_failed",
+	RESET_PASSWORD_FAILED: "auth_error_reset_password_failed",
+} as const;
