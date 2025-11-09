@@ -36,6 +36,13 @@
       "when": 1762627366607,
       "tag": "0004_fair_crystal",
       "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "7",
+      "when": 1762721225341,
+      "tag": "0005_daily_firebird",
+      "breakpoints": true
     }
   ]
 }

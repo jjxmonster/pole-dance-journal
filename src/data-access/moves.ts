@@ -76,17 +76,18 @@ export async function getMoveBySlugWithTranslations(
 		),
 		columns: {
 			id: true,
+			level: true,
 			slug: true,
 			imageUrl: true,
+			name: true,
+			description: true,
 		},
 		with: {
 			translations: {
 				where: eq(moveTranslations.language, language),
 				columns: {
 					moveId: true,
-					name: true,
 					description: true,
-					level: true,
 				},
 				limit: 1,
 			},
@@ -120,6 +121,8 @@ export async function getMoveBySlugWithTranslations(
 			),
 			columns: {
 				id: true,
+				name: true,
+				level: true,
 				slug: true,
 				imageUrl: true,
 			},
@@ -128,9 +131,7 @@ export async function getMoveBySlugWithTranslations(
 					where: eq(moveTranslations.language, "pl"),
 					columns: {
 						moveId: true,
-						name: true,
 						description: true,
-						level: true,
 					},
 					limit: 1,
 				},
@@ -158,10 +159,10 @@ export async function getMoveBySlugWithTranslations(
 			const translation = fallbackMove.translations[0];
 			return {
 				id: translation.moveId,
-				name: translation.name,
+				name: move?.name,
 				description: translation.description,
-				level: translation.level,
 				slug: fallbackMove.slug,
+				level: move?.level,
 				imageUrl: fallbackMove.imageUrl,
 				steps: fallbackMove.steps.map((step) => ({
 					orderIndex: step.orderIndex,
@@ -182,9 +183,9 @@ export async function getMoveBySlugWithTranslations(
 	const translation = move.translations[0];
 	return {
 		id: translation.moveId,
-		name: translation.name,
+		name: move.name,
 		description: translation.description,
-		level: translation.level,
+		level: move.level,
 		slug: move.slug,
 		imageUrl: move.imageUrl,
 		steps: move.steps.map((step) => ({
@@ -464,18 +465,14 @@ export async function createMove(data: {
 			{
 				moveId,
 				language: "en",
-				name: data.name,
 				description: data.descriptionEn,
-				level: data.level,
 				createdAt: new Date(),
 				updatedAt: new Date(),
 			},
 			{
 				moveId,
 				language: "pl",
-				name: data.name,
 				description: data.descriptionPl,
-				level: data.level,
 				createdAt: new Date(),
 				updatedAt: new Date(),
 			},
@@ -601,9 +598,7 @@ export async function updateMove(data: {
 		await tx
 			.update(moveTranslations)
 			.set({
-				name: data.name,
 				description: data.descriptionEn,
-				level: data.level,
 				updatedAt: new Date(),
 			})
 			.where(
@@ -616,9 +611,7 @@ export async function updateMove(data: {
 		await tx
 			.update(moveTranslations)
 			.set({
-				name: data.name,
 				description: data.descriptionPl,
-				level: data.level,
 				updatedAt: new Date(),
 			})
 			.where(

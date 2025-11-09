@@ -195,9 +195,7 @@ export const moveTranslations = pgTable(
 			.notNull()
 			.references(() => moves.id, { onDelete: "cascade" }),
 		language: languageEnum("language").notNull(),
-		name: text("name").notNull(),
 		description: text("description").notNull(),
-		level: moveLevelEnum("level").notNull(),
 		createdAt: timestamp("created_at", { withTimezone: true })
 			.defaultNow()
 			.notNull(),
@@ -209,14 +207,6 @@ export const moveTranslations = pgTable(
 		moveLanguageUnique: unique("move_language_unique").on(
 			table.moveId,
 			table.language
-		),
-		nameIdx: uniqueIndex("idx_move_trans_name_active").on(
-			sql`lower(${table.name})`,
-			table.language
-		),
-		nameLengthCheck: check(
-			"move_trans_name_length_check",
-			sql`char_length(${table.name}) between 3 and 100`
 		),
 		descriptionLengthCheck: check(
 			"move_trans_description_length_check",
