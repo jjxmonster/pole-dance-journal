@@ -1,8 +1,9 @@
 import { ORPCError, os } from "@orpc/server";
 import { getSupabaseServerClient } from "@/integrations/supabase/server";
+import { getLocale } from "@/paraglide/runtime";
 import {
 	getRandomMovesForWheel as fetchRandomMovesForWheel,
-	getMoveBySlug,
+	getMoveBySlugWithTranslations,
 	getMovesForUser,
 	getRandomPublishedMove,
 	listPublishedMoves,
@@ -34,7 +35,9 @@ export const getBySlug = os
 	.output(MoveGetBySlugOutputSchema)
 	.use(authMiddleware)
 	.handler(async ({ input }) => {
-		const move = await getMoveBySlug(input.slug);
+		const locale = getLocale();
+
+		const move = await getMoveBySlugWithTranslations(input.slug, locale);
 		if (!move) {
 			throw new ORPCError("NOT_FOUND", {
 				message: `Move with slug "${input.slug}" not found`,

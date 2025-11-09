@@ -16,11 +16,6 @@ import {
 	NOTE_MAX_LENGTH,
 } from "../utils/constants";
 
-export const TodoSchema = z.object({
-	id: z.number().int().min(1),
-	name: z.string(),
-});
-
 const DEFAULT_LIMIT = 20;
 const MAX_LIMIT = 100;
 const DEFAULT_OFFSET = 0;
@@ -73,6 +68,7 @@ export const MoveDetailSchema = z.object({
 	slug: z.string(),
 	imageUrl: z.string().nullable(),
 	steps: z.array(MoveStepSchema),
+	translationFallback: z.boolean().optional(),
 });
 
 export const MoveGetBySlugOutputSchema = MoveDetailSchema;

@@ -7,6 +7,7 @@ import { MoveImage } from "../components/moves/move-image";
 import { NoteEditor } from "../components/moves/note-editor";
 import { StatusButtons } from "../components/moves/status-buttons";
 import { StepsList } from "../components/moves/steps-list";
+import { Alert, AlertDescription } from "../components/ui/alert";
 import { Badge } from "../components/ui/badge";
 import { useAuth } from "../hooks/use-auth";
 import { useMoveStatus } from "../hooks/use-move-status";
@@ -118,6 +119,14 @@ function MoveDetailPage() {
 			data-testid="move-details-page"
 		>
 			<Breadcrumbs moveName={move.name} />
+
+			{move.translationFallback && (
+				<Alert className="mb-8" variant="destructive">
+					<AlertDescription>
+						Translation for English is in progress, please check back later.
+					</AlertDescription>
+				</Alert>
+			)}
 
 			<div className="space-y-8">
 				<div className="grid grid-cols-1 gap-8 md:grid-cols-3">

@@ -29,6 +29,13 @@
       "when": 1762588557381,
       "tag": "0003_nice_sir_ram",
       "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1762627366607,
+      "tag": "0004_fair_crystal",
+      "breakpoints": true
     }
   ]
 }

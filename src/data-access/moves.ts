@@ -15,7 +15,7 @@ import type { z } from "zod";
 import { getSupabaseServerClient } from "@/integrations/supabase/server";
 import { CACHE_CONTROL_SECONDS } from "@/utils/constants";
 import { db } from "../db";
-import { moves, steps } from "../db/schema";
+import { moves, moveTranslations, steps, stepTranslations } from "../db/schema";
 import type { MovesListInputSchema } from "../orpc/schema";
 
 type ListPublishedMovesInput = z.infer<typeof MovesListInputSchema>;
@@ -61,6 +61,138 @@ export async function listPublishedMoves(input: ListPublishedMovesInput) {
 	return {
 		moves: movesResult,
 		total: totalResult[0]?.count ?? 0,
+	};
+}
+
+export async function getMoveBySlugWithTranslations(
+	slug: string,
+	language: "en" | "pl" = "pl"
+) {
+	const move = await db.query.moves.findFirst({
+		where: and(
+			eq(sql`lower(${moves.slug})`, slug.toLowerCase()),
+			isNotNull(moves.publishedAt),
+			isNull(moves.deletedAt)
+		),
+		columns: {
+			id: true,
+			slug: true,
+			imageUrl: true,
+		},
+		with: {
+			translations: {
+				where: eq(moveTranslations.language, language),
+				columns: {
+					moveId: true,
+					name: true,
+					description: true,
+					level: true,
+				},
+				limit: 1,
+			},
+			steps: {
+				columns: {
+					orderIndex: true,
+				},
+				orderBy: [asc(steps.orderIndex)],
+				with: {
+					translations: {
+						where: eq(stepTranslations.language, language),
+						columns: {
+							title: true,
+							description: true,
+						},
+						limit: 1,
+					},
+				},
+			},
+		},
+	});
+
+	let usedFallback = false;
+
+	if (!move?.translations[0] && language !== "pl") {
+		const fallbackMove = await db.query.moves.findFirst({
+			where: and(
+				eq(sql`lower(${moves.slug})`, slug.toLowerCase()),
+				isNotNull(moves.publishedAt),
+				isNull(moves.deletedAt)
+			),
+			columns: {
+				id: true,
+				slug: true,
+				imageUrl: true,
+			},
+			with: {
+				translations: {
+					where: eq(moveTranslations.language, "pl"),
+					columns: {
+						moveId: true,
+						name: true,
+						description: true,
+						level: true,
+					},
+					limit: 1,
+				},
+				steps: {
+					columns: {
+						orderIndex: true,
+					},
+					orderBy: [asc(steps.orderIndex)],
+					with: {
+						translations: {
+							where: eq(stepTranslations.language, "pl"),
+							columns: {
+								title: true,
+								description: true,
+							},
+							limit: 1,
+						},
+					},
+				},
+			},
+		});
+
+		if (fallbackMove?.translations[0]) {
+			usedFallback = true;
+			const translation = fallbackMove.translations[0];
+			return {
+				id: translation.moveId,
+				name: translation.name,
+				description: translation.description,
+				level: translation.level,
+				slug: fallbackMove.slug,
+				imageUrl: fallbackMove.imageUrl,
+				steps: fallbackMove.steps.map((step) => ({
+					orderIndex: step.orderIndex,
+					title: step.translations[0]?.title ?? "",
+					description: step.translations[0]?.description ?? "",
+				})),
+				translationFallback: usedFallback,
+			};
+		}
+
+		return null;
+	}
+
+	if (!move?.translations[0]) {
+		return null;
+	}
+
+	const translation = move.translations[0];
+	return {
+		id: translation.moveId,
+		name: translation.name,
+		description: translation.description,
+		level: translation.level,
+		slug: move.slug,
+		imageUrl: move.imageUrl,
+		steps: move.steps.map((step) => ({
+			orderIndex: step.orderIndex,
+			title: step.translations[0]?.title ?? "",
+			description: step.translations[0]?.description ?? "",
+		})),
+		translationFallback: usedFallback,
 	};
 }
 
