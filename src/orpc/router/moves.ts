@@ -1,6 +1,6 @@
 import { ORPCError, os } from "@orpc/server";
+import { getCookies } from "@tanstack/react-start/server";
 import { getSupabaseServerClient } from "@/integrations/supabase/server";
-import { getLocale } from "@/paraglide/runtime";
 import {
 	getRandomMovesForWheel as fetchRandomMovesForWheel,
 	getMoveBySlugWithTranslations,
@@ -35,8 +35,8 @@ export const getBySlug = os
 	.output(MoveGetBySlugOutputSchema)
 	.use(authMiddleware)
 	.handler(async ({ input }) => {
-		const locale = getLocale();
-
+		const cookies = getCookies();
+		const locale = (cookies.PARAGLIDE_LOCALE as "en" | "pl") ?? "pl";
 		const move = await getMoveBySlugWithTranslations(input.slug, locale);
 		if (!move) {
 			throw new ORPCError("NOT_FOUND", {
