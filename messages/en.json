@@ -145,5 +145,22 @@
   "catalog_wheel_spin_button": "Spin the Wheel!",
   "catalog_wheel_spinning": "Spinning...",
   "catalog_wheel_selected_label": "Selected:",
-  "catalog_wheel_selected_move": "Selected move"
+  "catalog_wheel_selected_move": "Selected move",
+  "move_status_label": "My Status",
+  "move_status_want": "Want to do",
+  "move_status_almost": "Almost",
+  "move_status_done": "Done",
+  "note_editor_title": "My Notes",
+  "note_editor_placeholder": "Add a new note...",
+  "note_editor_privacy_notice": "Notes are private and only visible to you.",
+  "note_editor_submit_button": "Add Note",
+  "note_editor_submit_button_loading": "Adding...",
+  "note_editor_history_title": "Notes history",
+  "note_editor_loading": "Loading notes...",
+  "note_editor_delete_button_aria_label": "Delete note",
+  "note_editor_add_success": "Note added",
+  "note_editor_delete_success": "Note deleted",
+  "move_status_update_success": "Status updated",
+  "move_status_update_error": "Failed to update status. Please try again.",
+  "move_status_auth_required": "You must be logged in to update status"
 }

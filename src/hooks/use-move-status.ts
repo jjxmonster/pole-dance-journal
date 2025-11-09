@@ -2,6 +2,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useOptimistic, useTransition } from "react";
 import { toast } from "sonner";
 import { client, orpc } from "@/orpc/client";
+import { m } from "@/paraglide/messages";
 import type { MoveStatus } from "@/types/move";
 import { useAuth } from "./use-auth";
 
@@ -47,18 +48,18 @@ export function useMoveStatus(moveId: string) {
 			return result;
 		},
 		onSuccess: () => {
-			toast.success("Status zaktualizowany");
+			toast.success(m.move_status_update_success());
 			queryClient.invalidateQueries({ queryKey: ["my-moves"] });
 			refetch();
 		},
 		onError: () => {
-			toast.error("Nie udało się zaktualizować statusu. Spróbuj ponownie.");
+			toast.error(m.move_status_update_error());
 		},
 	});
 
 	const updateStatus = (status: MoveStatus) => {
 		if (!isAuthenticated) {
-			toast.error("Musisz być zalogowany, aby zaktualizować status");
+			toast.error(m.move_status_auth_required());
 			return;
 		}
 

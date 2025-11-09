@@ -32,9 +32,9 @@ export const DEFAULT_FILE_EXTENSION = "jpg";
 export const BASE_36_RADIX = 36;
 
 export const STATUS_OPTIONS: StatusOption[] = [
-	{ value: "WANT", label: "Chcę zrobić" },
-	{ value: "ALMOST", label: "Prawie" },
-	{ value: "DONE", label: "Zrobione" },
+	{ value: "WANT", messageKey: "move_status_want" },
+	{ value: "ALMOST", messageKey: "move_status_almost" },
+	{ value: "DONE", messageKey: "move_status_done" },
 ];
 
 export const NOTE_MAX_LENGTH = 2000;

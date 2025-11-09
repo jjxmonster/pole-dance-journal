@@ -121,7 +121,7 @@ function CatalogView() {
 	};
 
 	return (
-		<div className="container mx-auto max-w-7xl px-4 py-8">
+		<div className="container mx-auto max-w-7xl py-8">
 			<CatalogHeader />
 
 			<div className="mb-6 space-y-4">

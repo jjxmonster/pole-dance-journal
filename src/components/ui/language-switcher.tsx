@@ -8,8 +8,8 @@ import {
 } from "./select";
 
 const LOCALE_MAP = {
-	pl: "Polski",
-	en: "English",
+	pl: "Polski 🇵🇱",
+	en: "English 🇬🇧",
 };
 
 export function LanguageSwitcher() {
@@ -18,13 +18,13 @@ export function LanguageSwitcher() {
 			defaultValue={getLocale()}
 			onValueChange={(value) => setLocale(value as "pl" | "en")}
 		>
-			<SelectTrigger>
+			<SelectTrigger className="cursor-pointer font-medium text-primary">
 				<SelectValue />
 			</SelectTrigger>
 			<SelectContent>
 				{locales.map((locale) => (
-					<SelectItem key={locale} value={locale}>
-						{LOCALE_MAP[locale]} {locale === "pl" ? "🇵🇱" : "🇬🇧"}
+					<SelectItem className="cursor-pointer" key={locale} value={locale}>
+						{LOCALE_MAP[locale]}
 					</SelectItem>
 				))}
 			</SelectContent>

@@ -145,5 +145,22 @@
   "catalog_wheel_spin_button": "Zakręć Kołem!",
   "catalog_wheel_spinning": "Losowanie...",
   "catalog_wheel_selected_label": "Wylosowano:",
-  "catalog_wheel_selected_move": "Wybrana figura"
+  "catalog_wheel_selected_move": "Wybrana figura",
+  "move_status_label": "Mój Status",
+  "move_status_want": "Chcę zrobić",
+  "move_status_almost": "Prawie",
+  "move_status_done": "Zrobione",
+  "note_editor_title": "Moje Notatki",
+  "note_editor_placeholder": "Dodaj nową notatkę...",
+  "note_editor_privacy_notice": "Notatki są prywatne i widoczne tylko dla Ciebie.",
+  "note_editor_submit_button": "Dodaj Notatkę",
+  "note_editor_submit_button_loading": "Dodawanie...",
+  "note_editor_history_title": "Historia notatek",
+  "note_editor_loading": "Ładowanie notatek...",
+  "note_editor_delete_button_aria_label": "Usuń notatkę",
+  "note_editor_add_success": "Notatka dodana",
+  "note_editor_delete_success": "Notatka usunięta",
+  "move_status_update_success": "Status zaktualizowany",
+  "move_status_update_error": "Nie udało się zaktualizować statusu. Spróbuj ponownie.",
+  "move_status_auth_required": "Musisz być zalogowany, aby zaktualizować status"
 }
