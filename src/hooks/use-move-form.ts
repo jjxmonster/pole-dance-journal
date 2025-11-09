@@ -7,13 +7,16 @@ import {
 
 type StepViewModel = {
 	id: string;
-	title: string;
-	description: string;
+	titleEn: string;
+	titlePl: string;
+	descriptionEn: string;
+	descriptionPl: string;
 };
 
 type MoveFormViewModel = {
 	name: string;
-	description: string;
+	descriptionEn: string;
+	descriptionPl: string;
 	level: "Beginner" | "Intermediate" | "Advanced" | "";
 	steps: StepViewModel[];
 };
@@ -23,12 +26,12 @@ type UseMoveFormReturn = {
 	errors: z.ZodError | null;
 	isSubmitting: boolean;
 	handleInputChange: (
-		field: "name" | "description" | "level",
+		field: "name" | "descriptionEn" | "descriptionPl" | "level",
 		value: string
 	) => void;
 	handleStepChange: (
 		index: number,
-		field: "title" | "description",
+		field: "titleEn" | "titlePl" | "descriptionEn" | "descriptionPl",
 		value: string
 	) => void;
 	addStep: () => void;
@@ -36,19 +39,35 @@ type UseMoveFormReturn = {
 	handleSubmit: (
 		onSubmit: (data: AdminCreateMoveInput) => Promise<void>
 	) => Promise<void>;
-	getStepErrors: (
-		index: number
-	) => { title?: string; description?: string } | null;
+	getStepErrors: (index: number) => {
+		titleEn?: string;
+		titlePl?: string;
+		descriptionEn?: string;
+		descriptionPl?: string;
+	} | null;
 };
 
 export function useMoveForm(): UseMoveFormReturn {
 	const [formState, setFormState] = useState<MoveFormViewModel>({
 		name: "",
-		description: "",
+		descriptionEn: "",
+		descriptionPl: "",
 		level: "",
 		steps: [
-			{ id: crypto.randomUUID(), title: "", description: "" },
-			{ id: crypto.randomUUID(), title: "", description: "" },
+			{
+				id: crypto.randomUUID(),
+				titleEn: "",
+				titlePl: "",
+				descriptionEn: "",
+				descriptionPl: "",
+			},
+			{
+				id: crypto.randomUUID(),
+				titleEn: "",
+				titlePl: "",
+				descriptionEn: "",
+				descriptionPl: "",
+			},
 		],
 	});
 
@@ -56,7 +75,10 @@ export function useMoveForm(): UseMoveFormReturn {
 	const [isSubmitting, setIsSubmitting] = useState(false);
 
 	const handleInputChange = useCallback(
-		(field: "name" | "description" | "level", value: string) => {
+		(
+			field: "name" | "descriptionEn" | "descriptionPl" | "level",
+			value: string
+		) => {
 			setFormState((prev) => ({
 				...prev,
 				[field]: value,
@@ -66,7 +88,11 @@ export function useMoveForm(): UseMoveFormReturn {
 	);
 
 	const handleStepChange = useCallback(
-		(index: number, field: "title" | "description", value: string) => {
+		(
+			index: number,
+			field: "titleEn" | "titlePl" | "descriptionEn" | "descriptionPl",
+			value: string
+		) => {
 			setFormState((prev) => ({
 				...prev,
 				steps: prev.steps.map((step, i) =>
@@ -82,7 +108,13 @@ export function useMoveForm(): UseMoveFormReturn {
 			...prev,
 			steps: [
 				...prev.steps,
-				{ id: crypto.randomUUID(), title: "", description: "" },
+				{
+					id: crypto.randomUUID(),
+					titleEn: "",
+					titlePl: "",
+					descriptionEn: "",
+					descriptionPl: "",
+				},
 			],
 		}));
 	}, []);
@@ -95,7 +127,14 @@ export function useMoveForm(): UseMoveFormReturn {
 	}, []);
 
 	const getStepErrors = useCallback(
-		(index: number): { title?: string; description?: string } | null => {
+		(
+			index: number
+		): {
+			titleEn?: string;
+			titlePl?: string;
+			descriptionEn?: string;
+			descriptionPl?: string;
+		} | null => {
 			if (!errors) {
 				return null;
 			}
@@ -111,10 +150,20 @@ export function useMoveForm(): UseMoveFormReturn {
 				return null;
 			}
 
-			const result: { title?: string; description?: string } = {};
+			const result: {
+				titleEn?: string;
+				titlePl?: string;
+				descriptionEn?: string;
+				descriptionPl?: string;
+			} = {};
 			for (const error of stepErrors) {
 				const field = error.path[2];
-				if (field === "title" || field === "description") {
+				if (
+					field === "titleEn" ||
+					field === "titlePl" ||
+					field === "descriptionEn" ||
+					field === "descriptionPl"
+				) {
 					result[field] = error.message;
 				}
 			}
@@ -131,11 +180,14 @@ export function useMoveForm(): UseMoveFormReturn {
 
 		const submitData = {
 			name: formState.name,
-			description: formState.description,
+			descriptionEn: formState.descriptionEn,
+			descriptionPl: formState.descriptionPl,
 			level: formState.level as "Beginner" | "Intermediate" | "Advanced",
 			steps: formState.steps.map((step) => ({
-				title: step.title,
-				description: step.description,
+				titleEn: step.titleEn,
+				titlePl: step.titlePl,
+				descriptionEn: step.descriptionEn,
+				descriptionPl: step.descriptionPl,
 			})),
 		};
 

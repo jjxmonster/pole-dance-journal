@@ -7,14 +7,17 @@ import {
 
 type StepViewModel = {
 	id: string;
-	title: string;
-	description: string;
+	titleEn: string;
+	titlePl: string;
+	descriptionEn: string;
+	descriptionPl: string;
 };
 
 type MoveFormViewModel = {
 	id: string;
 	name: string;
-	description: string;
+	descriptionEn: string;
+	descriptionPl: string;
 	level: "Beginner" | "Intermediate" | "Advanced" | "";
 	steps: StepViewModel[];
 };
@@ -24,12 +27,12 @@ type UseEditMoveFormReturn = {
 	errors: z.ZodError | null;
 	isSubmitting: boolean;
 	handleInputChange: (
-		field: "name" | "description" | "level",
+		field: "name" | "descriptionEn" | "descriptionPl" | "level",
 		value: string
 	) => void;
 	handleStepChange: (
 		index: number,
-		field: "title" | "description",
+		field: "titleEn" | "titlePl" | "descriptionEn" | "descriptionPl",
 		value: string
 	) => void;
 	addStep: () => void;
@@ -37,17 +40,27 @@ type UseEditMoveFormReturn = {
 	handleSubmit: (
 		onSubmit: (data: AdminEditMoveInput) => Promise<void>
 	) => Promise<void>;
-	getStepErrors: (
-		index: number
-	) => { title?: string; description?: string } | null;
+	getStepErrors: (index: number) => {
+		titleEn?: string;
+		titlePl?: string;
+		descriptionEn?: string;
+		descriptionPl?: string;
+	} | null;
 };
 
 type InitialMoveData = {
 	id: string;
 	name: string;
-	description: string;
+	descriptionEn: string;
+	descriptionPl: string;
 	level: "Beginner" | "Intermediate" | "Advanced";
-	steps: Array<{ orderIndex: number; title: string; description: string }>;
+	steps: Array<{
+		orderIndex: number;
+		titleEn: string;
+		titlePl: string;
+		descriptionEn: string;
+		descriptionPl: string;
+	}>;
 };
 
 export function useEditMoveForm(
@@ -60,12 +73,15 @@ export function useEditMoveForm(
 	const [formState, setFormState] = useState<MoveFormViewModel>({
 		id: initialData.id,
 		name: initialData.name,
-		description: initialData.description,
+		descriptionEn: initialData.descriptionEn,
+		descriptionPl: initialData.descriptionPl,
 		level: initialData.level,
 		steps: sortedSteps.map((step) => ({
 			id: crypto.randomUUID(),
-			title: step.title,
-			description: step.description,
+			titleEn: step.titleEn,
+			titlePl: step.titlePl,
+			descriptionEn: step.descriptionEn,
+			descriptionPl: step.descriptionPl,
 		})),
 	});
 
@@ -73,7 +89,10 @@ export function useEditMoveForm(
 	const [isSubmitting, setIsSubmitting] = useState(false);
 
 	const handleInputChange = useCallback(
-		(field: "name" | "description" | "level", value: string) => {
+		(
+			field: "name" | "descriptionEn" | "descriptionPl" | "level",
+			value: string
+		) => {
 			setFormState((prev) => ({
 				...prev,
 				[field]: value,
@@ -83,7 +102,11 @@ export function useEditMoveForm(
 	);
 
 	const handleStepChange = useCallback(
-		(index: number, field: "title" | "description", value: string) => {
+		(
+			index: number,
+			field: "titleEn" | "titlePl" | "descriptionEn" | "descriptionPl",
+			value: string
+		) => {
 			setFormState((prev) => ({
 				...prev,
 				steps: prev.steps.map((step, i) =>
@@ -99,7 +122,13 @@ export function useEditMoveForm(
 			...prev,
 			steps: [
 				...prev.steps,
-				{ id: crypto.randomUUID(), title: "", description: "" },
+				{
+					id: crypto.randomUUID(),
+					titleEn: "",
+					titlePl: "",
+					descriptionEn: "",
+					descriptionPl: "",
+				},
 			],
 		}));
 	}, []);
@@ -112,7 +141,14 @@ export function useEditMoveForm(
 	}, []);
 
 	const getStepErrors = useCallback(
-		(index: number): { title?: string; description?: string } | null => {
+		(
+			index: number
+		): {
+			titleEn?: string;
+			titlePl?: string;
+			descriptionEn?: string;
+			descriptionPl?: string;
+		} | null => {
 			if (!errors) {
 				return null;
 			}
@@ -128,10 +164,20 @@ export function useEditMoveForm(
 				return null;
 			}
 
-			const result: { title?: string; description?: string } = {};
+			const result: {
+				titleEn?: string;
+				titlePl?: string;
+				descriptionEn?: string;
+				descriptionPl?: string;
+			} = {};
 			for (const error of stepErrors) {
 				const field = error.path[2];
-				if (field === "title" || field === "description") {
+				if (
+					field === "titleEn" ||
+					field === "titlePl" ||
+					field === "descriptionEn" ||
+					field === "descriptionPl"
+				) {
 					result[field] = error.message;
 				}
 			}
@@ -149,11 +195,14 @@ export function useEditMoveForm(
 		const submitData = {
 			id: formState.id,
 			name: formState.name,
-			description: formState.description,
+			descriptionEn: formState.descriptionEn,
+			descriptionPl: formState.descriptionPl,
 			level: formState.level as "Beginner" | "Intermediate" | "Advanced",
 			steps: formState.steps.map((step) => ({
-				title: step.title,
-				description: step.description,
+				titleEn: step.titleEn,
+				titlePl: step.titlePl,
+				descriptionEn: step.descriptionEn,
+				descriptionPl: step.descriptionPl,
 			})),
 		};
 

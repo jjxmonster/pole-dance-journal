@@ -428,34 +428,92 @@ export async function restoreMove(moveId: string) {
 
 export async function createMove(data: {
 	name: string;
-	description: string;
+	descriptionEn: string;
+	descriptionPl: string;
 	level: "Beginner" | "Intermediate" | "Advanced";
 	slug: string;
-	steps: Array<{ title: string; description: string }>;
+	steps: Array<{
+		titleEn: string;
+		titlePl: string;
+		descriptionEn: string;
+		descriptionPl: string;
+	}>;
 }) {
 	const moveId = crypto.randomUUID();
 
-	const stepsWithIndices = data.steps.map((step, index) => ({
+	const stepsWithIds = data.steps.map((step) => ({
 		id: crypto.randomUUID(),
-		moveId,
-		orderIndex: index + 1,
-		title: step.title,
-		description: step.description,
-		createdAt: new Date(),
-		updatedAt: new Date(),
+		titleEn: step.titleEn,
+		titlePl: step.titlePl,
+		descriptionEn: step.descriptionEn,
+		descriptionPl: step.descriptionPl,
 	}));
 
-	await db.insert(moves).values({
-		id: moveId,
-		name: data.name,
-		description: data.description,
-		level: data.level,
-		slug: data.slug,
-		createdAt: new Date(),
-		updatedAt: new Date(),
-	});
+	await db.transaction(async (tx) => {
+		await tx.insert(moves).values({
+			id: moveId,
+			name: data.name,
+			description: data.descriptionPl,
+			level: data.level,
+			slug: data.slug,
+			createdAt: new Date(),
+			updatedAt: new Date(),
+		});
 
-	await db.insert(steps).values(stepsWithIndices);
+		await tx.insert(moveTranslations).values([
+			{
+				moveId,
+				language: "en",
+				name: data.name,
+				description: data.descriptionEn,
+				level: data.level,
+				createdAt: new Date(),
+				updatedAt: new Date(),
+			},
+			{
+				moveId,
+				language: "pl",
+				name: data.name,
+				description: data.descriptionPl,
+				level: data.level,
+				createdAt: new Date(),
+				updatedAt: new Date(),
+			},
+		]);
+
+		const stepsToInsert = stepsWithIds.map((step, index) => ({
+			id: step.id,
+			moveId,
+			orderIndex: index + 1,
+			title: step.titlePl,
+			description: step.descriptionPl,
+			createdAt: new Date(),
+			updatedAt: new Date(),
+		}));
+
+		await tx.insert(steps).values(stepsToInsert);
+
+		const stepTranslationsToInsert = stepsWithIds.flatMap((step) => [
+			{
+				stepId: step.id,
+				language: "en" as const,
+				title: step.titleEn,
+				description: step.descriptionEn,
+				createdAt: new Date(),
+				updatedAt: new Date(),
+			},
+			{
+				stepId: step.id,
+				language: "pl" as const,
+				title: step.titlePl,
+				description: step.descriptionPl,
+				createdAt: new Date(),
+				updatedAt: new Date(),
+			},
+		]);
+
+		await tx.insert(stepTranslations).values(stepTranslationsToInsert);
+	});
 
 	return { id: moveId, slug: data.slug };
 }
@@ -509,19 +567,23 @@ export async function acceptMoveImage(moveId: string, imageUrl: string) {
 export async function updateMove(data: {
 	id: string;
 	name: string;
-	description: string;
+	descriptionEn: string;
+	descriptionPl: string;
 	level: "Beginner" | "Intermediate" | "Advanced";
 	slug: string;
-	steps: Array<{ title: string; description: string }>;
+	steps: Array<{
+		titleEn: string;
+		titlePl: string;
+		descriptionEn: string;
+		descriptionPl: string;
+	}>;
 }) {
-	const stepsWithIndices = data.steps.map((step, index) => ({
+	const stepsWithIds = data.steps.map((step) => ({
 		id: crypto.randomUUID(),
-		moveId: data.id,
-		orderIndex: index + 1,
-		title: step.title,
-		description: step.description,
-		createdAt: new Date(),
-		updatedAt: new Date(),
+		titleEn: step.titleEn,
+		titlePl: step.titlePl,
+		descriptionEn: step.descriptionEn,
+		descriptionPl: step.descriptionPl,
 	}));
 
 	await db.transaction(async (tx) => {
@@ -529,16 +591,77 @@ export async function updateMove(data: {
 			.update(moves)
 			.set({
 				name: data.name,
-				description: data.description,
+				description: data.descriptionPl,
 				level: data.level,
 				slug: data.slug,
 				updatedAt: new Date(),
 			})
 			.where(eq(moves.id, data.id));
 
+		await tx
+			.update(moveTranslations)
+			.set({
+				name: data.name,
+				description: data.descriptionEn,
+				level: data.level,
+				updatedAt: new Date(),
+			})
+			.where(
+				and(
+					eq(moveTranslations.moveId, data.id),
+					eq(moveTranslations.language, "en")
+				)
+			);
+
+		await tx
+			.update(moveTranslations)
+			.set({
+				name: data.name,
+				description: data.descriptionPl,
+				level: data.level,
+				updatedAt: new Date(),
+			})
+			.where(
+				and(
+					eq(moveTranslations.moveId, data.id),
+					eq(moveTranslations.language, "pl")
+				)
+			);
+
 		await tx.delete(steps).where(eq(steps.moveId, data.id));
 
-		await tx.insert(steps).values(stepsWithIndices);
+		const stepsToInsert = stepsWithIds.map((step, index) => ({
+			id: step.id,
+			moveId: data.id,
+			orderIndex: index + 1,
+			title: step.titlePl,
+			description: step.descriptionPl,
+			createdAt: new Date(),
+			updatedAt: new Date(),
+		}));
+
+		await tx.insert(steps).values(stepsToInsert);
+
+		const stepTranslationsToInsert = stepsWithIds.flatMap((step) => [
+			{
+				stepId: step.id,
+				language: "en" as const,
+				title: step.titleEn,
+				description: step.descriptionEn,
+				createdAt: new Date(),
+				updatedAt: new Date(),
+			},
+			{
+				stepId: step.id,
+				language: "pl" as const,
+				title: step.titlePl,
+				description: step.descriptionPl,
+				createdAt: new Date(),
+				updatedAt: new Date(),
+			},
+		]);
+
+		await tx.insert(stepTranslations).values(stepTranslationsToInsert);
 	});
 
 	return { id: data.id, slug: data.slug };
@@ -550,22 +673,64 @@ export async function getMoveByIdForAdmin(moveId: string) {
 		columns: {
 			id: true,
 			name: true,
-			description: true,
 			level: true,
 			slug: true,
 			imageUrl: true,
 		},
 		with: {
+			translations: {
+				columns: {
+					language: true,
+					description: true,
+				},
+			},
 			steps: {
 				columns: {
 					orderIndex: true,
-					title: true,
-					description: true,
 				},
 				orderBy: [asc(steps.orderIndex)],
+				with: {
+					translations: {
+						columns: {
+							language: true,
+							title: true,
+							description: true,
+						},
+					},
+				},
 			},
 		},
 	});
 
-	return move ?? null;
+	if (!move) {
+		return null;
+	}
+
+	const enTranslation = move.translations.find((t) => t.language === "en");
+	const plTranslation = move.translations.find((t) => t.language === "pl");
+
+	return {
+		id: move.id,
+		name: move.name,
+		descriptionEn: enTranslation?.description ?? "",
+		descriptionPl: plTranslation?.description ?? "",
+		level: move.level,
+		slug: move.slug,
+		imageUrl: move.imageUrl,
+		steps: move.steps.map((step) => {
+			const enStepTranslation = step.translations.find(
+				(t) => t.language === "en"
+			);
+			const plStepTranslation = step.translations.find(
+				(t) => t.language === "pl"
+			);
+			return {
+				orderIndex: step.orderIndex,
+				titleEn: enStepTranslation?.title ?? "",
+				titlePl: plStepTranslation?.title ?? "",
+				descriptionEn: enStepTranslation?.description ?? "",
+				descriptionPl: plStepTranslation?.description ?? "",
+			};
+		}),
+	};
 }
