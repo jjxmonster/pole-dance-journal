@@ -1,3 +1,4 @@
+import { ORPCError } from "@orpc/client";
 import {
 	and,
 	asc,
@@ -109,6 +110,11 @@ export async function getMoveBySlugWithTranslations(
 			},
 		},
 	});
+	if (!move) {
+		throw new ORPCError("NOT_FOUND", {
+			message: `Move with slug "${slug}" not found`,
+		});
+	}
 
 	let usedFallback = false;
 
