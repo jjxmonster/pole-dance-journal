@@ -8,7 +8,6 @@ import {
 	ilike,
 	isNotNull,
 	isNull,
-	or,
 	type SQLWrapper,
 	sql,
 } from "drizzle-orm";
@@ -30,10 +29,7 @@ export async function listPublishedMoves(input: ListPublishedMovesInput) {
 
 	if (input.query) {
 		const searchPattern = `%${input.query}%`;
-		const searchCondition = or(
-			ilike(moves.name, searchPattern),
-			ilike(moves.description, searchPattern)
-		);
+		const searchCondition = ilike(moves.name, searchPattern);
 		if (searchCondition) {
 			conditions.push(searchCondition);
 		}
@@ -47,7 +43,6 @@ export async function listPublishedMoves(input: ListPublishedMovesInput) {
 			.select({
 				id: moves.id,
 				name: moves.name,
-				description: moves.description,
 				level: moves.level,
 				slug: moves.slug,
 				imageUrl: moves.imageUrl,
@@ -81,7 +76,6 @@ export async function getMoveBySlugWithTranslations(
 			slug: true,
 			imageUrl: true,
 			name: true,
-			description: true,
 		},
 		with: {
 			translations: {
@@ -203,36 +197,6 @@ export async function getMoveBySlugWithTranslations(
 	};
 }
 
-export async function getMoveBySlug(slug: string) {
-	const move = await db.query.moves.findFirst({
-		where: and(
-			eq(sql`lower(${moves.slug})`, slug.toLowerCase()),
-			isNotNull(moves.publishedAt),
-			isNull(moves.deletedAt)
-		),
-		columns: {
-			id: true,
-			name: true,
-			description: true,
-			level: true,
-			slug: true,
-			imageUrl: true,
-		},
-		with: {
-			steps: {
-				columns: {
-					orderIndex: true,
-					title: true,
-					description: true,
-				},
-				orderBy: [asc(steps.orderIndex)],
-			},
-		},
-	});
-
-	return move ?? null;
-}
-
 export async function getRandomPublishedMove() {
 	const result = await db
 		.select({
@@ -344,10 +308,7 @@ export async function listAdminMoves(input: {
 
 	if (input.query) {
 		const searchPattern = `%${input.query}%`;
-		const searchCondition = or(
-			ilike(moves.name, searchPattern),
-			ilike(moves.description, searchPattern)
-		);
+		const searchCondition = ilike(moves.name, searchPattern);
 		conditions.push(searchCondition);
 	}
 
@@ -460,7 +421,6 @@ export async function createMove(data: {
 		await tx.insert(moves).values({
 			id: moveId,
 			name: data.name,
-			description: data.descriptionPl,
 			level: data.level,
 			slug: data.slug,
 			createdAt: new Date(),
@@ -488,8 +448,6 @@ export async function createMove(data: {
 			id: step.id,
 			moveId,
 			orderIndex: index + 1,
-			title: step.titlePl,
-			description: step.descriptionPl,
 			createdAt: new Date(),
 			updatedAt: new Date(),
 		}));
@@ -594,7 +552,6 @@ export async function updateMove(data: {
 			.update(moves)
 			.set({
 				name: data.name,
-				description: data.descriptionPl,
 				level: data.level,
 				slug: data.slug,
 				updatedAt: new Date(),
@@ -633,8 +590,6 @@ export async function updateMove(data: {
 			id: step.id,
 			moveId: data.id,
 			orderIndex: index + 1,
-			title: step.titlePl,
-			description: step.descriptionPl,
 			createdAt: new Date(),
 			updatedAt: new Date(),
 		}));

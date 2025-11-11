@@ -1,5 +1,5 @@
 import { db } from "./index";
-import { moves, steps } from "./schema";
+import { moves, moveTranslations, steps, stepTranslations } from "./schema";
 
 const IMAGE_URL =
 	"http://127.0.0.1:54321/storage/v1/object/sign/moves-images/move.jpg?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1cmwiOiJtb3Zlcy1pbWFnZXMvbW92ZS5qcGciLCJpYXQiOjE3NjAyODkwMTcsImV4cCI6MTc2MDg5MzgxN30.BZKhRDTIqEwvRAt-JruqkypgVPw8fIJLFlYT4AKgo1c";
@@ -316,7 +316,6 @@ async function seed() {
 				.insert(moves)
 				.values({
 					name: moveData.name,
-					description: moveData.description,
 					level: moveData.level,
 					slug: moveData.slug,
 					imageUrl: IMAGE_URL,
@@ -324,14 +323,34 @@ async function seed() {
 				})
 				.returning();
 
-			const stepsToInsert = moveData.steps.map((step, index) => ({
+			await db.insert(moveTranslations).values({
+				moveId: insertedMove.id,
+				language: "pl",
+				description: moveData.description,
+				createdAt: new Date(),
+				updatedAt: new Date(),
+			});
+
+			const stepsWithIds = moveData.steps.map((_step, index) => ({
+				id: crypto.randomUUID(),
 				moveId: insertedMove.id,
 				orderIndex: index + 1,
-				title: step.title,
-				description: step.description,
+				createdAt: new Date(),
+				updatedAt: new Date(),
 			}));
 
-			await db.insert(steps).values(stepsToInsert);
+			await db.insert(steps).values(stepsWithIds);
+
+			const stepTranslationsToInsert = moveData.steps.map((step, index) => ({
+				stepId: stepsWithIds[index].id,
+				language: "pl" as const,
+				title: step.title,
+				description: step.description,
+				createdAt: new Date(),
+				updatedAt: new Date(),
+			}));
+
+			await db.insert(stepTranslations).values(stepTranslationsToInsert);
 
 			totalSteps += moveData.steps.length;
 
