@@ -169,5 +169,7 @@
   "note_editor_delete_success": "Notatka usunięta",
   "move_status_update_success": "Status zaktualizowany",
   "move_status_update_error": "Nie udało się zaktualizować statusu. Spróbuj ponownie.",
-  "move_status_auth_required": "Musisz być zalogowany, aby zaktualizować status"
+  "move_status_auth_required": "Musisz być zalogowany, aby zaktualizować status",
+  "settings_meta_title": "Ustawienia - Spinella",
+  "settings_meta_description": "Zarządzaj swoim profilem"
 }

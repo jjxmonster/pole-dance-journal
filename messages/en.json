@@ -169,5 +169,7 @@
   "note_editor_delete_success": "Note deleted",
   "move_status_update_success": "Status updated",
   "move_status_update_error": "Failed to update status. Please try again.",
-  "move_status_auth_required": "You must be logged in to update status"
+  "move_status_auth_required": "You must be logged in to update status",
+  "settings_meta_title": "Settings - Spinella",
+  "settings_meta_description": "Manage your profile settings"
 }

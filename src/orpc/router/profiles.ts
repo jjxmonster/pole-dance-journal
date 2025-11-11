@@ -4,6 +4,7 @@ import {
 	updateProfileAvatar,
 	updateProfileName,
 } from "@/data-access/profiles";
+import { uploadAvatarToStorage } from "@/services/avatar-upload";
 import { authMiddleware } from "../auth";
 import {
 	ProfileGetOutputSchema,
@@ -11,6 +12,8 @@ import {
 	ProfileUpdateAvatarOutputSchema,
 	ProfileUpdateNameInputSchema,
 	ProfileUpdateNameOutputSchema,
+	ProfileUploadAvatarInputSchema,
+	ProfileUploadAvatarOutputSchema,
 } from "../schema";
 
 export const getProfile = os
@@ -79,6 +82,32 @@ export const updateAvatar = os
 
 			throw new ORPCError("INTERNAL_SERVER_ERROR", {
 				message: "Failed to update profile avatar.",
+			});
+		}
+	});
+
+export const uploadAvatar = os
+	.input(ProfileUploadAvatarInputSchema)
+	.output(ProfileUploadAvatarOutputSchema)
+	.use(authMiddleware)
+	.handler(async ({ input, context }) => {
+		const userId = context.user.id;
+
+		try {
+			const result = await uploadAvatarToStorage(input.file, userId);
+			const profile = await updateProfileAvatar(userId, result.avatarUrl);
+
+			return {
+				success: true,
+				avatarUrl: profile.avatarUrl ?? "",
+				updatedAt: profile.updatedAt,
+			};
+		} catch (error) {
+			if (error instanceof ORPCError) {
+				throw error;
+			}
+			throw new ORPCError("INTERNAL_SERVER_ERROR", {
+				message: "Failed to upload avatar.",
 			});
 		}
 	});

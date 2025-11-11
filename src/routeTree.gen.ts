@@ -9,6 +9,7 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as SettingsRouteImport } from './routes/settings'
 import { Route as MyMovesRouteImport } from './routes/my-moves'
 import { Route as CatalogRouteImport } from './routes/catalog'
 import { Route as AdminRouteImport } from './routes/admin'
@@ -27,6 +28,11 @@ import { Route as ApiRpcSplatRouteImport } from './routes/api.rpc.$'
 import { Route as AdminMovesNewRouteImport } from './routes/admin/moves/new'
 import { Route as AdminMovesMoveIdRouteImport } from './routes/admin/moves/$moveId'
 
+const SettingsRoute = SettingsRouteImport.update({
+  id: '/settings',
+  path: '/settings',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const MyMovesRoute = MyMovesRouteImport.update({
   id: '/my-moves',
   path: '/my-moves',
@@ -118,6 +124,7 @@ export interface FileRoutesByFullPath {
   '/admin': typeof AdminRouteWithChildren
   '/catalog': typeof CatalogRoute
   '/my-moves': typeof MyMovesRoute
+  '/settings': typeof SettingsRoute
   '/auth/forgot-password': typeof AuthForgotPasswordRoute
   '/auth/oauth-callback': typeof AuthOauthCallbackRoute
   '/auth/reset-password': typeof AuthResetPasswordRoute
@@ -136,6 +143,7 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/catalog': typeof CatalogRoute
   '/my-moves': typeof MyMovesRoute
+  '/settings': typeof SettingsRoute
   '/auth/forgot-password': typeof AuthForgotPasswordRoute
   '/auth/oauth-callback': typeof AuthOauthCallbackRoute
   '/auth/reset-password': typeof AuthResetPasswordRoute
@@ -156,6 +164,7 @@ export interface FileRoutesById {
   '/admin': typeof AdminRouteWithChildren
   '/catalog': typeof CatalogRoute
   '/my-moves': typeof MyMovesRoute
+  '/settings': typeof SettingsRoute
   '/auth/forgot-password': typeof AuthForgotPasswordRoute
   '/auth/oauth-callback': typeof AuthOauthCallbackRoute
   '/auth/reset-password': typeof AuthResetPasswordRoute
@@ -177,6 +186,7 @@ export interface FileRouteTypes {
     | '/admin'
     | '/catalog'
     | '/my-moves'
+    | '/settings'
     | '/auth/forgot-password'
     | '/auth/oauth-callback'
     | '/auth/reset-password'
@@ -195,6 +205,7 @@ export interface FileRouteTypes {
     | '/'
     | '/catalog'
     | '/my-moves'
+    | '/settings'
     | '/auth/forgot-password'
     | '/auth/oauth-callback'
     | '/auth/reset-password'
@@ -214,6 +225,7 @@ export interface FileRouteTypes {
     | '/admin'
     | '/catalog'
     | '/my-moves'
+    | '/settings'
     | '/auth/forgot-password'
     | '/auth/oauth-callback'
     | '/auth/reset-password'
@@ -234,6 +246,7 @@ export interface RootRouteChildren {
   AdminRoute: typeof AdminRouteWithChildren
   CatalogRoute: typeof CatalogRoute
   MyMovesRoute: typeof MyMovesRoute
+  SettingsRoute: typeof SettingsRoute
   AuthForgotPasswordRoute: typeof AuthForgotPasswordRoute
   AuthOauthCallbackRoute: typeof AuthOauthCallbackRoute
   AuthResetPasswordRoute: typeof AuthResetPasswordRoute
@@ -247,6 +260,13 @@ export interface RootRouteChildren {
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/settings': {
+      id: '/settings'
+      path: '/settings'
+      fullPath: '/settings'
+      preLoaderRoute: typeof SettingsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/my-moves': {
       id: '/my-moves'
       path: '/my-moves'
@@ -390,6 +410,7 @@ const rootRouteChildren: RootRouteChildren = {
   AdminRoute: AdminRouteWithChildren,
   CatalogRoute: CatalogRoute,
   MyMovesRoute: MyMovesRoute,
+  SettingsRoute: SettingsRoute,
   AuthForgotPasswordRoute: AuthForgotPasswordRoute,
   AuthOauthCallbackRoute: AuthOauthCallbackRoute,
   AuthResetPasswordRoute: AuthResetPasswordRoute,
