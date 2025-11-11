@@ -640,3 +640,21 @@ export const ProfileUpdateAvatarOutputSchema = z.object({
 export type ProfileUpdateAvatarOutput = z.infer<
 	typeof ProfileUpdateAvatarOutputSchema
 >;
+
+export const ProfileUploadAvatarInputSchema = z.object({
+	file: z.instanceof(File),
+});
+
+export type ProfileUploadAvatarInput = z.infer<
+	typeof ProfileUploadAvatarInputSchema
+>;
+
+export const ProfileUploadAvatarOutputSchema = z.object({
+	success: z.literal(true),
+	avatarUrl: z.string().url(),
+	updatedAt: z.date(),
+});
+
+export type ProfileUploadAvatarOutput = z.infer<
+	typeof ProfileUploadAvatarOutputSchema
+>;

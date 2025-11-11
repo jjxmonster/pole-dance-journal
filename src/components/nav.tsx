@@ -154,6 +154,15 @@ export function Nav() {
 								</div>
 								<DropdownMenuItem
 									className="cursor-pointer text-primary"
+									variant="default"
+								>
+									<Link className="cursor-pointer text-primary" to="/settings">
+										{/* {m.nav_settings()} */}
+										Settings
+									</Link>
+								</DropdownMenuItem>
+								<DropdownMenuItem
+									className="cursor-pointer text-primary"
 									onClick={handleSignOut}
 									variant="default"
 								>
