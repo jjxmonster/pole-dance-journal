@@ -31,6 +31,7 @@ import {
 	listMoves,
 	listMovesTrialVersion,
 } from "./moves";
+import { getProfile, updateAvatar, updateName } from "./profiles";
 import { get, set } from "./user-move-statuses";
 
 export default {
@@ -50,6 +51,11 @@ export default {
 		getNotes,
 		addNote,
 		deleteNote,
+	},
+	profiles: {
+		getProfile,
+		updateName,
+		updateAvatar,
 	},
 	admin: {
 		getStats: getStatsProcedure,
