@@ -16,6 +16,7 @@ import {
 	AuthSuccessSchema,
 } from "@/orpc/schema";
 import type { SupabaseClient } from "@/orpc/types";
+import { ERROR_MESSAGE_KEYS } from "@/utils/constants";
 
 export const register = os
 	.input(AuthRegisterInputSchema)
@@ -32,12 +33,12 @@ export const register = os
 			if (error) {
 				if (error.message.includes("already registered")) {
 					throw new ORPCError("CONFLICT", {
-						message: "This email is already registered.",
+						message: ERROR_MESSAGE_KEYS.EMAIL_ALREADY_REGISTERED,
 					});
 				}
 
 				throw new ORPCError("BAD_REQUEST", {
-					message: "Failed to register. Please check your email and password.",
+					message: ERROR_MESSAGE_KEYS.REGISTER_FAILED,
 				});
 			}
 
@@ -55,7 +56,7 @@ export const register = os
 			}
 
 			throw new ORPCError("INTERNAL_SERVER_ERROR", {
-				message: "Registration failed. Please try again.",
+				message: ERROR_MESSAGE_KEYS.REGISTRATION_FAILED,
 			});
 		}
 	});
@@ -74,13 +75,12 @@ export const login = os
 			if (error) {
 				if (error.message.includes("Email not confirmed")) {
 					throw new ORPCError("UNAUTHORIZED", {
-						message:
-							"Konto nie zostało potwierdzone. Sprawdź swoją pocztę i kliknij w link w celu potwierdzenia konta.",
+						message: ERROR_MESSAGE_KEYS.EMAIL_NOT_CONFIRMED,
 					});
 				}
 
 				throw new ORPCError("UNAUTHORIZED", {
-					message: "Invalid email or password.",
+					message: ERROR_MESSAGE_KEYS.INVALID_CREDENTIALS,
 				});
 			}
 
@@ -91,7 +91,7 @@ export const login = os
 			}
 
 			throw new ORPCError("INTERNAL_SERVER_ERROR", {
-				message: "Unable to sign in. Please try again.",
+				message: ERROR_MESSAGE_KEYS.SIGNIN_FAILED,
 			});
 		}
 	});
@@ -106,7 +106,7 @@ export const logout = os
 
 			if (error) {
 				throw new ORPCError("INTERNAL_SERVER_ERROR", {
-					message: "Failed to sign out. Please try again.",
+					message: ERROR_MESSAGE_KEYS.SIGNOUT_FAILED,
 				});
 			}
 
@@ -117,7 +117,7 @@ export const logout = os
 			}
 
 			throw new ORPCError("INTERNAL_SERVER_ERROR", {
-				message: "Failed to sign out. Please try again.",
+				message: ERROR_MESSAGE_KEYS.SIGNOUT_FAILED,
 			});
 		}
 	});
@@ -177,7 +177,7 @@ export const resetPassword = os
 
 			if (error) {
 				throw new ORPCError("BAD_REQUEST", {
-					message: "Reset link is invalid or expired.",
+					message: ERROR_MESSAGE_KEYS.RESET_LINK_INVALID,
 				});
 			}
 
@@ -187,7 +187,7 @@ export const resetPassword = os
 
 			if (updateError) {
 				throw new ORPCError("INTERNAL_SERVER_ERROR", {
-					message: "Failed to update password. Please try again.",
+					message: ERROR_MESSAGE_KEYS.PASSWORD_UPDATE_FAILED,
 				});
 			}
 
@@ -198,7 +198,7 @@ export const resetPassword = os
 			}
 
 			throw new ORPCError("INTERNAL_SERVER_ERROR", {
-				message: "Failed to reset password. Please try again.",
+				message: ERROR_MESSAGE_KEYS.RESET_PASSWORD_FAILED,
 			});
 		}
 	});
@@ -221,7 +221,7 @@ export const oauthStart = os
 
 			if (error || !data?.url) {
 				throw new ORPCError("INTERNAL_SERVER_ERROR", {
-					message: "Unable to start OAuth sign-in. Please try again.",
+					message: ERROR_MESSAGE_KEYS.OAUTH_START_FAILED,
 				});
 			}
 
@@ -232,7 +232,7 @@ export const oauthStart = os
 			}
 
 			throw new ORPCError("INTERNAL_SERVER_ERROR", {
-				message: "Unable to start OAuth sign-in. Please try again.",
+				message: ERROR_MESSAGE_KEYS.OAUTH_START_FAILED,
 			});
 		}
 	});
@@ -248,7 +248,7 @@ export const oauthCallback = os
 
 			if (error) {
 				throw new ORPCError("BAD_REQUEST", {
-					message: "Google sign-in link is invalid or expired.",
+					message: ERROR_MESSAGE_KEYS.OAUTH_LINK_INVALID,
 				});
 			}
 
@@ -257,7 +257,7 @@ export const oauthCallback = os
 
 			if (!userId) {
 				throw new ORPCError("INTERNAL_SERVER_ERROR", {
-					message: "Failed to retrieve user information.",
+					message: ERROR_MESSAGE_KEYS.USER_INFO_FAILED,
 				});
 			}
 
@@ -293,7 +293,7 @@ export const oauthCallback = os
 			}
 
 			throw new ORPCError("INTERNAL_SERVER_ERROR", {
-				message: "Failed to complete Google sign-in. Please try again.",
+				message: ERROR_MESSAGE_KEYS.OAUTH_FAILED,
 			});
 		}
 	});

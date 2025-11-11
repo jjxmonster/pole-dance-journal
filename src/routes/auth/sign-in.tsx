@@ -4,6 +4,8 @@ import { AuthFormWrapper } from "@/components/auth/auth-form-wrapper";
 import { SignInForm } from "@/components/auth/sign-in-form";
 import { useAuth } from "@/hooks/use-auth";
 import { client, orpc } from "@/orpc/client";
+import { m } from "@/paraglide/messages";
+import { translateErrorMessage } from "@/utils/error-messages";
 
 export const Route = createFileRoute("/auth/sign-in")({
 	component: SignInPage,
@@ -17,7 +19,7 @@ export const Route = createFileRoute("/auth/sign-in")({
 		meta: [
 			{
 				name: "description",
-				content: "Zaloguj się na swoje konto",
+				content: m.auth_signin_meta_description(),
 			},
 		],
 	}),
@@ -49,7 +51,9 @@ function SignInPage() {
 			await navigate({ to: redirectTo || "/catalog" });
 		} catch (err) {
 			const errorMessage =
-				err instanceof Error ? err.message : "Invalid email or password.";
+				err instanceof Error
+					? translateErrorMessage(err.message)
+					: m.auth_error_invalid_credentials();
 			setError(errorMessage);
 		} finally {
 			setIsLoading(false);
@@ -78,7 +82,9 @@ function SignInPage() {
 			}
 		} catch (err) {
 			const errorMessage =
-				err instanceof Error ? err.message : "Unable to start Google sign-in.";
+				err instanceof Error
+					? translateErrorMessage(err.message)
+					: m.auth_error_oauth_start_failed();
 			setError(errorMessage);
 			setIsLoading(false);
 		}
@@ -86,9 +92,9 @@ function SignInPage() {
 
 	return (
 		<AuthFormWrapper
-			description="Wprowadź e-mail i hasło, aby zalogować się na swoje konto"
+			description={m.auth_signin_description()}
 			error={error}
-			title="Zaloguj się"
+			title={m.auth_signin_title()}
 		>
 			<SignInForm
 				isLoading={isLoading}

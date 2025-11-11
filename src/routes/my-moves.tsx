@@ -1,9 +1,10 @@
 import { createFileRoute, Link, redirect } from "@tanstack/react-router";
 import { PlusIcon } from "lucide-react";
 import { z } from "zod";
+import { LevelFilterBadges } from "@/components/shared/level-filter-badges/level-filter-badges";
+import { m } from "@/paraglide/messages";
 import { EmptyState } from "../components/my-moves/empty-state";
 import { ErrorState } from "../components/my-moves/error-state";
-import { LevelFilterBadges } from "../components/my-moves/level-filter-badges";
 import { LoadingState } from "../components/my-moves/loading-state";
 import { MoveCardMyMoves } from "../components/my-moves/move-card-my-moves";
 import { StatusFilterBadges } from "../components/my-moves/status-filter-badges";
@@ -35,20 +36,19 @@ export const Route = createFileRoute("/my-moves")({
 	head: () => ({
 		meta: [
 			{
-				title: "Moje Figury - Spinella",
+				title: m.my_moves_meta_title(),
 			},
 			{
 				name: "description",
-				content:
-					"Zobacz i zarządzaj swoją osobistą kolekcją figur pole dance. Śledź swoje postępy i notatki.",
+				content: m.my_moves_meta_description(),
 			},
 			{
 				property: "og:title",
-				content: "Moje Figury - Spinella",
+				content: m.my_moves_meta_title(),
 			},
 			{
 				property: "og:description",
-				content: "Zobacz i zarządzaj swoją osobistą kolekcją figur pole dance.",
+				content: m.my_moves_meta_description(),
 			},
 		],
 	}),
@@ -88,16 +88,14 @@ function MyMovesView() {
 			<div className="mb-6 flex items-start justify-between gap-4">
 				<div>
 					<h1 className="mb-2 font-semibold text-5xl text-foreground">
-						Moje Figury
+						{m.my_moves_title()}
 					</h1>
-					<p className="mt-2 text-muted-foreground">
-						Zobacz i zarządzaj swoją osobistą kolekcją figur pole dance
-					</p>
+					<p className="mt-2 text-muted-foreground">{m.my_moves_subtitle()}</p>
 				</div>
 				<Button asChild data-testid="add-moves-button" type="button">
 					<Link to="/catalog">
 						<PlusIcon className="size-4" />
-						Dodaj figury
+						{m.my_moves_add_button()}
 					</Link>
 				</Button>
 			</div>
@@ -105,7 +103,7 @@ function MyMovesView() {
 			<div className="mb-6 space-y-4">
 				<div>
 					<h2 className="mb-3 font-semibold text-foreground text-sm">
-						Poziom trudności
+						{m.my_moves_level_filter_label()}
 					</h2>
 					<LevelFilterBadges
 						activeLevel={filters.level}
@@ -114,7 +112,7 @@ function MyMovesView() {
 				</div>
 				<div>
 					<h2 className="mb-3 font-semibold text-foreground text-sm">
-						Status figury
+						{m.my_moves_status_filter_label()}
 					</h2>
 					<StatusFilterBadges
 						activeStatus={filters.status}

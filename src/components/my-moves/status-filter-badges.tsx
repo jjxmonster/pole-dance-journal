@@ -1,3 +1,4 @@
+import { m } from "@/paraglide/messages";
 import type { MoveStatus } from "@/types/move";
 import { Badge } from "../ui/badge";
 
@@ -6,14 +7,22 @@ type StatusFilterBadgesProps = {
 	onChange: (status: MoveStatus | "All") => void;
 };
 
-const STATUS_LABELS_POLISH: Record<MoveStatus | "All", string> = {
-	All: "Wszystkie",
-	WANT: "Chcę zrobić",
-	ALMOST: "Prawie",
-	DONE: "Zrobione",
-};
-
 const STATUSES: Array<MoveStatus | "All"> = ["All", "WANT", "ALMOST", "DONE"];
+
+const getStatusLabel = (status: MoveStatus | "All"): string => {
+	switch (status) {
+		case "All":
+			return m.my_moves_status_all();
+		case "WANT":
+			return m.my_moves_status_want();
+		case "ALMOST":
+			return m.my_moves_status_almost();
+		case "DONE":
+			return m.my_moves_status_done();
+		default:
+			return status;
+	}
+};
 
 export function StatusFilterBadges({
 	activeStatus,
@@ -23,9 +32,10 @@ export function StatusFilterBadges({
 		<div className="flex flex-wrap items-center gap-3">
 			{STATUSES.map((status) => {
 				const isActive = activeStatus === status;
+				const label = getStatusLabel(status);
 				return (
 					<button
-						aria-label={`Filtruj według statusu: ${STATUS_LABELS_POLISH[status]}`}
+						aria-label={m.my_moves_status_filter_aria_label({ status: label })}
 						aria-pressed={isActive}
 						className="rounded-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
 						data-testid="status-filter-badge"
@@ -41,7 +51,7 @@ export function StatusFilterBadges({
 							}`}
 							variant={isActive ? "default" : "outline"}
 						>
-							{STATUS_LABELS_POLISH[status]}
+							{label}
 						</Badge>
 					</button>
 				);

@@ -8,13 +8,14 @@ import { CatalogHeader } from "../components/catalog/catalog-header";
 import { CatalogPagination } from "../components/catalog/catalog-pagination";
 import { CatalogResultsSummary } from "../components/catalog/catalog-results-summary";
 import { CatalogSkeletonGrid } from "../components/catalog/catalog-skeleton";
-import { LevelFilterBadges } from "../components/catalog/level-filter-badges";
 import { MoveCard } from "../components/catalog/move-card";
 import { SearchBar } from "../components/catalog/search-bar";
+import { LevelFilterBadges } from "../components/shared/level-filter-badges/level-filter-badges";
 import { moveLevelEnum } from "../db/schema";
 import { useCatalogFilters } from "../hooks/use-catalog-filters";
 import { useDebouncedValue } from "../hooks/use-debounced-value";
 import { orpc } from "../orpc/client";
+import { m } from "../paraglide/messages";
 import {
 	DEBOUNCE_DELAY_MS,
 	PAGE_SIZE,
@@ -39,21 +40,19 @@ export const Route = createFileRoute("/catalog")({
 	head: () => ({
 		meta: [
 			{
-				title: "Przeglądaj Figury - Spinella",
+				title: m.catalog_meta_title(),
 			},
 			{
 				name: "description",
-				content:
-					"Przeglądaj kolekcję figur pole dance. Filtruj po poziomie trudności, wyszukuj po nazwie i odkryj nowe techniki do opanowania.",
+				content: m.catalog_meta_description(),
 			},
 			{
 				property: "og:title",
-				content: "Przeglądaj Figury Pole Dance - Spinella",
+				content: m.catalog_meta_og_title(),
 			},
 			{
 				property: "og:description",
-				content:
-					"Przeglądaj kolekcję figur pole dance. Filtruj po poziomie trudności i odkryj nowe techniki.",
+				content: m.catalog_meta_og_description(),
 			},
 			{
 				name: "twitter:card",
@@ -61,7 +60,7 @@ export const Route = createFileRoute("/catalog")({
 			},
 			{
 				name: "twitter:title",
-				content: "Przeglądaj Figury Pole Dance - Spinella",
+				content: m.catalog_meta_og_title(),
 			},
 		],
 	}),
@@ -122,7 +121,7 @@ function CatalogView() {
 	};
 
 	return (
-		<div className="container mx-auto max-w-7xl px-4 py-8">
+		<div className="container mx-auto max-w-7xl py-8">
 			<CatalogHeader />
 
 			<div className="mb-6 space-y-4">

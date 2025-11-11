@@ -22,6 +22,34 @@
       "when": 1761766705943,
       "tag": "0002_known_sue_storm",
       "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1762588557381,
+      "tag": "0003_nice_sir_ram",
+      "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1762627366607,
+      "tag": "0004_fair_crystal",
+      "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "7",
+      "when": 1762721225341,
+      "tag": "0005_daily_firebird",
+      "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "7",
+      "when": 1762875342800,
+      "tag": "0006_famous_omega_flight",
+      "breakpoints": true
     }
   ]
 }

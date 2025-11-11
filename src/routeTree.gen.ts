@@ -20,7 +20,6 @@ import { Route as AuthSignInRouteImport } from './routes/auth/sign-in'
 import { Route as AuthResetPasswordRouteImport } from './routes/auth/reset-password'
 import { Route as AuthOauthCallbackRouteImport } from './routes/auth/oauth-callback'
 import { Route as AuthForgotPasswordRouteImport } from './routes/auth/forgot-password'
-import { Route as ApiSplatRouteImport } from './routes/api.$'
 import { Route as AdminMovesIndexRouteImport } from './routes/admin/moves/index'
 import { Route as ApiRpcSplatRouteImport } from './routes/api.rpc.$'
 import { Route as AdminMovesNewRouteImport } from './routes/admin/moves/new'
@@ -81,11 +80,6 @@ const AuthForgotPasswordRoute = AuthForgotPasswordRouteImport.update({
   path: '/auth/forgot-password',
   getParentRoute: () => rootRouteImport,
 } as any)
-const ApiSplatRoute = ApiSplatRouteImport.update({
-  id: '/api/$',
-  path: '/api/$',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const AdminMovesIndexRoute = AdminMovesIndexRouteImport.update({
   id: '/moves/',
   path: '/moves/',
@@ -112,7 +106,6 @@ export interface FileRoutesByFullPath {
   '/admin': typeof AdminRouteWithChildren
   '/catalog': typeof CatalogRoute
   '/my-moves': typeof MyMovesRoute
-  '/api/$': typeof ApiSplatRoute
   '/auth/forgot-password': typeof AuthForgotPasswordRoute
   '/auth/oauth-callback': typeof AuthOauthCallbackRoute
   '/auth/reset-password': typeof AuthResetPasswordRoute
@@ -129,7 +122,6 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/catalog': typeof CatalogRoute
   '/my-moves': typeof MyMovesRoute
-  '/api/$': typeof ApiSplatRoute
   '/auth/forgot-password': typeof AuthForgotPasswordRoute
   '/auth/oauth-callback': typeof AuthOauthCallbackRoute
   '/auth/reset-password': typeof AuthResetPasswordRoute
@@ -148,7 +140,6 @@ export interface FileRoutesById {
   '/admin': typeof AdminRouteWithChildren
   '/catalog': typeof CatalogRoute
   '/my-moves': typeof MyMovesRoute
-  '/api/$': typeof ApiSplatRoute
   '/auth/forgot-password': typeof AuthForgotPasswordRoute
   '/auth/oauth-callback': typeof AuthOauthCallbackRoute
   '/auth/reset-password': typeof AuthResetPasswordRoute
@@ -168,7 +159,6 @@ export interface FileRouteTypes {
     | '/admin'
     | '/catalog'
     | '/my-moves'
-    | '/api/$'
     | '/auth/forgot-password'
     | '/auth/oauth-callback'
     | '/auth/reset-password'
@@ -185,7 +175,6 @@ export interface FileRouteTypes {
     | '/'
     | '/catalog'
     | '/my-moves'
-    | '/api/$'
     | '/auth/forgot-password'
     | '/auth/oauth-callback'
     | '/auth/reset-password'
@@ -203,7 +192,6 @@ export interface FileRouteTypes {
     | '/admin'
     | '/catalog'
     | '/my-moves'
-    | '/api/$'
     | '/auth/forgot-password'
     | '/auth/oauth-callback'
     | '/auth/reset-password'
@@ -222,7 +210,6 @@ export interface RootRouteChildren {
   AdminRoute: typeof AdminRouteWithChildren
   CatalogRoute: typeof CatalogRoute
   MyMovesRoute: typeof MyMovesRoute
-  ApiSplatRoute: typeof ApiSplatRoute
   AuthForgotPasswordRoute: typeof AuthForgotPasswordRoute
   AuthOauthCallbackRoute: typeof AuthOauthCallbackRoute
   AuthResetPasswordRoute: typeof AuthResetPasswordRoute
@@ -311,13 +298,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthForgotPasswordRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/api/$': {
-      id: '/api/$'
-      path: '/api/$'
-      fullPath: '/api/$'
-      preLoaderRoute: typeof ApiSplatRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/admin/moves/': {
       id: '/admin/moves/'
       path: '/moves'
@@ -370,7 +350,6 @@ const rootRouteChildren: RootRouteChildren = {
   AdminRoute: AdminRouteWithChildren,
   CatalogRoute: CatalogRoute,
   MyMovesRoute: MyMovesRoute,
-  ApiSplatRoute: ApiSplatRoute,
   AuthForgotPasswordRoute: AuthForgotPasswordRoute,
   AuthOauthCallbackRoute: AuthOauthCallbackRoute,
   AuthResetPasswordRoute: AuthResetPasswordRoute,

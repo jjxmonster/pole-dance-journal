@@ -2,6 +2,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
 import { toast } from "sonner";
 import { client } from "@/orpc/client";
+import { m } from "@/paraglide/messages";
 import { NOTE_MAX_LENGTH } from "@/utils/constants";
 
 export function useNotes(moveId: string) {
@@ -26,7 +27,7 @@ export function useNotes(moveId: string) {
 		},
 		onSuccess: () => {
 			setContent("");
-			toast.success("Notatka dodana");
+			toast.success(m.note_editor_add_success());
 			queryClient.invalidateQueries({ queryKey: ["moveNotes", moveId] });
 		},
 	});
@@ -39,7 +40,7 @@ export function useNotes(moveId: string) {
 			return result;
 		},
 		onSuccess: () => {
-			toast.success("Notatka usunięta");
+			toast.success(m.note_editor_delete_success());
 			queryClient.invalidateQueries({ queryKey: ["moveNotes", moveId] });
 		},
 	});

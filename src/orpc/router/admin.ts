@@ -257,10 +257,16 @@ export const createMoveProcedure = os
 		try {
 			const result = await createMove({
 				name: input.name,
-				description: input.description,
+				descriptionEn: input.descriptionEn,
+				descriptionPl: input.descriptionPl,
 				level: input.level,
 				slug,
-				steps: input.steps,
+				steps: input.steps.map((step) => ({
+					titleEn: step.titleEn,
+					titlePl: step.titlePl,
+					descriptionEn: step.descriptionEn,
+					descriptionPl: step.descriptionPl,
+				})),
 			});
 
 			return result;
@@ -297,10 +303,16 @@ export const editMoveProcedure = os
 			const result = await updateMove({
 				id: input.id,
 				name: input.name,
-				description: input.description,
+				descriptionEn: input.descriptionEn,
+				descriptionPl: input.descriptionPl,
 				level: input.level,
 				slug,
-				steps: input.steps,
+				steps: input.steps.map((step) => ({
+					titleEn: step.titleEn,
+					titlePl: step.titlePl,
+					descriptionEn: step.descriptionEn,
+					descriptionPl: step.descriptionPl,
+				})),
 			});
 
 			return result;

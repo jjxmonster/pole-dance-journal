@@ -1,5 +1,5 @@
 import { X } from "lucide-react";
-import { LEVEL_LABELS_POLISH } from "@/utils/constants";
+import { m } from "@/paraglide/messages";
 import type { moveLevelEnum } from "../../db/schema";
 import { Badge } from "../ui/badge";
 
@@ -15,6 +15,19 @@ type CatalogFiltersSummaryProps = {
 	onRemoveFilter: (filterKey: "query" | "level") => void;
 };
 
+const getLevelLabel = (level: MoveLevel): string => {
+	switch (level) {
+		case "Beginner":
+			return m.catalog_level_beginner();
+		case "Intermediate":
+			return m.catalog_level_intermediate();
+		case "Advanced":
+			return m.catalog_level_advanced();
+		default:
+			return level;
+	}
+};
+
 export function CatalogFiltersSummary({
 	activeFilters,
 	onRemoveFilter,
@@ -27,13 +40,17 @@ export function CatalogFiltersSummary({
 
 	return (
 		<div className="mb-4 flex flex-wrap items-center gap-2">
-			<span className="text-muted-foreground text-sm">Aktywne filtry:</span>
+			<span className="text-muted-foreground text-sm">
+				{m.catalog_active_filters()}
+			</span>
 
 			{activeFilters.query && (
 				<Badge className="gap-2 pr-1" variant="secondary">
-					<span>Szukaj: "{activeFilters.query}"</span>
+					<span>{m.catalog_filter_search({ query: activeFilters.query })}</span>
 					<button
-						aria-label="Remove search filter"
+						aria-label={m.catalog_filter_remove_aria_label({
+							filterType: "search",
+						})}
 						className="rounded-full transition-colors hover:bg-destructive/20"
 						onClick={() => onRemoveFilter("query")}
 						type="button"
@@ -45,9 +62,15 @@ export function CatalogFiltersSummary({
 
 			{activeFilters.level && (
 				<Badge className="gap-2 pr-1" variant="secondary">
-					<span>Poziom: {LEVEL_LABELS_POLISH[activeFilters.level]}</span>
+					<span>
+						{m.catalog_filter_level({
+							level: getLevelLabel(activeFilters.level),
+						})}
+					</span>
 					<button
-						aria-label="Remove level filter"
+						aria-label={m.catalog_filter_remove_aria_label({
+							filterType: "level",
+						})}
 						className="rounded-full transition-colors hover:bg-destructive/20"
 						onClick={() => onRemoveFilter("level")}
 						type="button"

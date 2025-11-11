@@ -14,7 +14,7 @@ export type MoveStatus = "WANT" | "ALMOST" | "DONE";
 
 export type StatusOption = {
 	value: MoveStatus;
-	label: string;
+	messageKey: string;
 };
 
 export type SaveStatus = "idle" | "saving" | "saved" | "error";

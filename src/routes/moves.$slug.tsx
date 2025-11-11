@@ -1,16 +1,31 @@
 import { createFileRoute, notFound, redirect } from "@tanstack/react-router";
 import { useEffect } from "react";
-import { LEVEL_COLORS, LEVEL_LABELS_POLISH } from "@/utils/constants";
+import { LEVEL_COLORS } from "@/utils/constants";
 import { Breadcrumbs } from "../components/moves/breadcrumbs";
 import { MoveDescription } from "../components/moves/move-description";
 import { MoveImage } from "../components/moves/move-image";
 import { NoteEditor } from "../components/moves/note-editor";
 import { StatusButtons } from "../components/moves/status-buttons";
 import { StepsList } from "../components/moves/steps-list";
+import { Alert, AlertDescription } from "../components/ui/alert";
 import { Badge } from "../components/ui/badge";
 import { useAuth } from "../hooks/use-auth";
 import { useMoveStatus } from "../hooks/use-move-status";
 import { orpc } from "../orpc/client";
+import { m } from "../paraglide/messages";
+
+const getLevelLabel = (level: string): string => {
+	switch (level) {
+		case "Beginner":
+			return m.catalog_level_beginner();
+		case "Intermediate":
+			return m.catalog_level_intermediate();
+		case "Advanced":
+			return m.catalog_level_advanced();
+		default:
+			return level;
+	}
+};
 
 export const Route = createFileRoute("/moves/$slug")({
 	loader: async ({ params, context }) => {
@@ -100,10 +115,18 @@ function MoveDetailPage() {
 
 	return (
 		<div
-			className="container mx-auto max-w-7xl px-4 py-8 md:px-0"
+			className="container mx-auto max-w-7xl py-8 xl:px-0"
 			data-testid="move-details-page"
 		>
 			<Breadcrumbs moveName={move.name} />
+
+			{move.translationFallback && (
+				<Alert className="mb-8" variant="destructive">
+					<AlertDescription>
+						Translation for English is in progress, please check back later.
+					</AlertDescription>
+				</Alert>
+			)}
 
 			<div className="space-y-8">
 				<div className="grid grid-cols-1 gap-8 md:grid-cols-3">
@@ -116,7 +139,7 @@ function MoveDetailPage() {
 								{move.name}
 							</h1>
 							<Badge className={LEVEL_COLORS[move.level]} variant="secondary">
-								{LEVEL_LABELS_POLISH[move.level]}
+								{getLevelLabel(move.level)}
 							</Badge>
 						</header>
 						<MoveDescription description={move.description} />

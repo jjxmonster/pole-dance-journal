@@ -6,6 +6,7 @@ import {
 } from "@tanstack/react-router";
 import { useEffect } from "react";
 import { Toaster } from "sonner";
+import { getLocale } from "@/paraglide/runtime";
 import { Footer } from "../components/footer";
 import { Nav } from "../components/nav";
 import { NotFound } from "../components/not-found";
@@ -101,14 +102,14 @@ function RootDocument({ children }: { children: React.ReactNode }) {
 	}, [setAuth]);
 
 	return (
-		<html lang="en">
+		<html lang={getLocale()}>
 			<head>
 				<HeadContent />
 			</head>
 			<body>
 				<div className="flex min-h-screen flex-col bg-background">
 					<Nav />
-					<main className="flex-1 pt-20">{children}</main>
+					<main className="flex-1 px-4 pt-20">{children}</main>
 					<Footer />
 				</div>
 				<Toaster position="top-right" richColors />
