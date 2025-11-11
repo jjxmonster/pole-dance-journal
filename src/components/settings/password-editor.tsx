@@ -6,6 +6,7 @@ import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { orpc } from "@/orpc/client";
+import { m } from "@/paraglide/messages";
 
 const SUCCESS_MESSAGE_TIMEOUT = 3000;
 
@@ -54,7 +55,9 @@ export function PasswordEditor() {
 	return (
 		<div className="space-y-4">
 			<div className="space-y-2">
-				<Label htmlFor="current-password">Current password</Label>
+				<Label htmlFor="current-password">
+					{m.settings_password_current_label()}
+				</Label>
 				<PasswordInput
 					disabled={mutation.isPending}
 					id="current-password"
@@ -65,7 +68,7 @@ export function PasswordEditor() {
 			</div>
 
 			<div className="space-y-2">
-				<Label htmlFor="new-password">New password</Label>
+				<Label htmlFor="new-password">{m.settings_password_new_label()}</Label>
 				<PasswordInput
 					disabled={mutation.isPending}
 					id="new-password"
@@ -76,7 +79,9 @@ export function PasswordEditor() {
 			</div>
 
 			<div className="space-y-2">
-				<Label htmlFor="confirm-password">Confirm new password</Label>
+				<Label htmlFor="confirm-password">
+					{m.settings_password_confirm_label()}
+				</Label>
 				<PasswordInput
 					disabled={mutation.isPending}
 					id="confirm-password"
@@ -85,14 +90,16 @@ export function PasswordEditor() {
 					value={confirmPassword}
 				/>
 				{confirmPassword.length > 0 && !passwordsMatch && (
-					<p className="text-destructive text-sm">Passwords do not match</p>
+					<p className="text-destructive text-sm">
+						{m.settings_password_error_mismatch()}
+					</p>
 				)}
 			</div>
 
 			{showSuccess && (
 				<Alert>
 					<CheckCircle2 className="size-4" />
-					<AlertDescription>Password changed successfully!</AlertDescription>
+					<AlertDescription>{m.settings_password_success()}</AlertDescription>
 				</Alert>
 			)}
 
@@ -104,7 +111,9 @@ export function PasswordEditor() {
 			)}
 
 			<Button disabled={!canSave} onClick={handleSave} type="button">
-				{mutation.isPending ? "Changing Password..." : "Change Password"}
+				{mutation.isPending
+					? m.settings_password_changing()
+					: m.settings_password_change_button()}
 			</Button>
 		</div>
 	);

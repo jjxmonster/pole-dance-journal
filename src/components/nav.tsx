@@ -157,8 +157,7 @@ export function Nav() {
 									variant="default"
 								>
 									<Link className="cursor-pointer text-primary" to="/settings">
-										{/* {m.nav_settings()} */}
-										Settings
+										{m.nav_settings()}
 									</Link>
 								</DropdownMenuItem>
 								<DropdownMenuItem

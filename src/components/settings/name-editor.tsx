@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { orpc } from "@/orpc/client";
+import { m } from "@/paraglide/messages";
 
 const NAME_MIN_LENGTH = 2;
 const NAME_MAX_LENGTH = 100;
@@ -56,26 +57,29 @@ export function NameEditor({ currentName, onUpdate }: NameEditorProps) {
 	return (
 		<div className="space-y-4">
 			<div className="space-y-2">
-				<Label htmlFor="name">Display Name</Label>
+				<Label htmlFor="name">{m.settings_name_label()}</Label>
 				<Input
 					disabled={mutation.isPending}
 					id="name"
 					maxLength={NAME_MAX_LENGTH}
 					minLength={NAME_MIN_LENGTH}
 					onChange={(e) => setName(e.target.value)}
-					placeholder="Enter your name"
+					placeholder={m.settings_name_placeholder()}
 					type="text"
 					value={name}
 				/>
 				<p className="text-muted-foreground text-sm">
-					{name.trim().length}/{NAME_MAX_LENGTH} characters
+					{m.settings_name_character_counter({
+						current: name.trim().length.toString(),
+						max: NAME_MAX_LENGTH.toString(),
+					})}
 				</p>
 			</div>
 
 			{showSuccess && (
 				<Alert>
 					<CheckCircle2 className="size-4" />
-					<AlertDescription>Name updated successfully!</AlertDescription>
+					<AlertDescription>{m.settings_name_success()}</AlertDescription>
 				</Alert>
 			)}
 
@@ -87,7 +91,9 @@ export function NameEditor({ currentName, onUpdate }: NameEditorProps) {
 			)}
 
 			<Button disabled={!canSave} onClick={handleSave} type="button">
-				{mutation.isPending ? "Saving..." : "Save Name"}
+				{mutation.isPending
+					? m.settings_name_saving()
+					: m.settings_name_save_button()}
 			</Button>
 		</div>
 	);

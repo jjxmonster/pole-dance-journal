@@ -5,6 +5,7 @@ import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { orpc } from "@/orpc/client";
+import { m } from "@/paraglide/messages";
 
 const BYTES_PER_KB = 1024;
 const BYTES_PER_MB = BYTES_PER_KB * BYTES_PER_KB;
@@ -53,10 +54,10 @@ export function AvatarEditor({
 
 	const validateFile = (file: File): string | null => {
 		if (!ALLOWED_TYPES.includes(file.type)) {
-			return "Invalid file type. Please upload a JPEG, PNG, or WebP image.";
+			return m.settings_avatar_error_invalid_type();
 		}
 		if (file.size > MAX_FILE_SIZE) {
-			return "File size exceeds 10MB limit.";
+			return m.settings_avatar_error_size();
 		}
 		return null;
 	};
@@ -110,7 +111,10 @@ export function AvatarEditor({
 				>
 					<Avatar className="size-20">
 						{displayUrl ? (
-							<AvatarImage alt="Avatar preview" src={displayUrl} />
+							<AvatarImage
+								alt={m.settings_avatar_placeholder_alt()}
+								src={displayUrl}
+							/>
 						) : null}
 						<AvatarFallback>
 							<User className="size-10" />
@@ -123,8 +127,7 @@ export function AvatarEditor({
 
 				<div className="flex-1">
 					<p className="text-muted-foreground text-sm">
-						Update your avatar by clicking the image. Size recommended is
-						288x288 px. JPEG, PNG or WebP format only (max 10MB).
+						{m.settings_avatar_helper()}
 					</p>
 				</div>
 
@@ -142,7 +145,7 @@ export function AvatarEditor({
 			{showSuccess && (
 				<Alert>
 					<CheckCircle2 className="size-4" />
-					<AlertDescription>Avatar updated successfully!</AlertDescription>
+					<AlertDescription>{m.settings_avatar_success()}</AlertDescription>
 				</Alert>
 			)}
 
@@ -160,11 +163,11 @@ export function AvatarEditor({
 					type="button"
 				>
 					{mutation.isPending ? (
-						"Uploading..."
+						m.settings_avatar_uploading()
 					) : (
 						<>
 							<Upload className="mr-2 size-4" />
-							Upload Avatar
+							{m.settings_avatar_upload_button()}
 						</>
 					)}
 				</Button>
