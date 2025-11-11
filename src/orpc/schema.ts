@@ -39,7 +39,6 @@ export const MovesListInputSchema = z.object({
 export const MoveListItemSchema = z.object({
 	id: z.string().uuid(),
 	name: z.string(),
-	description: z.string(),
 	level: z.enum(moveLevelEnum.enumValues),
 	slug: z.string(),
 	imageUrl: z.string().nullable(),

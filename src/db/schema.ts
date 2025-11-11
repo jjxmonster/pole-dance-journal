@@ -39,7 +39,6 @@ export const moves = pgTable(
 	{
 		id: uuid("id").defaultRandom().primaryKey(),
 		name: text("name").notNull(),
-		description: text("description").notNull(),
 		level: moveLevelEnum("level").notNull(),
 		slug: text("slug").notNull(),
 		imageUrl: text("image_url"),
@@ -57,10 +56,7 @@ export const moves = pgTable(
 			"name_length_check",
 			sql`char_length(${table.name}) between 3 and 100`
 		),
-		descriptionLengthCheck: check(
-			"description_length_check",
-			sql`char_length(${table.description}) between 10 and 1000`
-		),
+
 		nameActiveIdx: uniqueIndex("idx_moves_name_active")
 			.on(sql`lower(${table.name})`)
 			.where(sql`${table.deletedAt} IS NULL`),
@@ -78,8 +74,6 @@ export const steps = pgTable(
 			.notNull()
 			.references(() => moves.id, { onDelete: "cascade" }),
 		orderIndex: integer("order_index").notNull(),
-		title: text("title").notNull(),
-		description: text("description").notNull(),
 		createdAt: timestamp("created_at", { withTimezone: true })
 			.defaultNow()
 			.notNull(),
@@ -89,14 +83,6 @@ export const steps = pgTable(
 	},
 	(table) => ({
 		orderIndexCheck: check("order_index_check", sql`${table.orderIndex} > 0`),
-		titleLengthCheck: check(
-			"title_length_check",
-			sql`char_length(${table.title}) between 3 and 350`
-		),
-		descriptionLengthCheck: check(
-			"description_length_check",
-			sql`char_length(${table.description}) between 10 and 350`
-		),
 		moveOrderUnique: unique("move_order_unique").on(
 			table.moveId,
 			table.orderIndex
