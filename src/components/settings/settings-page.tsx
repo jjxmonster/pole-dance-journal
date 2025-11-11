@@ -7,6 +7,7 @@ import { Label } from "@/components/ui/label";
 import { Skeleton } from "@/components/ui/skeleton";
 import { cn } from "@/lib/utils";
 import { orpc } from "@/orpc/client";
+import { m } from "@/paraglide/messages";
 import { AvatarEditor } from "./avatar-editor";
 import { NameEditor } from "./name-editor";
 import { PasswordEditor } from "./password-editor";
@@ -19,9 +20,9 @@ type Tab = {
 	icon: typeof User;
 };
 
-const tabs: Tab[] = [
-	{ value: "profile", label: "Profile", icon: User },
-	{ value: "security", label: "Security", icon: Lock },
+const getTabs = (): Tab[] => [
+	{ value: "profile", label: m.settings_tab_profile(), icon: User },
+	{ value: "security", label: m.settings_tab_security(), icon: Lock },
 ];
 
 export function SettingsPage() {
@@ -72,9 +73,7 @@ export function SettingsPage() {
 			<div className="container mx-auto max-w-6xl px-4 py-8">
 				<Alert variant="destructive">
 					<AlertCircle className="size-4" />
-					<AlertDescription>
-						Failed to load settings. Please try refreshing the page.
-					</AlertDescription>
+					<AlertDescription>{m.settings_error_load()}</AlertDescription>
 				</Alert>
 			</div>
 		);
@@ -84,9 +83,11 @@ export function SettingsPage() {
 		return null;
 	}
 
+	const tabs = getTabs();
+
 	return (
-		<div className="container mx-auto max-w-6xl px-4 py-8">
-			<div className="flex gap-8">
+		<div className="container mx-auto max-w-6xl py-8">
+			<div className="flex flex-row gap-8">
 				<aside className="w-64 space-y-1">
 					{tabs.map((tab) => {
 						const Icon = tab.icon;
@@ -110,12 +111,16 @@ export function SettingsPage() {
 				</aside>
 
 				<main className="flex-1">
-					<h1 className="mb-8 font-semibold text-3xl">Account settings</h1>
+					<h1 className="mb-8 font-semibold text-3xl">
+						{m.settings_page_title()}
+					</h1>
 
 					{activeTab === "profile" && (
 						<div className="space-y-8">
 							<section>
-								<h2 className="mb-6 font-semibold text-2xl">Profile</h2>
+								<h2 className="mb-6 font-semibold text-2xl">
+									{m.settings_section_profile()}
+								</h2>
 								<div className="space-y-6">
 									<AvatarEditor
 										currentAvatarUrl={profile.avatarUrl}
@@ -123,7 +128,7 @@ export function SettingsPage() {
 									/>
 
 									<div className="space-y-2">
-										<Label htmlFor="email">Email</Label>
+										<Label htmlFor="email">{m.settings_email_label()}</Label>
 										<Input
 											disabled
 											id="email"
@@ -132,7 +137,7 @@ export function SettingsPage() {
 											value={session.email || ""}
 										/>
 										<p className="text-muted-foreground text-sm">
-											Your email address cannot be changed
+											{m.settings_email_helper()}
 										</p>
 									</div>
 
@@ -148,7 +153,9 @@ export function SettingsPage() {
 					{activeTab === "security" && (
 						<div className="space-y-8">
 							<section>
-								<h2 className="mb-6 font-semibold text-2xl">Security</h2>
+								<h2 className="mb-6 font-semibold text-2xl">
+									{m.settings_section_security()}
+								</h2>
 								<PasswordEditor />
 							</section>
 						</div>
