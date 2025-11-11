@@ -4,7 +4,6 @@ import { useRef, useState } from "react";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
-import { Label } from "@/components/ui/label";
 import { orpc } from "@/orpc/client";
 
 const BYTES_PER_KB = 1024;
@@ -96,33 +95,48 @@ export function AvatarEditor({
 
 	const displayUrl = previewUrl || currentAvatarUrl;
 
+	const handleAvatarClick = () => {
+		fileInputRef.current?.click();
+	};
+
 	return (
 		<div className="space-y-4">
 			<div className="flex items-center gap-6">
-				<Avatar className="size-32">
-					{displayUrl ? (
-						<AvatarImage alt="Avatar preview" src={displayUrl} />
-					) : null}
-					<AvatarFallback>
-						<User className="size-16" />
-					</AvatarFallback>
-				</Avatar>
+				<button
+					className="group relative cursor-pointer"
+					disabled={mutation.isPending}
+					onClick={handleAvatarClick}
+					type="button"
+				>
+					<Avatar className="size-20">
+						{displayUrl ? (
+							<AvatarImage alt="Avatar preview" src={displayUrl} />
+						) : null}
+						<AvatarFallback>
+							<User className="size-10" />
+						</AvatarFallback>
+					</Avatar>
+					<div className="absolute inset-0 flex items-center justify-center rounded-full bg-black/50 opacity-0 transition-opacity group-hover:opacity-100">
+						<Upload className="size-6 text-white" />
+					</div>
+				</button>
 
-				<div className="flex-1 space-y-2">
-					<Label htmlFor="avatar-upload">Upload New Avatar</Label>
-					<input
-						accept={ALLOWED_TYPES.join(",")}
-						className="block w-full text-foreground text-sm file:mr-4 file:rounded-md file:border-0 file:bg-primary file:px-4 file:py-2 file:font-medium file:text-primary-foreground file:text-sm hover:file:bg-primary/90"
-						disabled={mutation.isPending}
-						id="avatar-upload"
-						onChange={handleFileSelect}
-						ref={fileInputRef}
-						type="file"
-					/>
+				<div className="flex-1">
 					<p className="text-muted-foreground text-sm">
-						JPEG, PNG, or WebP (max 10MB)
+						Update your avatar by clicking the image. Size recommended is
+						288x288 px. JPEG, PNG or WebP format only (max 10MB).
 					</p>
 				</div>
+
+				<input
+					accept={ALLOWED_TYPES.join(",")}
+					className="hidden"
+					disabled={mutation.isPending}
+					id="avatar-upload"
+					onChange={handleFileSelect}
+					ref={fileInputRef}
+					type="file"
+				/>
 			</div>
 
 			{showSuccess && (
@@ -139,20 +153,22 @@ export function AvatarEditor({
 				</Alert>
 			)}
 
-			<Button
-				disabled={!selectedFile || mutation.isPending}
-				onClick={handleUpload}
-				type="button"
-			>
-				{mutation.isPending ? (
-					"Uploading..."
-				) : (
-					<>
-						<Upload className="mr-2 size-4" />
-						Upload Avatar
-					</>
-				)}
-			</Button>
+			{selectedFile && (
+				<Button
+					disabled={mutation.isPending}
+					onClick={handleUpload}
+					type="button"
+				>
+					{mutation.isPending ? (
+						"Uploading..."
+					) : (
+						<>
+							<Upload className="mr-2 size-4" />
+							Upload Avatar
+						</>
+					)}
+				</Button>
+			)}
 		</div>
 	);
 }

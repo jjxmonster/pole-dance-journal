@@ -658,3 +658,21 @@ export const ProfileUploadAvatarOutputSchema = z.object({
 export type ProfileUploadAvatarOutput = z.infer<
 	typeof ProfileUploadAvatarOutputSchema
 >;
+
+export const ProfileChangePasswordInputSchema = z.object({
+	currentPassword: z.string().min(1, "Current password is required"),
+	newPassword: PasswordSchema,
+});
+
+export type ProfileChangePasswordInput = z.infer<
+	typeof ProfileChangePasswordInputSchema
+>;
+
+export const ProfileChangePasswordOutputSchema = z.object({
+	success: z.literal(true),
+	updatedAt: z.date(),
+});
+
+export type ProfileChangePasswordOutput = z.infer<
+	typeof ProfileChangePasswordOutputSchema
+>;
