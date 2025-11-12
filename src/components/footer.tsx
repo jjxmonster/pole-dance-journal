@@ -1,4 +1,6 @@
+import { Link } from "@tanstack/react-router";
 import { m } from "@/paraglide/messages";
+import { getLocale } from "@/paraglide/runtime";
 
 export function Footer() {
 	return (
@@ -19,6 +21,14 @@ export function Footer() {
 				</div>
 
 				<div className="mt-8 border-border border-t pt-8 text-center text-muted-foreground text-sm">
+					<div className="mb-2">
+						<Link
+							className="underline transition-colors hover:text-foreground"
+							to={`/privacy/${getLocale()}`}
+						>
+							{m.footer_privacy_policy()}
+						</Link>
+					</div>
 					{m.footer_created_by()}{" "}
 					<a
 						href="https://www.instagram.com/wiktoriv_ke/"
