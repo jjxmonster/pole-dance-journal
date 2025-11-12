@@ -60,6 +60,35 @@ export async function listPublishedMoves(input: ListPublishedMovesInput) {
 	};
 }
 
+export async function listPublishedMovesTrialVersion() {
+	const TRIAL_LIMIT = 4;
+	const whereClause = and(
+		isNotNull(moves.publishedAt),
+		isNull(moves.deletedAt)
+	);
+
+	const [totalResult, movesResult] = await Promise.all([
+		db.select({ count: count() }).from(moves).where(whereClause),
+		db
+			.select({
+				id: moves.id,
+				name: moves.name,
+				level: moves.level,
+				slug: moves.slug,
+				imageUrl: moves.imageUrl,
+			})
+			.from(moves)
+			.where(whereClause)
+			.orderBy(asc(moves.createdAt))
+			.limit(TRIAL_LIMIT),
+	]);
+
+	return {
+		moves: movesResult,
+		total: totalResult[0]?.count ?? 0,
+	};
+}
+
 export async function getMoveBySlugWithTranslations(
 	slug: string,
 	language: "en" | "pl" = "pl"

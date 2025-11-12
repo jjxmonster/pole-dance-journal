@@ -78,11 +78,11 @@ export function Nav() {
 					initial={{ opacity: 0, x: 0 }}
 					transition={{ duration: 0.5, delay: 0.1 }}
 				>
+					<Link className={getNavLinkClass("/catalog")} to="/catalog">
+						{m.nav_catalog()}
+					</Link>
 					{isAuthenticated && (
 						<>
-							<Link className={getNavLinkClass("/catalog")} to="/catalog">
-								{m.nav_catalog()}
-							</Link>
 							<Link className={getNavLinkClass("/my-moves")} to="/my-moves">
 								{m.nav_my_moves()}
 							</Link>
@@ -246,13 +246,15 @@ export function Nav() {
 									</div>
 								</SheetContent>
 							</Sheet>
-							<LanguageSwitcher />
-							<Button asChild size="sm" variant="ghost">
-								<Link to="/auth/sign-in">{m.nav_sign_in()}</Link>
-							</Button>
-							<Button asChild size="sm" variant="default">
-								<Link to="/auth/sign-up">{m.nav_create_account()}</Link>
-							</Button>
+							<div className="hidden items-center gap-2 md:flex">
+								<LanguageSwitcher />
+								<Button asChild size="sm" variant="ghost">
+									<Link to="/auth/sign-in">{m.nav_sign_in()}</Link>
+								</Button>
+								<Button asChild size="sm" variant="default">
+									<Link to="/auth/sign-up">{m.nav_create_account()}</Link>
+								</Button>
+							</div>
 						</>
 					)}
 				</motion.div>
