@@ -4,6 +4,7 @@ import { z } from "zod";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { m } from "@/paraglide/messages";
+import { getLocale } from "@/paraglide/runtime";
 import { SignUpAuthEmailSchema, SignUpPasswordSchema } from "@/utils/schemas";
 import { PasswordInput } from "./password-input";
 import { PasswordRequirementsCheck } from "./password-requirements-check";
@@ -187,6 +188,16 @@ export function SignUpForm({
 			>
 				{isLoading ? m.auth_signup_loading() : m.auth_signup_button()}
 			</Button>
+
+			<div className="text-center text-muted-foreground text-xs">
+				{m.auth_signup_privacy_policy_text()}{" "}
+				<Link
+					className="text-primary hover:underline"
+					to={`/privacy/${getLocale()}`}
+				>
+					{m.auth_signup_privacy_policy_link()}
+				</Link>
+			</div>
 
 			<div className="mt-6 text-center text-sm">
 				{m.auth_signup_have_account()}{" "}

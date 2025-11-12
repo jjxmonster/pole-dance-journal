@@ -14,6 +14,8 @@ import { Route as CatalogRouteImport } from './routes/catalog'
 import { Route as AdminRouteImport } from './routes/admin'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AdminIndexRouteImport } from './routes/admin/index'
+import { Route as PrivacyPlRouteImport } from './routes/privacy/pl'
+import { Route as PrivacyEnRouteImport } from './routes/privacy/en'
 import { Route as MovesSlugRouteImport } from './routes/moves.$slug'
 import { Route as AuthSignUpRouteImport } from './routes/auth/sign-up'
 import { Route as AuthSignInRouteImport } from './routes/auth/sign-in'
@@ -49,6 +51,16 @@ const AdminIndexRoute = AdminIndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => AdminRoute,
+} as any)
+const PrivacyPlRoute = PrivacyPlRouteImport.update({
+  id: '/privacy/pl',
+  path: '/privacy/pl',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PrivacyEnRoute = PrivacyEnRouteImport.update({
+  id: '/privacy/en',
+  path: '/privacy/en',
+  getParentRoute: () => rootRouteImport,
 } as any)
 const MovesSlugRoute = MovesSlugRouteImport.update({
   id: '/moves/$slug',
@@ -112,6 +124,8 @@ export interface FileRoutesByFullPath {
   '/auth/sign-in': typeof AuthSignInRoute
   '/auth/sign-up': typeof AuthSignUpRoute
   '/moves/$slug': typeof MovesSlugRoute
+  '/privacy/en': typeof PrivacyEnRoute
+  '/privacy/pl': typeof PrivacyPlRoute
   '/admin/': typeof AdminIndexRoute
   '/admin/moves/$moveId': typeof AdminMovesMoveIdRoute
   '/admin/moves/new': typeof AdminMovesNewRoute
@@ -128,6 +142,8 @@ export interface FileRoutesByTo {
   '/auth/sign-in': typeof AuthSignInRoute
   '/auth/sign-up': typeof AuthSignUpRoute
   '/moves/$slug': typeof MovesSlugRoute
+  '/privacy/en': typeof PrivacyEnRoute
+  '/privacy/pl': typeof PrivacyPlRoute
   '/admin': typeof AdminIndexRoute
   '/admin/moves/$moveId': typeof AdminMovesMoveIdRoute
   '/admin/moves/new': typeof AdminMovesNewRoute
@@ -146,6 +162,8 @@ export interface FileRoutesById {
   '/auth/sign-in': typeof AuthSignInRoute
   '/auth/sign-up': typeof AuthSignUpRoute
   '/moves/$slug': typeof MovesSlugRoute
+  '/privacy/en': typeof PrivacyEnRoute
+  '/privacy/pl': typeof PrivacyPlRoute
   '/admin/': typeof AdminIndexRoute
   '/admin/moves/$moveId': typeof AdminMovesMoveIdRoute
   '/admin/moves/new': typeof AdminMovesNewRoute
@@ -165,6 +183,8 @@ export interface FileRouteTypes {
     | '/auth/sign-in'
     | '/auth/sign-up'
     | '/moves/$slug'
+    | '/privacy/en'
+    | '/privacy/pl'
     | '/admin/'
     | '/admin/moves/$moveId'
     | '/admin/moves/new'
@@ -181,6 +201,8 @@ export interface FileRouteTypes {
     | '/auth/sign-in'
     | '/auth/sign-up'
     | '/moves/$slug'
+    | '/privacy/en'
+    | '/privacy/pl'
     | '/admin'
     | '/admin/moves/$moveId'
     | '/admin/moves/new'
@@ -198,6 +220,8 @@ export interface FileRouteTypes {
     | '/auth/sign-in'
     | '/auth/sign-up'
     | '/moves/$slug'
+    | '/privacy/en'
+    | '/privacy/pl'
     | '/admin/'
     | '/admin/moves/$moveId'
     | '/admin/moves/new'
@@ -216,6 +240,8 @@ export interface RootRouteChildren {
   AuthSignInRoute: typeof AuthSignInRoute
   AuthSignUpRoute: typeof AuthSignUpRoute
   MovesSlugRoute: typeof MovesSlugRoute
+  PrivacyEnRoute: typeof PrivacyEnRoute
+  PrivacyPlRoute: typeof PrivacyPlRoute
   ApiRpcSplatRoute: typeof ApiRpcSplatRoute
 }
 
@@ -255,6 +281,20 @@ declare module '@tanstack/react-router' {
       fullPath: '/admin/'
       preLoaderRoute: typeof AdminIndexRouteImport
       parentRoute: typeof AdminRoute
+    }
+    '/privacy/pl': {
+      id: '/privacy/pl'
+      path: '/privacy/pl'
+      fullPath: '/privacy/pl'
+      preLoaderRoute: typeof PrivacyPlRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/privacy/en': {
+      id: '/privacy/en'
+      path: '/privacy/en'
+      fullPath: '/privacy/en'
+      preLoaderRoute: typeof PrivacyEnRouteImport
+      parentRoute: typeof rootRouteImport
     }
     '/moves/$slug': {
       id: '/moves/$slug'
@@ -356,6 +396,8 @@ const rootRouteChildren: RootRouteChildren = {
   AuthSignInRoute: AuthSignInRoute,
   AuthSignUpRoute: AuthSignUpRoute,
   MovesSlugRoute: MovesSlugRoute,
+  PrivacyEnRoute: PrivacyEnRoute,
+  PrivacyPlRoute: PrivacyPlRoute,
   ApiRpcSplatRoute: ApiRpcSplatRoute,
 }
 export const routeTree = rootRouteImport

@@ -78,7 +78,9 @@
   },
   "devDependencies": {
     "@biomejs/biome": "2.2.4",
+    "@inlang/paraglide-js": "2.4.0",
     "@netlify/vite-plugin-tanstack-start": "^1.1.8",
+    "@tailwindcss/typography": "^0.5.19",
     "@tanstack/devtools-event-client": "^0.2.1",
     "@testing-library/dom": "^10.4.0",
     "@testing-library/react": "^16.2.0",
@@ -95,8 +97,7 @@
     "ultracite": "5.4.5",
     "vite": "^7.1.7",
     "vitest": "^3.0.5",
-    "web-vitals": "^4.2.4",
-    "@inlang/paraglide-js": "2.4.0"
+    "web-vitals": "^4.2.4"
   },
   "packageManager": "pnpm@10.17.1+sha512.17c560fca4867ae9473a3899ad84a88334914f379be46d455cbf92e5cf4b39d34985d452d2583baf19967fa76cb5c17bc9e245529d0b98745721aa7200ecaf7a",
   "lint-staged": {
