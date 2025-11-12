@@ -175,9 +175,7 @@ function PrivacyPolicyPage() {
 				<p>We make every effort to secure user data, including:</p>
 				<ul>
 					<li>Password encryption (we never store passwords in plain text)</li>
-					<li>
-						Security measures provided by Cloudflare and Supabase platforms
-					</li>
+					<li>Security measures provided by Netlify and Supabase platforms</li>
 					<li>Connection encryption using HTTPS protocol</li>
 					<li>Regular security updates</li>
 				</ul>

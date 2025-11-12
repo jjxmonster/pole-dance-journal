@@ -185,9 +185,7 @@ function PrivacyPolicyPage() {
 					<li>
 						Szyfrowanie haseł (nigdy nie przechowujemy haseł w formie jawnej)
 					</li>
-					<li>
-						Zabezpieczenia oferowane przez platformy Cloudflare i Supabase
-					</li>
+					<li>Zabezpieczenia oferowane przez platformy Netlify i Supabase</li>
 					<li>Szyfrowanie połączeń za pomocą protokołu HTTPS</li>
 					<li>Regularne aktualizacje zabezpieczeń</li>
 				</ul>
