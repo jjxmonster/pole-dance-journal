@@ -29,12 +29,14 @@ import {
 	getRandomMove,
 	getRandomMovesForWheel,
 	listMoves,
+	listMovesTrialVersion,
 } from "./moves";
 import { get, set } from "./user-move-statuses";
 
 export default {
 	moves: {
 		list: listMoves,
+		listTrialVersion: listMovesTrialVersion,
 		getBySlug,
 		getForUser,
 		getRandomMove,

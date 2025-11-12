@@ -16,7 +16,11 @@ import { WheelOfFortune } from "./wheel-of-fortune";
 
 const WHEEL_RESULT_DELAY_MS = 2000;
 
-export function CatalogHeader() {
+type CatalogHeaderProps = {
+	isAuthenticated: boolean;
+};
+
+export function CatalogHeader({ isAuthenticated }: CatalogHeaderProps) {
 	const navigate = useNavigate();
 	const [isWheelOpen, setIsWheelOpen] = useState(false);
 	const [isSpinning, setIsSpinning] = useState(false);
@@ -52,49 +56,55 @@ export function CatalogHeader() {
 					</h1>
 					<p className="text-muted-foreground">{m.catalog_header_subtitle()}</p>
 				</div>
-				<Button
-					className="hidden md:flex"
-					onClick={handleOpenWheel}
-					variant="default"
-				>
-					<Dices className="mr-2 h-4 w-4" />
-					{m.catalog_wheel_button()}
-				</Button>
-				<Button
-					className="fixed right-10 bottom-10 z-50 shadow-lg md:hidden"
-					onClick={handleOpenWheel}
-					size="lg"
-					variant="default"
-				>
-					<Dices className="mr-1 h-4 w-4" />
-					{m.catalog_wheel_button()}
-				</Button>
+				{isAuthenticated && (
+					<>
+						<Button
+							className="hidden md:flex"
+							onClick={handleOpenWheel}
+							variant="default"
+						>
+							<Dices className="mr-2 h-4 w-4" />
+							{m.catalog_wheel_button()}
+						</Button>
+						<Button
+							className="fixed right-10 bottom-10 z-50 shadow-lg md:hidden"
+							onClick={handleOpenWheel}
+							size="lg"
+							variant="default"
+						>
+							<Dices className="mr-1 h-4 w-4" />
+							{m.catalog_wheel_button()}
+						</Button>
+					</>
+				)}
 			</div>
 
-			<Dialog onOpenChange={setIsWheelOpen} open={isWheelOpen}>
-				<DialogContent className="max-w-[90vw] md:max-w-2xl">
-					<DialogHeader>
-						<DialogTitle>{m.catalog_wheel_title()}</DialogTitle>
-						<DialogDescription>
-							{m.catalog_wheel_description()}
-						</DialogDescription>
-					</DialogHeader>
+			{isAuthenticated && (
+				<Dialog onOpenChange={setIsWheelOpen} open={isWheelOpen}>
+					<DialogContent className="max-w-[90vw] md:max-w-2xl">
+						<DialogHeader>
+							<DialogTitle>{m.catalog_wheel_title()}</DialogTitle>
+							<DialogDescription>
+								{m.catalog_wheel_description()}
+							</DialogDescription>
+						</DialogHeader>
 
-					{wheelData?.moves && wheelData.moves.length > 0 ? (
-						<WheelOfFortune
-							isSpinning={isSpinning}
-							onSpinComplete={handleSpinComplete}
-							segments={wheelData.moves}
-						/>
-					) : (
-						<div className="flex items-center justify-center py-12">
-							<p className="text-muted-foreground">
-								{m.catalog_wheel_loading()}
-							</p>
-						</div>
-					)}
-				</DialogContent>
-			</Dialog>
+						{wheelData?.moves && wheelData.moves.length > 0 ? (
+							<WheelOfFortune
+								isSpinning={isSpinning}
+								onSpinComplete={handleSpinComplete}
+								segments={wheelData.moves}
+							/>
+						) : (
+							<div className="flex items-center justify-center py-12">
+								<p className="text-muted-foreground">
+									{m.catalog_wheel_loading()}
+								</p>
+							</div>
+						)}
+					</DialogContent>
+				</Dialog>
+			)}
 		</>
 	);
 }
