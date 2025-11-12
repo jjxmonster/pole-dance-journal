@@ -30,6 +30,13 @@ import {
 	getRandomMovesForWheel,
 	listMoves,
 } from "./moves";
+import {
+	changePassword,
+	getProfile,
+	updateAvatar,
+	updateName,
+	uploadAvatar,
+} from "./profiles";
 import { get, set } from "./user-move-statuses";
 
 export default {
@@ -48,6 +55,13 @@ export default {
 		getNotes,
 		addNote,
 		deleteNote,
+	},
+	profiles: {
+		getProfile,
+		updateName,
+		updateAvatar,
+		uploadAvatar,
+		changePassword,
 	},
 	admin: {
 		getStats: getStatsProcedure,
