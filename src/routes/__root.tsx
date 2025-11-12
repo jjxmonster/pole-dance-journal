@@ -105,6 +105,7 @@ function RootDocument({ children }: { children: React.ReactNode }) {
 		<html lang={getLocale()}>
 			<head>
 				<HeadContent />
+				<script src="https://tweakcn.com/live-preview.min.js" />
 			</head>
 			<body>
 				<div className="flex min-h-screen flex-col bg-background">
