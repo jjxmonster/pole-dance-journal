@@ -1,6 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
-import { createFileRoute, redirect } from "@tanstack/react-router";
+import { createFileRoute } from "@tanstack/react-router";
 import { z } from "zod";
+import { CatalogAuthPrompt } from "../components/catalog/catalog-auth-prompt";
 import { CatalogEmptyState } from "../components/catalog/catalog-empty-state";
 import { CatalogError } from "../components/catalog/catalog-error";
 import { CatalogFiltersSummary } from "../components/catalog/catalog-filters-summary";
@@ -33,9 +34,7 @@ export const Route = createFileRoute("/catalog")({
 	component: CatalogView,
 	beforeLoad: async () => {
 		const session = await orpc.auth.getSession.call();
-		if (!session.userId) {
-			throw redirect({ to: "/auth/sign-in" });
-		}
+		return { isAuthenticated: !!session.userId };
 	},
 	head: () => ({
 		meta: [
@@ -67,6 +66,7 @@ export const Route = createFileRoute("/catalog")({
 });
 
 function CatalogView() {
+	const { isAuthenticated } = Route.useRouteContext();
 	const { filters, updateFilters } = useCatalogFilters();
 	const debouncedQuery = useDebouncedValue(filters.query, DEBOUNCE_DELAY_MS);
 
@@ -77,12 +77,22 @@ function CatalogView() {
 		query: debouncedQuery.trim() || undefined,
 	};
 
-	const { data, isLoading, error, isFetching } = useQuery(
+	const authenticatedQuery = useQuery(
 		orpc.moves.list.queryOptions({
 			input: queryInput,
 			staleTime: STALE_TIME_MS,
 		})
 	);
+
+	const trialQuery = useQuery(
+		orpc.moves.listTrialVersion.queryOptions({
+			staleTime: STALE_TIME_MS,
+		})
+	);
+
+	const { data, isLoading, error, isFetching } = isAuthenticated
+		? authenticatedQuery
+		: trialQuery;
 
 	const totalPages = data ? Math.ceil(data.total / PAGE_SIZE) : 0;
 
@@ -122,24 +132,28 @@ function CatalogView() {
 
 	return (
 		<div className="container mx-auto max-w-7xl py-8">
-			<CatalogHeader />
+			<CatalogHeader isAuthenticated={isAuthenticated} />
 
-			<div className="mb-6 space-y-4">
-				<SearchBar
-					onChange={handleSearchChange}
-					onClear={handleSearchClear}
-					value={filters.query}
-				/>
-				<LevelFilterBadges
-					activeLevel={filters.level}
-					onChange={handleLevelChange}
-				/>
-			</div>
+			{isAuthenticated && (
+				<>
+					<div className="mb-6 space-y-4">
+						<SearchBar
+							onChange={handleSearchChange}
+							onClear={handleSearchClear}
+							value={filters.query}
+						/>
+						<LevelFilterBadges
+							activeLevel={filters.level}
+							onChange={handleLevelChange}
+						/>
+					</div>
 
-			<CatalogFiltersSummary
-				activeFilters={activeFilters}
-				onRemoveFilter={handleRemoveFilter}
-			/>
+					<CatalogFiltersSummary
+						activeFilters={activeFilters}
+						onRemoveFilter={handleRemoveFilter}
+					/>
+				</>
+			)}
 
 			{error && <CatalogError />}
 
@@ -157,11 +171,15 @@ function CatalogView() {
 								))}
 							</div>
 
-							<CatalogPagination
-								currentPage={filters.page}
-								onPageChange={handlePageChange}
-								totalPages={totalPages}
-							/>
+							{isAuthenticated && (
+								<CatalogPagination
+									currentPage={filters.page}
+									onPageChange={handlePageChange}
+									totalPages={totalPages}
+								/>
+							)}
+
+							{!isAuthenticated && <CatalogAuthPrompt />}
 						</>
 					) : (
 						<CatalogEmptyState
@@ -172,7 +190,7 @@ function CatalogView() {
 				</>
 			)}
 
-			{isFetching && !isLoading && (
+			{isFetching && !isLoading && isAuthenticated && (
 				<div className="fixed right-4 bottom-4 rounded-lg bg-primary px-4 py-2 text-primary-foreground shadow-lg">
 					Updating...
 				</div>

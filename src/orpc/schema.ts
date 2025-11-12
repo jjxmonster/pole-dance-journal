@@ -49,6 +49,8 @@ export const MovesListOutputSchema = z.object({
 	total: z.number().int().nonnegative(),
 });
 
+export const MovesListTrialOutputSchema = MovesListOutputSchema;
+
 export const MoveGetBySlugInputSchema = z.object({
 	slug: z.string().trim().min(1, "Slug is required"),
 });

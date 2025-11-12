@@ -7,6 +7,7 @@ import {
 	getMovesForUser,
 	getRandomPublishedMove,
 	listPublishedMoves,
+	listPublishedMovesTrialVersion,
 } from "../../data-access/moves";
 import { authMiddleware } from "../auth";
 import {
@@ -19,6 +20,7 @@ import {
 	MovesGetForUserOutputSchema,
 	MovesListInputSchema,
 	MovesListOutputSchema,
+	MovesListTrialOutputSchema,
 } from "../schema";
 
 export const listMoves = os
@@ -101,4 +103,11 @@ export const getRandomMovesForWheel = os
 		}
 
 		return { moves };
+	});
+
+export const listMovesTrialVersion = os
+	.output(MovesListTrialOutputSchema)
+	.handler(async () => {
+		const result = await listPublishedMovesTrialVersion();
+		return result;
 	});
