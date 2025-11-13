@@ -165,7 +165,7 @@ export function Nav() {
 									<SheetHeader className="flex flex-row items-center justify-between px-8 pt-8">
 										<Link className="flex items-center gap-0" to="/">
 											<div className="mr-1 flex h-6 w-6 items-center justify-center rounded-lg bg-praimary text-primary-foreground md:h-7 md:w-7">
-												<img alt="Spinella logo" src="/logo.svg" />
+												<img alt="Spinella logo" src="/logo.png" />
 											</div>
 											<span className="font-sans font-semibold text-base text-foreground md:text-xl">
 												Spinella
@@ -243,7 +243,7 @@ export function Nav() {
 									<SheetHeader className="flex flex-row items-center justify-between px-8 pt-8">
 										<Link className="flex items-center gap-0" to="/">
 											<div className="mr-1 flex h-6 w-6 items-center justify-center rounded-lg bg-praimary text-primary-foreground md:h-7 md:w-7">
-												<img alt="Spinella logo" src="/logo.svg" />
+												<img alt="Spinella logo" src="/logo.png" />
 											</div>
 											<span className="font-sans font-semibold text-base text-foreground md:text-xl">
 												Spinella
