@@ -12,6 +12,8 @@ export function useAuth() {
 		email: authState.email,
 		isAdmin: authState.isAdmin,
 		expiresAt: authState.expiresAt,
+		avatarUrl: authState.avatarUrl,
+		name: authState.name,
 		isAuthenticated: authenticated,
 		isExpired: expired,
 		setAuth: (state: Partial<AuthState>) => {
@@ -26,6 +28,8 @@ export function useAuth() {
 				email: null,
 				isAdmin: false,
 				expiresAt: null,
+				avatarUrl: null,
+				name: null,
 			});
 		},
 	};

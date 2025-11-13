@@ -128,14 +128,34 @@ export const getSession = os
 		const supabase = getSupabaseServerClient();
 		try {
 			const data = await supabase.auth.getUser();
+			const userId = data.data.user?.id ?? null;
 
-			const isAdmin = await validateUserIsAdmin(data.data.user?.id ?? "");
+			if (!userId) {
+				return {
+					userId: null,
+					email: null,
+					isAdmin: false,
+					expiresAt: null,
+					avatarUrl: null,
+					name: null,
+				};
+			}
+
+			const isAdmin = await validateUserIsAdmin(userId);
+
+			const profile = await db
+				.select()
+				.from(profiles)
+				.where(eq(profiles.userId, userId))
+				.limit(1);
 
 			return {
-				userId: data.data.user?.id ?? null,
+				userId,
 				email: data.data.user?.email ?? null,
 				isAdmin,
 				expiresAt: null,
+				avatarUrl: profile[0]?.avatarUrl ?? null,
+				name: profile[0]?.name ?? null,
 			};
 		} catch {
 			return {
@@ -143,6 +163,8 @@ export const getSession = os
 				email: null,
 				isAdmin: false,
 				expiresAt: null,
+				avatarUrl: null,
+				name: null,
 			};
 		}
 	});
@@ -269,9 +291,15 @@ export const oauthCallback = os
 
 			if (existingProfile.length === 0) {
 				try {
+					const userData = sessionData?.session?.user;
+					const name = userData?.user_metadata?.full_name ?? null;
+					const avatarUrl = userData?.user_metadata?.avatar_url ?? null;
+
 					await db.insert(profiles).values({
 						userId,
 						isAdmin: false,
+						name,
+						avatarUrl,
 						createdAt: new Date(),
 						updatedAt: new Date(),
 					});

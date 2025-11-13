@@ -87,6 +87,8 @@ function RootDocument({ children }: { children: React.ReactNode }) {
 					email: session.email,
 					isAdmin: session.isAdmin,
 					expiresAt: session.expiresAt,
+					avatarUrl: session.avatarUrl,
+					name: session.name,
 				});
 			} catch {
 				setAuth({
@@ -94,6 +96,8 @@ function RootDocument({ children }: { children: React.ReactNode }) {
 					email: null,
 					isAdmin: false,
 					expiresAt: null,
+					avatarUrl: null,
+					name: null,
 				});
 			}
 		};
