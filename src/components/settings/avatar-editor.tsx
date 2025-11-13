@@ -99,7 +99,6 @@ export function AvatarEditor({
 	const handleAvatarClick = () => {
 		fileInputRef.current?.click();
 	};
-
 	return (
 		<div className="space-y-4">
 			<div className="flex items-center gap-6">
