@@ -81,15 +81,15 @@ export function Hero() {
 					</motion.div>
 
 					<motion.div
-						animate={{ opacity: 1, scale: 1, rotateY: 0 }}
+						animate={{ opacity: 1, y: 0 }}
 						className="relative"
-						initial={{ opacity: 0, scale: 0.8, rotateY: -15 }}
-						transition={{ duration: 0.8, delay: 0.2 }}
+						initial={{ opacity: 0, y: 60 }}
+						transition={{ duration: 0.2, ease: "easeOut", delay: 0.2 }}
 					>
 						<div className="-inset-4 absolute rounded-3xl bg-gradient-to-r from-primary/20 to-secondary/20 opacity-75 blur-2xl" />
 						<div className="relative aspect-[4/3] overflow-hidden rounded-2xl border border-border bg-card shadow-2xl">
 							<img
-								alt="Pole dance studio"
+								alt="Butterfly - Pole Dance Move"
 								className="h-full w-full object-cover"
 								src="/hero.jpg"
 							/>
