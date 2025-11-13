@@ -1,6 +1,9 @@
 import { ORPCError, os } from "@orpc/server";
 import { eq } from "drizzle-orm";
-import { validateUserIsAdmin } from "@/data-access/profiles";
+import {
+	getProfileByUserId,
+	validateUserIsAdmin,
+} from "@/data-access/profiles";
 import { db } from "@/db";
 import { profiles } from "@/db/schema";
 import { getSupabaseServerClient } from "@/integrations/supabase/server";
@@ -143,19 +146,15 @@ export const getSession = os
 
 			const isAdmin = await validateUserIsAdmin(userId);
 
-			const profile = await db
-				.select()
-				.from(profiles)
-				.where(eq(profiles.userId, userId))
-				.limit(1);
+			const profile = await getProfileByUserId(userId);
 
 			return {
 				userId,
 				email: data.data.user?.email ?? null,
 				isAdmin,
 				expiresAt: null,
-				avatarUrl: profile[0]?.avatarUrl ?? null,
-				name: profile[0]?.name ?? null,
+				avatarUrl: profile.avatarUrl ?? null,
+				name: profile.name ?? null,
 			};
 		} catch {
 			return {

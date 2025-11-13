@@ -655,7 +655,7 @@ export type ProfileUploadAvatarInput = z.infer<
 
 export const ProfileUploadAvatarOutputSchema = z.object({
 	success: z.literal(true),
-	avatarUrl: z.string().url(),
+	avatarUrl: z.string(),
 	updatedAt: z.date(),
 });
 

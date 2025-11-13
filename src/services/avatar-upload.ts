@@ -30,7 +30,7 @@ export async function uploadAvatarToStorage(
 		.from("avatars")
 		.upload(path, file, {
 			cacheControl: CACHE_CONTROL_SECONDS.toString(),
-			upsert: false,
+			upsert: true,
 			contentType: "image/jpeg",
 		});
 
@@ -42,45 +42,20 @@ export async function uploadAvatarToStorage(
 		throw new Error("Failed to upload avatar to storage. Please try again.");
 	}
 
-	const { data: publicUrlData } = supabase.storage
-		.from("avatars")
-		.getPublicUrl(path);
-
-	if (!publicUrlData) {
-		throw new Error("Failed to generate avatar URL. Please try again.");
-	}
-
 	return {
-		avatarUrl: publicUrlData.publicUrl,
+		avatarUrl: path,
 	};
 }
 
 export async function getSignedAvatarUrl(
 	avatarUrl: string
 ): Promise<string | null> {
-	if (!avatarUrl) {
-		return null;
-	}
-
-	if (!avatarUrl.includes("supabase")) {
-		return avatarUrl;
-	}
-
 	try {
-		const url = new URL(avatarUrl);
-		const pathParts = url.pathname.split("/");
-		const bucketIndex = pathParts.indexOf("avatars");
-
-		if (bucketIndex === -1) {
-			return avatarUrl;
-		}
-
-		const filePath = pathParts.slice(bucketIndex + 1).join("/");
 		const supabase = getSupabaseServerClient();
 
 		const { data, error } = await supabase.storage
 			.from("avatars")
-			.createSignedUrl(filePath, SIGNED_URL_EXPIRATION_SECONDS);
+			.createSignedUrl(avatarUrl, SIGNED_URL_EXPIRATION_SECONDS);
 
 		if (error || !data) {
 			return avatarUrl;
