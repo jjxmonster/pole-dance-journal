@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 import { useAuth } from "@/hooks/use-auth";
 import { orpc } from "@/orpc/client";
 import { m } from "@/paraglide/messages";
+import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
 import { Button } from "./ui/button";
 import {
 	DropdownMenu,
@@ -111,11 +112,16 @@ export function Nav() {
 										variant="ghost"
 									>
 										{avatarUrl ? (
-											<img
-												alt={name || "User avatar"}
-												className="size-5 rounded-full object-cover"
-												src={avatarUrl}
-											/>
+											<Avatar>
+												<AvatarImage
+													alt={name || "User avatar"}
+													className="size-10 rounded-full object-cover"
+													src={avatarUrl}
+												/>
+												<AvatarFallback>
+													<User className="size-5" />
+												</AvatarFallback>
+											</Avatar>
 										) : (
 											<User className="size-5" />
 										)}
