@@ -10,7 +10,7 @@ export function Footer() {
 					<div className="flex flex-col items-center justify-center">
 						<div className="mb-4 flex items-center gap-1">
 							<div className="flex h-6 w-6 items-center justify-center rounded-lg bg-praimary text-primary-foreground">
-								<img alt="Spinella logo" src="/logo.svg" />
+								<img alt="Spinella logo" src="/logo.png" />
 							</div>
 							<span className="font-bold text-foreground">Spinella</span>
 						</div>

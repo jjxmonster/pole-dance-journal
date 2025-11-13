@@ -103,11 +103,11 @@ export const uploadAvatar = os
 				const supabase = getSupabaseServerClient();
 				const url = new URL(existingProfile.avatarUrl);
 				const pathParts = url.pathname.split("/");
-				const bucketIndex = pathParts.indexOf("moves-images");
+				const bucketIndex = pathParts.indexOf("avatars");
 
 				if (bucketIndex !== -1) {
 					const filePath = pathParts.slice(bucketIndex + 1).join("/");
-					await supabase.storage.from("moves-images").remove([filePath]);
+					await supabase.storage.from("avatars").remove([filePath]);
 				}
 			}
 
@@ -119,10 +119,7 @@ export const uploadAvatar = os
 				avatarUrl: profile.avatarUrl ?? "",
 				updatedAt: profile.updatedAt,
 			};
-		} catch (error) {
-			if (error instanceof ORPCError) {
-				throw error;
-			}
+		} catch {
 			throw new ORPCError("INTERNAL_SERVER_ERROR", {
 				message: "Failed to upload avatar.",
 			});

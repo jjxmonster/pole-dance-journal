@@ -220,6 +220,8 @@ export const AuthSessionOutputSchema = z.object({
 	email: z.string().email().nullable(),
 	isAdmin: z.boolean().default(false),
 	expiresAt: z.number().int().nullable(),
+	avatarUrl: z.string().nullable().optional(),
+	name: z.string().nullable().optional(),
 });
 
 export const AuthOAuthProviderSchema = z.enum(["google"]);

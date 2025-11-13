@@ -25,7 +25,8 @@ import {
 export function Nav() {
 	const navigate = useNavigate();
 	const location = useLocation();
-	const { isAuthenticated, clearAuth, email, isAdmin } = useAuth();
+	const { isAuthenticated, clearAuth, email, isAdmin, avatarUrl, name } =
+		useAuth();
 	const [isMenuOpen, setIsMenuOpen] = useState(false);
 
 	const handleSignOut = async () => {
@@ -55,7 +56,7 @@ export function Nav() {
 	}, [location.pathname]);
 
 	return (
-		<nav className="-translate-x-1/2 fixed top-4 left-1/2 z-50 w-[calc(100%-2rem)] max-w-7xl rounded-2xl border border-border/40 bg-background/95 shadow-md backdrop-blur">
+		<nav className="-translate-x-1/2 fixed top-4 left-1/2 z-50 w-[calc(100%-2rem)] max-w-7xl rounded-2xl border border-border/40 bg-white shadow-md backdrop-blur">
 			<div className="flex items-center justify-between px-4 py-4 sm:px-6 lg:px-8">
 				<motion.div
 					animate={{ opacity: 1, x: 0 }}
@@ -65,7 +66,7 @@ export function Nav() {
 				>
 					<Link className="flex items-center gap-0" to="/">
 						<div className="mr-1 flex h-6 w-6 items-center justify-center rounded-lg bg-praimary text-primary-foreground md:h-7 md:w-7">
-							<img alt="Spinella logo" src="/logo.svg" />
+							<img alt="Spinella logo" src="/logo.png" />
 						</div>
 						<span className="font-sans font-semibold text-base text-foreground md:text-xl">
 							Spinella
@@ -109,12 +110,20 @@ export function Nav() {
 										size="icon-sm"
 										variant="ghost"
 									>
-										<User className="size-5" />
+										{avatarUrl ? (
+											<img
+												alt={name || "User avatar"}
+												className="size-5 rounded-full object-cover"
+												src={avatarUrl}
+											/>
+										) : (
+											<User className="size-5" />
+										)}
 									</Button>
 								</DropdownMenuTrigger>
 								<DropdownMenuContent align="end">
 									<div className="px-2 py-1.5 font-medium text-sm">
-										{email?.split("@")[0]}
+										{name || email?.split("@")[0]}
 									</div>
 									<DropdownMenuItem
 										className="cursor-pointer text-primary"
