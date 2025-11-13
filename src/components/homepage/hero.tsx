@@ -38,7 +38,7 @@ const parseHeroTitle = (titleText: string) => {
 
 export function Hero() {
 	return (
-		<section className="relative overflow-hidden px-4 py-20 sm:px-6 lg:px-8 lg:py-32">
+		<section className="relative overflow-hidden py-20 lg:py-32">
 			<div className="-z-10 absolute inset-0 bg-[linear-gradient(to_right,#8080800a_1px,transparent_1px),linear-gradient(to_bottom,#8080800a_1px,transparent_1px)] bg-[size:14px_24px]" />
 			<div className="-z-10 absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-secondary/5" />
 
