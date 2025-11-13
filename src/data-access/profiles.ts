@@ -3,6 +3,7 @@ import { eq } from "drizzle-orm";
 import { db } from "@/db";
 import { profiles } from "@/db/schema";
 import { getSupabaseServerClient } from "@/integrations/supabase/server";
+import { getSignedAvatarUrl } from "@/services/avatar-upload";
 
 export async function validateUserIsAdmin(userId: string): Promise<boolean> {
 	const supabase = getSupabaseServerClient();
@@ -34,7 +35,14 @@ export async function getProfileByUserId(userId: string) {
 		});
 	}
 
-	return profile[0];
+	const avatarUrl = profile[0].avatarUrl
+		? await getSignedAvatarUrl(profile[0].avatarUrl)
+		: null;
+
+	return {
+		...profile[0],
+		avatarUrl,
+	};
 }
 
 export async function updateProfileName(userId: string, name: string) {

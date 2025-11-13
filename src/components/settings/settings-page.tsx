@@ -13,26 +13,14 @@ import { PasswordEditor } from "./password-editor";
 
 export function SettingsPage() {
 	const {
-		data: profile,
-		isLoading: isLoadingProfile,
-		isError: isProfileError,
-		refetch,
-	} = useQuery({
-		queryKey: ["profile"],
-		queryFn: () => orpc.profiles.getProfile.call(),
-	});
-
-	const {
 		data: session,
-		isLoading: isLoadingSession,
-		isError: isSessionError,
+		isLoading,
+		isError,
+		refetch,
 	} = useQuery({
 		queryKey: ["session"],
 		queryFn: () => orpc.auth.getSession.call(),
 	});
-
-	const isLoading = isLoadingProfile || isLoadingSession;
-	const isError = isProfileError || isSessionError;
 
 	if (isLoading) {
 		return (
@@ -60,7 +48,7 @@ export function SettingsPage() {
 		);
 	}
 
-	if (!(profile && session)) {
+	if (!session) {
 		return null;
 	}
 
@@ -93,7 +81,7 @@ export function SettingsPage() {
 						</h2>
 						<div className="space-y-6">
 							<AvatarEditor
-								currentAvatarUrl={profile.avatarUrl}
+								currentAvatarUrl={session.avatarUrl ?? null}
 								onUpdate={refetch}
 							/>
 
@@ -111,7 +99,7 @@ export function SettingsPage() {
 								</p>
 							</div>
 
-							<NameEditor currentName={profile.name ?? ""} onUpdate={refetch} />
+							<NameEditor currentName={session.name ?? ""} onUpdate={refetch} />
 						</div>
 					</section>
 				</TabsContent>

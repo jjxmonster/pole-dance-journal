@@ -38,12 +38,14 @@ function SignInPage() {
 		try {
 			await orpc.auth.login.call(values);
 			const session = await client.auth.getSession();
-
+			const profile = await orpc.profiles.getProfile.call();
 			setAuth({
 				userId: session.userId,
 				email: session.email,
 				isAdmin: session.isAdmin,
 				expiresAt: session.expiresAt,
+				avatarUrl: profile.avatarUrl,
+				name: profile.name,
 			});
 			const redirectTo = new URLSearchParams(window.location.search).get(
 				"redirectTo"

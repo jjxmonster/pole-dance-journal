@@ -220,6 +220,8 @@ export const AuthSessionOutputSchema = z.object({
 	email: z.string().email().nullable(),
 	isAdmin: z.boolean().default(false),
 	expiresAt: z.number().int().nullable(),
+	avatarUrl: z.string().nullable().optional(),
+	name: z.string().nullable().optional(),
 });
 
 export const AuthOAuthProviderSchema = z.enum(["google"]);
@@ -653,7 +655,7 @@ export type ProfileUploadAvatarInput = z.infer<
 
 export const ProfileUploadAvatarOutputSchema = z.object({
 	success: z.literal(true),
-	avatarUrl: z.string().url(),
+	avatarUrl: z.string(),
 	updatedAt: z.date(),
 });
 

@@ -36,6 +36,8 @@ function OAuthCallbackPage() {
 					email: session.email,
 					isAdmin: session.isAdmin,
 					expiresAt: session.expiresAt,
+					avatarUrl: session.avatarUrl,
+					name: session.name,
 				});
 
 				const redirectTo = (search as Record<string, string>).redirectTo;

@@ -13,6 +13,8 @@ const getInitialState = (): AuthState => {
 			email: null,
 			isAdmin: false,
 			expiresAt: null,
+			avatarUrl: null,
+			name: null,
 		};
 	}
 
@@ -31,6 +33,8 @@ const getInitialState = (): AuthState => {
 		email: null,
 		isAdmin: false,
 		expiresAt: null,
+		avatarUrl: null,
+		name: null,
 	};
 };
 

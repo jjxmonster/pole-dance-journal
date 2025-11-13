@@ -1,5 +1,8 @@
 import { getSupabaseServerClient } from "@/integrations/supabase/server";
-import { CACHE_CONTROL_SECONDS } from "@/utils/constants";
+import {
+	CACHE_CONTROL_SECONDS,
+	SIGNED_URL_EXPIRATION_SECONDS,
+} from "@/utils/constants";
 import { validateFileFormat, validateFileSize } from "@/utils/utils";
 
 export type AvatarUploadResult = {
@@ -20,14 +23,15 @@ export async function uploadAvatarToStorage(
 		throw new Error(sizeError.message);
 	}
 
-	const path = `avatars/${userId}/avatar.jpg`;
+	const path = `/${userId}/avatar.jpg`;
 	const supabase = getSupabaseServerClient();
 
 	const { data, error } = await supabase.storage
-		.from("moves-images")
+		.from("avatars")
 		.upload(path, file, {
 			cacheControl: CACHE_CONTROL_SECONDS.toString(),
 			upsert: true,
+			contentType: "image/jpeg",
 		});
 
 	if (error) {
@@ -38,15 +42,27 @@ export async function uploadAvatarToStorage(
 		throw new Error("Failed to upload avatar to storage. Please try again.");
 	}
 
-	const { data: publicUrlData } = supabase.storage
-		.from("moves-images")
-		.getPublicUrl(path);
-
-	if (!publicUrlData) {
-		throw new Error("Failed to generate avatar URL. Please try again.");
-	}
-
 	return {
-		avatarUrl: publicUrlData.publicUrl,
+		avatarUrl: path,
 	};
+}
+
+export async function getSignedAvatarUrl(
+	avatarUrl: string
+): Promise<string | null> {
+	try {
+		const supabase = getSupabaseServerClient();
+
+		const { data, error } = await supabase.storage
+			.from("avatars")
+			.createSignedUrl(avatarUrl, SIGNED_URL_EXPIRATION_SECONDS);
+
+		if (error || !data) {
+			return avatarUrl;
+		}
+
+		return data.signedUrl;
+	} catch {
+		return avatarUrl;
+	}
 }
