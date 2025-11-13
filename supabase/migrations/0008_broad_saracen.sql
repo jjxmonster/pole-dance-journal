@@ -1,0 +1,2 @@
+ALTER TABLE "profiles" DROP CONSTRAINT "profile_name_length_check";--> statement-breakpoint
+ALTER TABLE "profiles" ADD CONSTRAINT "profile_name_length_check" CHECK ("profiles"."name" IS NULL OR char_length("profiles"."name") between 2 and 25);

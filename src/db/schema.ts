@@ -40,7 +40,7 @@ export const profiles = pgTable(
 	(table) => ({
 		nameLengthCheck: check(
 			"profile_name_length_check",
-			sql`${table.name} IS NULL OR char_length(${table.name}) between 2 and 100`
+			sql`${table.name} IS NULL OR char_length(${table.name}) between 2 and 25`
 		),
 	})
 );

@@ -9,7 +9,7 @@ import { orpc } from "@/orpc/client";
 import { m } from "@/paraglide/messages";
 
 const NAME_MIN_LENGTH = 2;
-const NAME_MAX_LENGTH = 100;
+const NAME_MAX_LENGTH = 25;
 const SUCCESS_MESSAGE_TIMEOUT = 3000;
 
 type NameEditorProps = {
