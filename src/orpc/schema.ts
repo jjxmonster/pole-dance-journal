@@ -220,6 +220,8 @@ export const AuthSessionOutputSchema = z.object({
 	email: z.string().email().nullable(),
 	isAdmin: z.boolean().default(false),
 	expiresAt: z.number().int().nullable(),
+	avatarUrl: z.string().nullable().optional(),
+	name: z.string().nullable().optional(),
 });
 
 export const AuthOAuthProviderSchema = z.enum(["google"]);
@@ -581,3 +583,100 @@ export const AdminGetMoveOutputSchema = z.object({
 });
 
 export type AdminGetMoveOutput = z.infer<typeof AdminGetMoveOutputSchema>;
+
+const PROFILE_NAME_MIN_LENGTH = 2;
+const PROFILE_NAME_MAX_LENGTH = 100;
+
+export const ProfileGetOutputSchema = z.object({
+	id: z.string().uuid(),
+	userId: z.string().uuid(),
+	name: z.string().nullable(),
+	avatarUrl: z.string().url().nullable(),
+	isAdmin: z.boolean(),
+	createdAt: z.date(),
+	updatedAt: z.date(),
+});
+
+export type ProfileGetOutput = z.infer<typeof ProfileGetOutputSchema>;
+
+export const ProfileUpdateNameInputSchema = z.object({
+	name: z
+		.string()
+		.min(
+			PROFILE_NAME_MIN_LENGTH,
+			`Name must be at least ${PROFILE_NAME_MIN_LENGTH} characters`
+		)
+		.max(
+			PROFILE_NAME_MAX_LENGTH,
+			`Name must be at most ${PROFILE_NAME_MAX_LENGTH} characters`
+		)
+		.trim(),
+});
+
+export type ProfileUpdateNameInput = z.infer<
+	typeof ProfileUpdateNameInputSchema
+>;
+
+export const ProfileUpdateNameOutputSchema = z.object({
+	success: z.literal(true),
+	name: z.string(),
+	updatedAt: z.date(),
+});
+
+export type ProfileUpdateNameOutput = z.infer<
+	typeof ProfileUpdateNameOutputSchema
+>;
+
+export const ProfileUpdateAvatarInputSchema = z.object({
+	avatarUrl: z.string().url("Invalid avatar URL"),
+});
+
+export type ProfileUpdateAvatarInput = z.infer<
+	typeof ProfileUpdateAvatarInputSchema
+>;
+
+export const ProfileUpdateAvatarOutputSchema = z.object({
+	success: z.literal(true),
+	avatarUrl: z.string().url(),
+	updatedAt: z.date(),
+});
+
+export type ProfileUpdateAvatarOutput = z.infer<
+	typeof ProfileUpdateAvatarOutputSchema
+>;
+
+export const ProfileUploadAvatarInputSchema = z.object({
+	file: z.instanceof(File),
+});
+
+export type ProfileUploadAvatarInput = z.infer<
+	typeof ProfileUploadAvatarInputSchema
+>;
+
+export const ProfileUploadAvatarOutputSchema = z.object({
+	success: z.literal(true),
+	avatarUrl: z.string(),
+	updatedAt: z.date(),
+});
+
+export type ProfileUploadAvatarOutput = z.infer<
+	typeof ProfileUploadAvatarOutputSchema
+>;
+
+export const ProfileChangePasswordInputSchema = z.object({
+	currentPassword: z.string().min(1, "Current password is required"),
+	newPassword: PasswordSchema,
+});
+
+export type ProfileChangePasswordInput = z.infer<
+	typeof ProfileChangePasswordInputSchema
+>;
+
+export const ProfileChangePasswordOutputSchema = z.object({
+	success: z.literal(true),
+	updatedAt: z.date(),
+});
+
+export type ProfileChangePasswordOutput = z.infer<
+	typeof ProfileChangePasswordOutputSchema
+>;

@@ -22,17 +22,28 @@ export const moveLevelEnum = pgEnum("move_level", [
 export const moveStatusEnum = pgEnum("move_status", ["WANT", "ALMOST", "DONE"]);
 export const languageEnum = pgEnum("language", ["en", "pl"]);
 
-export const profiles = pgTable("profiles", {
-	id: uuid("id").defaultRandom().primaryKey(),
-	userId: uuid("user_id").notNull().unique(), // Foreign key to auth.users(id) in Supabase
-	isAdmin: boolean("is_admin").default(false).notNull(),
-	createdAt: timestamp("created_at", { withTimezone: true })
-		.defaultNow()
-		.notNull(),
-	updatedAt: timestamp("updated_at", { withTimezone: true })
-		.defaultNow()
-		.notNull(),
-});
+export const profiles = pgTable(
+	"profiles",
+	{
+		id: uuid("id").defaultRandom().primaryKey(),
+		userId: uuid("user_id").notNull().unique(), // Foreign key to auth.users(id) in Supabase
+		name: text("name"),
+		avatarUrl: text("avatar_url"),
+		isAdmin: boolean("is_admin").default(false).notNull(),
+		createdAt: timestamp("created_at", { withTimezone: true })
+			.defaultNow()
+			.notNull(),
+		updatedAt: timestamp("updated_at", { withTimezone: true })
+			.defaultNow()
+			.notNull(),
+	},
+	(table) => ({
+		nameLengthCheck: check(
+			"profile_name_length_check",
+			sql`${table.name} IS NULL OR char_length(${table.name}) between 2 and 25`
+		),
+	})
+);
 
 export const moves = pgTable(
 	"moves",

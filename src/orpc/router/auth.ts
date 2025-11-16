@@ -1,6 +1,9 @@
 import { ORPCError, os } from "@orpc/server";
 import { eq } from "drizzle-orm";
-import { validateUserIsAdmin } from "@/data-access/profiles";
+import {
+	getProfileByUserId,
+	validateUserIsAdmin,
+} from "@/data-access/profiles";
 import { db } from "@/db";
 import { profiles } from "@/db/schema";
 import { getSupabaseServerClient } from "@/integrations/supabase/server";
@@ -128,14 +131,30 @@ export const getSession = os
 		const supabase = getSupabaseServerClient();
 		try {
 			const data = await supabase.auth.getUser();
+			const userId = data.data.user?.id ?? null;
 
-			const isAdmin = await validateUserIsAdmin(data.data.user?.id ?? "");
+			if (!userId) {
+				return {
+					userId: null,
+					email: null,
+					isAdmin: false,
+					expiresAt: null,
+					avatarUrl: null,
+					name: null,
+				};
+			}
+
+			const isAdmin = await validateUserIsAdmin(userId);
+
+			const profile = await getProfileByUserId(userId);
 
 			return {
-				userId: data.data.user?.id ?? null,
+				userId,
 				email: data.data.user?.email ?? null,
 				isAdmin,
 				expiresAt: null,
+				avatarUrl: profile.avatarUrl ?? null,
+				name: profile.name ?? null,
 			};
 		} catch {
 			return {
@@ -143,6 +162,8 @@ export const getSession = os
 				email: null,
 				isAdmin: false,
 				expiresAt: null,
+				avatarUrl: null,
+				name: null,
 			};
 		}
 	});
@@ -269,9 +290,15 @@ export const oauthCallback = os
 
 			if (existingProfile.length === 0) {
 				try {
+					const userData = sessionData?.session?.user;
+					const name = userData?.user_metadata?.full_name ?? null;
+					const avatarUrl = userData?.user_metadata?.avatar_url ?? null;
+
 					await db.insert(profiles).values({
 						userId,
 						isAdmin: false,
+						name,
+						avatarUrl,
 						createdAt: new Date(),
 						updatedAt: new Date(),
 					});

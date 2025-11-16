@@ -50,6 +50,20 @@
       "when": 1762875342800,
       "tag": "0006_famous_omega_flight",
       "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "7",
+      "when": 1762890847687,
+      "tag": "0007_organic_tarot",
+      "breakpoints": true
+    },
+    {
+      "idx": 8,
+      "version": "7",
+      "when": 1763056542811,
+      "tag": "0008_broad_saracen",
+      "breakpoints": true
     }
   ]
 }
