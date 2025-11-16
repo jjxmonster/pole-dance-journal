@@ -118,7 +118,7 @@ function RootDocument({ children }: { children: React.ReactNode }) {
 				<script src="https://tweakcn.com/live-preview.min.js" />
 			</head>
 			<body>
-				<div className="flex min-h-screen flex-col bg-background">
+				<div className="flex min-h-screen flex-col overflow-x-hidden bg-background">
 					<Nav />
 					<main className="flex-1 px-4 pt-20">{children}</main>
 					<Footer />
