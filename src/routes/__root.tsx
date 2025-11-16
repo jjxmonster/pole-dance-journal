@@ -3,6 +3,7 @@ import {
 	createRootRouteWithContext,
 	HeadContent,
 	Scripts,
+	useLoaderData,
 } from "@tanstack/react-router";
 import { useEffect } from "react";
 import { Toaster } from "sonner";
@@ -19,6 +20,15 @@ type MyRouterContext = {
 };
 
 export const Route = createRootRouteWithContext<MyRouterContext>()({
+	beforeLoad: async () => {
+		const session = await client.auth.getSession();
+		return {
+			session,
+		};
+	},
+	loader: ({ context }) => ({
+		session: context.session,
+	}),
 	head: () => ({
 		meta: [
 			{
@@ -77,33 +87,29 @@ export const Route = createRootRouteWithContext<MyRouterContext>()({
 
 function RootDocument({ children }: { children: React.ReactNode }) {
 	const { setAuth } = useAuth();
+	const { session } = useLoaderData({ from: "__root__" });
 
 	useEffect(() => {
-		const syncSession = async () => {
-			try {
-				const session = await client.auth.getSession();
-				setAuth({
-					userId: session.userId,
-					email: session.email,
-					isAdmin: session.isAdmin,
-					expiresAt: session.expiresAt,
-					avatarUrl: session.avatarUrl,
-					name: session.name,
-				});
-			} catch {
-				setAuth({
-					userId: null,
-					email: null,
-					isAdmin: false,
-					expiresAt: null,
-					avatarUrl: null,
-					name: null,
-				});
-			}
-		};
-
-		syncSession();
-	}, [setAuth]);
+		if (session) {
+			setAuth({
+				userId: session.userId,
+				email: session.email,
+				isAdmin: session.isAdmin,
+				expiresAt: session.expiresAt,
+				avatarUrl: session.avatarUrl,
+				name: session.name,
+			});
+		} else {
+			setAuth({
+				userId: null,
+				email: null,
+				isAdmin: false,
+				expiresAt: null,
+				avatarUrl: null,
+				name: null,
+			});
+		}
+	}, [session, setAuth]);
 
 	return (
 		<html lang={getLocale()}>
