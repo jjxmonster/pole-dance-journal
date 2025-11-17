@@ -44,8 +44,6 @@ function OAuthCallbackPage() {
 
 				queryClient.setQueryData(["auth", "session"], session);
 
-				queryClient.setQueryData(["auth", "session"], session);
-
 				const redirectTo = (search as Record<string, string>).redirectTo;
 				await navigate({ to: redirectTo || "/catalog" });
 			} catch (err) {
