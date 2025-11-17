@@ -1,12 +1,14 @@
 import { createFileRoute, redirect } from "@tanstack/react-router";
 import { SettingsPage } from "@/components/settings/settings-page";
-import { orpc } from "@/orpc/client";
 import { m } from "@/paraglide/messages";
+import { sessionQueryOptions } from "@/query-options/auth";
 
 export const Route = createFileRoute("/settings")({
 	component: SettingsView,
-	beforeLoad: async () => {
-		const session = await orpc.auth.getSession.call();
+	beforeLoad: async ({ context }) => {
+		const session = await context.queryClient.ensureQueryData(
+			sessionQueryOptions()
+		);
 		if (!session.userId) {
 			throw redirect({
 				to: "/auth/sign-in",

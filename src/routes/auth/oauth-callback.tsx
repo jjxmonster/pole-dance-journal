@@ -1,3 +1,4 @@
+import { useQueryClient } from "@tanstack/react-query";
 import {
 	createFileRoute,
 	useNavigate,
@@ -15,6 +16,7 @@ export const Route = createFileRoute("/auth/oauth-callback")({
 function OAuthCallbackPage() {
 	const search = useSearch({ from: "/auth/oauth-callback" });
 	const navigate = useNavigate();
+	const queryClient = useQueryClient();
 	const { setAuth } = useAuth();
 	const [error, setError] = useState<string | null>(null);
 
@@ -40,6 +42,8 @@ function OAuthCallbackPage() {
 					name: session.name,
 				});
 
+				queryClient.setQueryData(["auth", "session"], session);
+
 				const redirectTo = (search as Record<string, string>).redirectTo;
 				await navigate({ to: redirectTo || "/catalog" });
 			} catch (err) {
@@ -52,7 +56,7 @@ function OAuthCallbackPage() {
 		};
 
 		processOAuthCallback();
-	}, [search, navigate, setAuth]);
+	}, [search, navigate, setAuth, queryClient]);
 
 	return (
 		<AuthFormWrapper

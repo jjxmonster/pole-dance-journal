@@ -1,3 +1,4 @@
+import { useQueryClient } from "@tanstack/react-query";
 import { createFileRoute, redirect, useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
 import { AuthFormWrapper } from "@/components/auth/auth-form-wrapper";
@@ -5,12 +6,15 @@ import { SignInForm } from "@/components/auth/sign-in-form";
 import { useAuth } from "@/hooks/use-auth";
 import { client, orpc } from "@/orpc/client";
 import { m } from "@/paraglide/messages";
+import { sessionQueryOptions } from "@/query-options/auth";
 import { translateErrorMessage } from "@/utils/error-messages";
 
 export const Route = createFileRoute("/auth/sign-in")({
 	component: SignInPage,
-	beforeLoad: async () => {
-		const session = await orpc.auth.getSession.call();
+	beforeLoad: async ({ context }) => {
+		const session = await context.queryClient.ensureQueryData(
+			sessionQueryOptions()
+		);
 		if (session.userId) {
 			throw redirect({ to: "/catalog" });
 		}
@@ -26,6 +30,7 @@ export const Route = createFileRoute("/auth/sign-in")({
 });
 
 function SignInPage() {
+	const queryClient = useQueryClient();
 	const navigate = useNavigate();
 	const { setAuth } = useAuth();
 	const [isLoading, setIsLoading] = useState(false);
@@ -37,16 +42,20 @@ function SignInPage() {
 
 		try {
 			await orpc.auth.login.call(values);
+
 			const session = await client.auth.getSession();
-			const profile = await orpc.profiles.getProfile.call();
+
 			setAuth({
 				userId: session.userId,
 				email: session.email,
 				isAdmin: session.isAdmin,
 				expiresAt: session.expiresAt,
-				avatarUrl: profile.avatarUrl,
-				name: profile.name,
+				avatarUrl: session.avatarUrl,
+				name: session.name,
 			});
+
+			queryClient.setQueryData(["auth", "session"], session);
+
 			const redirectTo = new URLSearchParams(window.location.search).get(
 				"redirectTo"
 			);

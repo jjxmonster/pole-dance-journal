@@ -12,7 +12,7 @@ import { Button } from "../components/ui/button";
 import { moveLevelEnum, moveStatusEnum } from "../db/schema";
 import { useMyMoves } from "../hooks/use-my-moves";
 import { useMyMovesFilters } from "../hooks/use-my-moves-filters";
-import { orpc } from "../orpc/client";
+import { sessionQueryOptions } from "../query-options/auth";
 
 const myMovesSearchSchema = z.object({
 	level: z.enum([...moveLevelEnum.enumValues, "All"] as const).optional(),
@@ -22,8 +22,10 @@ const myMovesSearchSchema = z.object({
 export const Route = createFileRoute("/my-moves")({
 	validateSearch: myMovesSearchSchema,
 	component: MyMovesView,
-	beforeLoad: async () => {
-		const session = await orpc.auth.getSession.call();
+	beforeLoad: async ({ context }) => {
+		const session = await context.queryClient.ensureQueryData(
+			sessionQueryOptions()
+		);
 		if (!session.userId) {
 			throw redirect({
 				to: "/auth/sign-in",

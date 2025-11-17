@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, useLoaderData } from "@tanstack/react-router";
 import { z } from "zod";
 import { CatalogAuthPrompt } from "../components/catalog/catalog-auth-prompt";
 import { CatalogEmptyState } from "../components/catalog/catalog-empty-state";
@@ -32,10 +32,7 @@ const catalogSearchSchema = z.object({
 export const Route = createFileRoute("/catalog")({
 	validateSearch: catalogSearchSchema,
 	component: CatalogView,
-	beforeLoad: async () => {
-		const session = await orpc.auth.getSession.call();
-		return { isAuthenticated: !!session.userId };
-	},
+
 	head: () => ({
 		meta: [
 			{
@@ -66,7 +63,8 @@ export const Route = createFileRoute("/catalog")({
 });
 
 function CatalogView() {
-	const { isAuthenticated } = Route.useRouteContext();
+	const { session } = useLoaderData({ from: "__root__" });
+	const isAuthenticated = !!session?.userId;
 	const { filters, updateFilters } = useCatalogFilters();
 	const debouncedQuery = useDebouncedValue(filters.query, DEBOUNCE_DELAY_MS);
 
