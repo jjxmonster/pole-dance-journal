@@ -5,8 +5,8 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { orpc } from "@/orpc/client";
 import { m } from "@/paraglide/messages";
+import { sessionQueryOptions } from "@/query-options/auth";
 import { AvatarEditor } from "./avatar-editor";
 import { NameEditor } from "./name-editor";
 import { PasswordEditor } from "./password-editor";
@@ -17,10 +17,7 @@ export function SettingsPage() {
 		isLoading,
 		isError,
 		refetch,
-	} = useQuery({
-		queryKey: ["session"],
-		queryFn: () => orpc.auth.getSession.call(),
-	});
+	} = useQuery(sessionQueryOptions());
 
 	if (isLoading) {
 		return (

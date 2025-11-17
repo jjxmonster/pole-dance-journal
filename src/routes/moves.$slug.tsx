@@ -13,6 +13,7 @@ import { useAuth } from "../hooks/use-auth";
 import { useMoveStatus } from "../hooks/use-move-status";
 import { orpc } from "../orpc/client";
 import { m } from "../paraglide/messages";
+import { sessionQueryOptions } from "../query-options/auth";
 
 const getLevelLabel = (level: string): string => {
 	switch (level) {
@@ -29,7 +30,9 @@ const getLevelLabel = (level: string): string => {
 
 export const Route = createFileRoute("/moves/$slug")({
 	loader: async ({ params, context }) => {
-		const session = await orpc.auth.getSession.call();
+		const session = await context.queryClient.ensureQueryData(
+			sessionQueryOptions()
+		);
 		if (!session.userId) {
 			throw redirect({ to: "/auth/sign-in" });
 		}

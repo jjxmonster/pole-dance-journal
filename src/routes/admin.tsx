@@ -1,9 +1,11 @@
 import { createFileRoute, Outlet, redirect } from "@tanstack/react-router";
-import { orpc } from "../orpc/client";
+import { sessionQueryOptions } from "../query-options/auth";
 
 export const Route = createFileRoute("/admin")({
-	beforeLoad: async () => {
-		const session = await orpc.auth.getSession.call();
+	beforeLoad: async ({ context }) => {
+		const session = await context.queryClient.ensureQueryData(
+			sessionQueryOptions()
+		);
 
 		if (!session.userId) {
 			throw redirect({

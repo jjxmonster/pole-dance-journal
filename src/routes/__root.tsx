@@ -12,7 +12,7 @@ import { Footer } from "../components/footer";
 import { Nav } from "../components/nav";
 import { NotFound } from "../components/not-found";
 import { useAuth } from "../hooks/use-auth";
-import { client } from "../orpc/client";
+import { sessionQueryOptions } from "../query-options/auth";
 import appCss from "../styles.css?url";
 
 type MyRouterContext = {
@@ -20,8 +20,10 @@ type MyRouterContext = {
 };
 
 export const Route = createRootRouteWithContext<MyRouterContext>()({
-	beforeLoad: async () => {
-		const session = await client.auth.getSession();
+	beforeLoad: async ({ context }) => {
+		const session = await context.queryClient.ensureQueryData(
+			sessionQueryOptions()
+		);
 		return {
 			session,
 		};

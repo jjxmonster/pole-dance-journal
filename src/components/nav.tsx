@@ -1,3 +1,4 @@
+import { useQueryClient } from "@tanstack/react-query";
 import { Link, useLocation, useNavigate } from "@tanstack/react-router";
 import { Menu, User, XIcon } from "lucide-react";
 import { motion } from "motion/react";
@@ -29,14 +30,32 @@ export function Nav() {
 	const { isAuthenticated, clearAuth, email, isAdmin, avatarUrl, name } =
 		useAuth();
 	const [isMenuOpen, setIsMenuOpen] = useState(false);
+	const queryClient = useQueryClient();
 
 	const handleSignOut = async () => {
 		try {
 			await orpc.auth.logout.call();
-		} catch {
-			// Logout failed, but we still clear auth and navigate
-		} finally {
 			clearAuth();
+			queryClient.setQueryData(["auth", "session"], {
+				userId: null,
+				email: null,
+				isAdmin: false,
+				expiresAt: null,
+				avatarUrl: null,
+				name: null,
+			});
+			await navigate({ to: "/" });
+			setIsMenuOpen(false);
+		} catch {
+			clearAuth();
+			queryClient.setQueryData(["auth", "session"], {
+				userId: null,
+				email: null,
+				isAdmin: false,
+				expiresAt: null,
+				avatarUrl: null,
+				name: null,
+			});
 			await navigate({ to: "/" });
 			setIsMenuOpen(false);
 		}
