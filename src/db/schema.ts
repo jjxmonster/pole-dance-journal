@@ -152,10 +152,46 @@ export const moveNotes = pgTable(
 	})
 );
 
+export const moveComboReferences = pgTable(
+	"move_combo_references",
+	{
+		id: uuid("id").defaultRandom().primaryKey(),
+		moveId: uuid("move_id")
+			.notNull()
+			.references(() => moves.id, { onDelete: "cascade" }),
+		referencedMoveId: uuid("referenced_move_id")
+			.notNull()
+			.references(() => moves.id, { onDelete: "cascade" }),
+		orderIndex: integer("order_index").notNull(),
+		createdAt: timestamp("created_at", { withTimezone: true })
+			.defaultNow()
+			.notNull(),
+	},
+	(table) => ({
+		orderIndexCheck: check(
+			"combo_order_index_check",
+			sql`${table.orderIndex} between 1 and 3`
+		),
+		moveOrderUnique: unique("combo_move_order_unique").on(
+			table.moveId,
+			table.orderIndex
+		),
+		noSelfReference: check(
+			"combo_no_self_reference",
+			sql`${table.moveId} != ${table.referencedMoveId}`
+		),
+		noDuplicateReference: unique("combo_no_duplicate_reference").on(
+			table.moveId,
+			table.referencedMoveId
+		),
+	})
+);
+
 export const movesRelations = relations(moves, ({ many }) => ({
 	steps: many(steps),
 	userMoveStatuses: many(userMoveStatuses),
 	translations: many(moveTranslations),
+	comboReferences: many(moveComboReferences),
 }));
 
 export const stepsRelations = relations(steps, ({ one, many }) => ({
@@ -261,6 +297,20 @@ export const stepTranslationsRelations = relations(
 		step: one(steps, {
 			fields: [stepTranslations.stepId],
 			references: [steps.id],
+		}),
+	})
+);
+
+export const moveComboReferencesRelations = relations(
+	moveComboReferences,
+	({ one }) => ({
+		move: one(moves, {
+			fields: [moveComboReferences.moveId],
+			references: [moves.id],
+		}),
+		referencedMove: one(moves, {
+			fields: [moveComboReferences.referencedMoveId],
+			references: [moves.id],
 		}),
 	})
 );
