@@ -191,7 +191,9 @@ export const movesRelations = relations(moves, ({ many }) => ({
 	steps: many(steps),
 	userMoveStatuses: many(userMoveStatuses),
 	translations: many(moveTranslations),
-	comboReferences: many(moveComboReferences),
+	comboReferences: many(moveComboReferences, {
+		relationName: "moveToComboReferences",
+	}),
 }));
 
 export const stepsRelations = relations(steps, ({ one, many }) => ({
@@ -307,10 +309,12 @@ export const moveComboReferencesRelations = relations(
 		move: one(moves, {
 			fields: [moveComboReferences.moveId],
 			references: [moves.id],
+			relationName: "moveToComboReferences",
 		}),
 		referencedMove: one(moves, {
 			fields: [moveComboReferences.referencedMoveId],
 			references: [moves.id],
+			relationName: "referencedMoveToComboReferences",
 		}),
 	})
 );
