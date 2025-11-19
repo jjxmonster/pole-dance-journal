@@ -112,8 +112,12 @@ export const generateImageProcedure = os
 			});
 		}
 
+		const finalPrompt = input.customPromptAddition
+			? `${GENERATE_IMAGE_PROMPT}\n\nADDITIONAL REQUIREMENTS: ${input.customPromptAddition}`
+			: GENERATE_IMAGE_PROMPT;
+
 		const { imageUrl } = await performImageGeneration(
-			GENERATE_IMAGE_PROMPT,
+			finalPrompt,
 			input.referenceImageUrl
 		);
 		return { previewUrl: imageUrl };

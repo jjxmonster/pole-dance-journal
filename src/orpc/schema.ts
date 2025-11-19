@@ -290,6 +290,13 @@ export const GenerateImageInputSchema = z.object({
 		.url("Invalid URL format")
 		.startsWith("https://", "Must use HTTPS"),
 	sessionId: z.string().uuid("Invalid session ID format").optional(),
+	customPromptAddition: z
+		.string()
+		.max(
+			GENERATE_IMAGE_VALIDATION.PROMPT_MAX_LENGTH,
+			"Custom prompt addition must be at most 500 characters"
+		)
+		.optional(),
 });
 
 export type GenerateImageInput = z.infer<typeof GenerateImageInputSchema>;
