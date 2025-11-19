@@ -203,6 +203,6 @@
   "settings_password_changing": "Changing Password...",
   "combo_moves_section_title": "Transitions",
   "combo_moves_section_description": "You can easily transition from this move to other moves",
-  "combo_moves_new_feature_toast": "New! Scroll down to see the transitions!",
+  "combo_moves_new_feature_toast": "New! Scroll down to see the possible transitions from this move!",
   "combo_move_card_view_button": "View Move"
 }
