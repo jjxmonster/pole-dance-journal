@@ -125,7 +125,15 @@ function RootDocument({ children }: { children: React.ReactNode }) {
 					<main className="flex-1 px-4 pt-20">{children}</main>
 					<Footer />
 				</div>
-				<Toaster position="top-right" richColors />
+				<Toaster
+					position="top-right"
+					richColors
+					toastOptions={{
+						classNames: {
+							info: "!bg-primary !text-primary-foreground !border-primary",
+						},
+					}}
+				/>
 				<Scripts />
 			</body>
 		</html>

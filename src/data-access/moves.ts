@@ -137,6 +137,23 @@ export async function getMoveBySlugWithTranslations(
 					},
 				},
 			},
+			comboReferences: {
+				columns: {
+					orderIndex: true,
+				},
+				orderBy: [asc(moveComboReferences.orderIndex)],
+				with: {
+					referencedMove: {
+						columns: {
+							id: true,
+							name: true,
+							slug: true,
+							level: true,
+							imageUrl: true,
+						},
+					},
+				},
+			},
 		},
 	});
 	if (!move) {
@@ -186,6 +203,23 @@ export async function getMoveBySlugWithTranslations(
 						},
 					},
 				},
+				comboReferences: {
+					columns: {
+						orderIndex: true,
+					},
+					orderBy: [asc(moveComboReferences.orderIndex)],
+					with: {
+						referencedMove: {
+							columns: {
+								id: true,
+								name: true,
+								slug: true,
+								level: true,
+								imageUrl: true,
+							},
+						},
+					},
+				},
 			},
 		});
 
@@ -205,6 +239,13 @@ export async function getMoveBySlugWithTranslations(
 					description: step.translations[0]?.description ?? "",
 				})),
 				translationFallback: usedFallback,
+				comboReferences: fallbackMove.comboReferences.map((ref) => ({
+					id: ref.referencedMove.id,
+					name: ref.referencedMove.name,
+					slug: ref.referencedMove.slug,
+					level: ref.referencedMove.level,
+					imageUrl: ref.referencedMove.imageUrl,
+				})),
 			};
 		}
 
@@ -229,6 +270,13 @@ export async function getMoveBySlugWithTranslations(
 			description: step.translations[0]?.description ?? "",
 		})),
 		translationFallback: usedFallback,
+		comboReferences: move.comboReferences.map((ref) => ({
+			id: ref.referencedMove.id,
+			name: ref.referencedMove.name,
+			slug: ref.referencedMove.slug,
+			level: ref.referencedMove.level,
+			imageUrl: ref.referencedMove.imageUrl,
+		})),
 	};
 }
 

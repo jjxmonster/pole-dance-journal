@@ -200,5 +200,9 @@
   "settings_password_error_mismatch": "Hasła się nie zgadzają",
   "settings_password_success": "Hasło zostało zmienione pomyślnie!",
   "settings_password_change_button": "Zmień Hasło",
-  "settings_password_changing": "Zmiana Hasła..."
+  "settings_password_changing": "Zmiana Hasła...",
+  "combo_moves_section_title": "Przejścia",
+  "combo_moves_section_description": "Z tej figury możesz łatwo wykonać przejście do innych figur",
+  "combo_moves_new_feature_toast": "Nowość! Przewiń w dół, aby zobaczyć figury do których możesz łatwo przejść!",
+  "combo_move_card_view_button": "Zobacz Figurę"
 }

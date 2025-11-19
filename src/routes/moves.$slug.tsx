@@ -1,19 +1,25 @@
 import { createFileRoute, notFound, redirect } from "@tanstack/react-router";
 import { useEffect } from "react";
+import { toast } from "sonner";
+import { Breadcrumbs } from "@/components/moves/breadcrumbs";
+import { ComboMovesSection } from "@/components/moves/combo-moves-section";
+import { MoveDescription } from "@/components/moves/move-description";
+import { MoveImage } from "@/components/moves/move-image";
+import { NoteEditor } from "@/components/moves/note-editor";
+import { StatusButtons } from "@/components/moves/status-buttons";
+import { StepsList } from "@/components/moves/steps-list";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import { Badge } from "@/components/ui/badge";
+import { useAuth } from "@/hooks/use-auth";
+import { useMoveStatus } from "@/hooks/use-move-status";
+import { orpc } from "@/orpc/client";
+import { m } from "@/paraglide/messages";
+import { sessionQueryOptions } from "@/query-options/auth";
 import { LEVEL_COLORS } from "@/utils/constants";
-import { Breadcrumbs } from "../components/moves/breadcrumbs";
-import { MoveDescription } from "../components/moves/move-description";
-import { MoveImage } from "../components/moves/move-image";
-import { NoteEditor } from "../components/moves/note-editor";
-import { StatusButtons } from "../components/moves/status-buttons";
-import { StepsList } from "../components/moves/steps-list";
-import { Alert, AlertDescription } from "../components/ui/alert";
-import { Badge } from "../components/ui/badge";
-import { useAuth } from "../hooks/use-auth";
-import { useMoveStatus } from "../hooks/use-move-status";
-import { orpc } from "../orpc/client";
-import { m } from "../paraglide/messages";
-import { sessionQueryOptions } from "../query-options/auth";
+import {
+	hasSeenComboNotification,
+	markComboNotificationAsSeen,
+} from "@/utils/cookie-utils";
 
 const getLevelLabel = (level: string): string => {
 	switch (level) {
@@ -116,6 +122,20 @@ function MoveDetailPage() {
 		}
 	}, []);
 
+	useEffect(() => {
+		if (
+			move.comboReferences &&
+			move.comboReferences.length > 0 &&
+			!hasSeenComboNotification()
+		) {
+			toast.info(m.combo_moves_new_feature_toast(), {
+				duration: 5000,
+				position: "top-center",
+			});
+			markComboNotificationAsSeen();
+		}
+	}, [move.comboReferences]);
+
 	return (
 		<div
 			className="container mx-auto max-w-7xl py-8 xl:px-0"
@@ -148,6 +168,12 @@ function MoveDetailPage() {
 						<MoveDescription description={move.description} />
 						<StepsList steps={move.steps} />
 						{isAuthenticated && <NoteEditor moveId={move.id} />}
+						{isAuthenticated && move.comboReferences.length > 0 && (
+							<ComboMovesSection
+								comboMoves={move.comboReferences}
+								moveId={move.id}
+							/>
+						)}
 					</div>
 
 					<div

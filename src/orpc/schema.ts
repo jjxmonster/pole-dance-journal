@@ -62,6 +62,14 @@ export const MoveStepSchema = z.object({
 	description: z.string(),
 });
 
+export const ComboMoveReferenceSchema = z.object({
+	id: z.string().uuid(),
+	name: z.string(),
+	slug: z.string(),
+	level: z.enum(moveLevelEnum.enumValues),
+	imageUrl: z.string().nullable(),
+});
+
 export const MoveDetailSchema = z.object({
 	id: z.string().uuid(),
 	name: z.string(),
@@ -71,6 +79,7 @@ export const MoveDetailSchema = z.object({
 	imageUrl: z.string().nullable(),
 	steps: z.array(MoveStepSchema),
 	translationFallback: z.boolean().optional(),
+	comboReferences: z.array(ComboMoveReferenceSchema),
 });
 
 export const MoveGetBySlugOutputSchema = MoveDetailSchema;
