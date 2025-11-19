@@ -200,5 +200,9 @@
   "settings_password_error_mismatch": "Passwords do not match",
   "settings_password_success": "Password changed successfully!",
   "settings_password_change_button": "Change Password",
-  "settings_password_changing": "Changing Password..."
+  "settings_password_changing": "Changing Password...",
+  "combo_moves_section_title": "Transitions",
+  "combo_moves_section_description": "You can easily transition from this move to other moves",
+  "combo_moves_new_feature_toast": "New! Scroll down to see the transitions!",
+  "combo_move_card_view_button": "View Move"
 }

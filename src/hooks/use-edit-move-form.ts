@@ -20,6 +20,7 @@ type MoveFormViewModel = {
 	descriptionPl: string;
 	level: "Beginner" | "Intermediate" | "Advanced" | "";
 	steps: StepViewModel[];
+	comboReferences: string[];
 };
 
 type UseEditMoveFormReturn = {
@@ -35,6 +36,7 @@ type UseEditMoveFormReturn = {
 		field: "titleEn" | "titlePl" | "descriptionEn" | "descriptionPl",
 		value: string
 	) => void;
+	handleComboReferencesChange: (references: string[]) => void;
 	addStep: () => void;
 	removeStep: (index: number) => void;
 	handleSubmit: (
@@ -61,12 +63,20 @@ type InitialMoveData = {
 		descriptionEn: string;
 		descriptionPl: string;
 	}>;
+	comboReferences: Array<{
+		id: string;
+		orderIndex: number;
+	}>;
 };
 
 export function useEditMoveForm(
 	initialData: InitialMoveData
 ): UseEditMoveFormReturn {
 	const sortedSteps = [...initialData.steps].sort(
+		(a, b) => a.orderIndex - b.orderIndex
+	);
+
+	const sortedComboReferences = [...initialData.comboReferences].sort(
 		(a, b) => a.orderIndex - b.orderIndex
 	);
 
@@ -83,6 +93,7 @@ export function useEditMoveForm(
 			descriptionEn: step.descriptionEn,
 			descriptionPl: step.descriptionPl,
 		})),
+		comboReferences: sortedComboReferences.map((ref) => ref.id),
 	});
 
 	const [errors, setErrors] = useState<z.ZodError | null>(null);
@@ -137,6 +148,13 @@ export function useEditMoveForm(
 		setFormState((prev) => ({
 			...prev,
 			steps: prev.steps.filter((_, i) => i !== index),
+		}));
+	}, []);
+
+	const handleComboReferencesChange = useCallback((references: string[]) => {
+		setFormState((prev) => ({
+			...prev,
+			comboReferences: references,
 		}));
 	}, []);
 
@@ -204,6 +222,7 @@ export function useEditMoveForm(
 				descriptionEn: step.descriptionEn,
 				descriptionPl: step.descriptionPl,
 			})),
+			comboReferences: formState.comboReferences,
 		};
 
 		const validation = AdminEditMoveInputSchema.safeParse(submitData);
@@ -227,6 +246,7 @@ export function useEditMoveForm(
 		isSubmitting,
 		handleInputChange,
 		handleStepChange,
+		handleComboReferencesChange,
 		addStep,
 		removeStep,
 		handleSubmit,
