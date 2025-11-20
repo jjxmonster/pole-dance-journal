@@ -2,6 +2,8 @@ import { drizzle } from "drizzle-orm/postgres-js";
 import postgres from "postgres";
 import { env } from "@/env";
 import {
+	moveComboReferences,
+	moveComboReferencesRelations,
 	moveNotes,
 	moveNotesRelations,
 	moves,
@@ -23,6 +25,8 @@ const client = postgres(env.POSTGRES_URL, {
 export const db = drizzle({
 	client,
 	schema: {
+		moveComboReferences,
+		moveComboReferencesRelations,
 		moves,
 		movesRelations,
 		moveNotes,

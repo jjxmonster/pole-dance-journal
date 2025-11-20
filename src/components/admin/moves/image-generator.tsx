@@ -1,11 +1,14 @@
-import { useMutation } from "@tanstack/react-query";
 import { useState } from "react";
-import { toast } from "sonner";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { orpc } from "@/orpc/client";
+import { Textarea } from "@/components/ui/textarea";
+import {
+	useImageAcceptance,
+	useImageGeneration,
+	useImageUpload,
+} from "@/hooks/use-image-generator";
 
 type ImageGeneratorProps = {
 	moveId: string;
@@ -22,67 +25,25 @@ export function ImageGenerator({
 		null
 	);
 	const [previewImageUrl, setPreviewImageUrl] = useState<string | null>(null);
+	const [customPromptAddition, setCustomPromptAddition] = useState("");
 
-	const uploadReferenceImageMutation = useMutation({
-		mutationFn: (file: File) =>
-			orpc.admin.moves.uploadReferenceImage.call({
-				file,
-				moveId,
-			}),
-		onSuccess: (data) => {
-			setReferenceImageUrl(data.referenceImageUrl);
-			toast.success("Reference image uploaded successfully");
-		},
-		onError: (error) => {
-			const errorMessage =
-				error instanceof Error ? error.message : "Failed to upload image";
-			toast.error(errorMessage);
-		},
-	});
+	const uploadReferenceImageMutation = useImageUpload(
+		moveId,
+		setReferenceImageUrl
+	);
 
-	const generateImageMutation = useMutation({
-		mutationFn: () => {
-			if (!referenceImageUrl) {
-				throw new Error("Reference image URL is required");
-			}
-			return orpc.admin.moves.generateImage.call({
-				moveId,
-				referenceImageUrl,
-			});
-		},
-		onSuccess: (data) => {
-			setPreviewImageUrl(data.previewUrl);
-			toast.success("Image generated successfully");
-		},
-		onError: (error) => {
-			const errorMessage =
-				error instanceof Error ? error.message : "Failed to generate image";
-			toast.error(errorMessage);
-		},
-	});
+	const generateImageMutation = useImageGeneration(
+		moveId,
+		referenceImageUrl,
+		customPromptAddition,
+		setPreviewImageUrl
+	);
 
-	const acceptImageMutation = useMutation({
-		mutationFn: () => {
-			if (!previewImageUrl) {
-				throw new Error("No image to accept");
-			}
-			return orpc.admin.moves.acceptImage.call({
-				moveId,
-				imageUrl: previewImageUrl,
-			});
-		},
-		onSuccess: () => {
-			if (previewImageUrl) {
-				onImageAccepted(previewImageUrl);
-			}
-			toast.success("Image accepted successfully");
-		},
-		onError: (error) => {
-			const errorMessage =
-				error instanceof Error ? error.message : "Failed to accept image";
-			toast.error(errorMessage);
-		},
-	});
+	const acceptImageMutation = useImageAcceptance(
+		moveId,
+		previewImageUrl,
+		onImageAccepted
+	);
 
 	const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
 		const file = e.target.files?.[0];
@@ -104,105 +65,199 @@ export function ImageGenerator({
 				<h3 className="mb-4 font-semibold text-lg">Generate Move Image</h3>
 
 				<div className="space-y-4">
-					<div>
-						<Label
-							className="mb-2 block font-medium text-sm"
-							htmlFor="reference-image"
-						>
-							Reference Image
-						</Label>
-						<Input
-							accept="image/jpeg,image/png,image/webp"
-							disabled={isDisabled || uploadReferenceImageMutation.isPending}
-							id="reference-image"
-							onChange={handleFileChange}
-							type="file"
-						/>
-						{uploadReferenceImageMutation.isPending && (
-							<p className="mt-2 text-muted-foreground text-sm">
-								Uploading image...
-							</p>
-						)}
-						{referenceImageUrl && (
-							<div className="mt-4 overflow-hidden rounded-lg border border-border bg-muted">
-								<img
-									alt="Reference for AI generation"
-									className="h-auto w-full"
-									src={referenceImageUrl}
-								/>
-							</div>
-						)}
-					</div>
+					<ReferenceImageUpload
+						isDisabled={isDisabled}
+						isPending={uploadReferenceImageMutation.isPending}
+						onFileChange={handleFileChange}
+						referenceImageUrl={referenceImageUrl}
+					/>
 
 					{referenceImageUrl && (
-						<>
-							<div className="flex gap-3">
-								<Button
-									className="flex-1"
-									disabled={
-										isDisabled ||
-										generateImageMutation.isPending ||
-										!referenceImageUrl
-									}
-									onClick={() => generateImageMutation.mutate()}
-									type="button"
-								>
-									{generateImageMutation.isPending
-										? "Generating..."
-										: "Generate Image"}
-								</Button>
-							</div>
+						<GenerationControls
+							customPromptAddition={customPromptAddition}
+							isDisabled={isDisabled}
+							isGenerating={generateImageMutation.isPending}
+							onCustomPromptChange={setCustomPromptAddition}
+							onGenerate={() => generateImageMutation.mutate()}
+						/>
+					)}
 
-							{previewImageUrl && (
-								<>
-									<div className="overflow-hidden rounded-lg border border-border bg-muted">
-										<img
-											alt="Generated preview"
-											className="h-auto w-full"
-											src={previewImageUrl}
-										/>
-									</div>
-
-									<div className="flex gap-3">
-										<Button
-											className="flex-1"
-											disabled={isDisabled || generateImageMutation.isPending}
-											onClick={() => generateImageMutation.mutate()}
-											type="button"
-											variant="outline"
-										>
-											Regenerate
-										</Button>
-										<Button
-											className="flex-1"
-											disabled={isDisabled || acceptImageMutation.isPending}
-											onClick={() => acceptImageMutation.mutate()}
-											type="button"
-										>
-											{acceptImageMutation.isPending
-												? "Accepting..."
-												: "Accept Image"}
-										</Button>
-									</div>
-								</>
-							)}
-						</>
+					{previewImageUrl && (
+						<PreviewSection
+							acceptImageMutation={acceptImageMutation}
+							generateImageMutation={generateImageMutation}
+							isDisabled={isDisabled}
+							previewImageUrl={previewImageUrl}
+						/>
 					)}
 
 					{hasError && (
-						<Alert variant="destructive">
-							<AlertDescription>
-								{uploadReferenceImageMutation.error instanceof Error &&
-									uploadReferenceImageMutation.error.message}
-								{generateImageMutation.error instanceof Error &&
-									generateImageMutation.error.message}
-								{acceptImageMutation.error instanceof Error &&
-									acceptImageMutation.error.message}
-							</AlertDescription>
-						</Alert>
+						<ErrorDisplay
+							acceptImageError={acceptImageMutation.error}
+							generateImageError={generateImageMutation.error}
+							uploadImageError={uploadReferenceImageMutation.error}
+						/>
 					)}
 				</div>
 			</div>
 		</div>
+	);
+}
+
+function ReferenceImageUpload({
+	isDisabled,
+	isPending,
+	onFileChange,
+	referenceImageUrl,
+}: {
+	isDisabled: boolean;
+	isPending: boolean;
+	onFileChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+	referenceImageUrl: string | null;
+}) {
+	return (
+		<div>
+			<Label
+				className="mb-2 block font-medium text-sm"
+				htmlFor="reference-image"
+			>
+				Reference Image
+			</Label>
+			<Input
+				accept="image/jpeg,image/png,image/webp"
+				disabled={isDisabled || isPending}
+				id="reference-image"
+				onChange={onFileChange}
+				type="file"
+			/>
+			{isPending && (
+				<p className="mt-2 text-muted-foreground text-sm">Uploading image...</p>
+			)}
+			{referenceImageUrl && (
+				<div className="mt-4 overflow-hidden rounded-lg border border-border bg-muted">
+					<img
+						alt="Reference for AI generation"
+						className="h-auto w-full"
+						src={referenceImageUrl}
+					/>
+				</div>
+			)}
+		</div>
+	);
+}
+
+function GenerationControls({
+	customPromptAddition,
+	isDisabled,
+	isGenerating,
+	onCustomPromptChange,
+	onGenerate,
+}: {
+	customPromptAddition: string;
+	isDisabled: boolean;
+	isGenerating: boolean;
+	onCustomPromptChange: (value: string) => void;
+	onGenerate: () => void;
+}) {
+	return (
+		<>
+			<div>
+				<Label
+					className="mb-2 block font-medium text-sm"
+					htmlFor="custom-prompt"
+				>
+					Additional Prompt (Optional)
+				</Label>
+				<Textarea
+					className="min-h-[100px] resize-y"
+					disabled={isDisabled || isGenerating}
+					id="custom-prompt"
+					maxLength={500}
+					onChange={(e) => onCustomPromptChange(e.target.value)}
+					placeholder="Add any specific requirements or modifications to the default prompt..."
+					value={customPromptAddition}
+				/>
+				<p className="mt-1 text-muted-foreground text-xs">
+					{customPromptAddition.length}/500 characters
+				</p>
+			</div>
+
+			<div className="flex gap-3">
+				<Button
+					className="flex-1"
+					disabled={isDisabled || isGenerating}
+					onClick={onGenerate}
+					type="button"
+				>
+					{isGenerating ? "Generating..." : "Generate Image"}
+				</Button>
+			</div>
+		</>
+	);
+}
+
+type PreviewSectionProps = {
+	previewImageUrl: string;
+	isDisabled: boolean;
+	generateImageMutation: ReturnType<typeof useImageGeneration>;
+	acceptImageMutation: ReturnType<typeof useImageAcceptance>;
+};
+
+function PreviewSection({
+	previewImageUrl,
+	isDisabled,
+	generateImageMutation,
+	acceptImageMutation,
+}: PreviewSectionProps) {
+	return (
+		<>
+			<div className="overflow-hidden rounded-lg border border-border bg-muted">
+				<img
+					alt="Generated preview"
+					className="h-auto w-full"
+					src={previewImageUrl}
+				/>
+			</div>
+
+			<div className="flex gap-3">
+				<Button
+					className="flex-1"
+					disabled={isDisabled || generateImageMutation.isPending}
+					onClick={() => generateImageMutation.mutate()}
+					type="button"
+					variant="outline"
+				>
+					Regenerate
+				</Button>
+				<Button
+					className="flex-1"
+					disabled={isDisabled || acceptImageMutation.isPending}
+					onClick={() => acceptImageMutation.mutate()}
+					type="button"
+				>
+					{acceptImageMutation.isPending ? "Accepting..." : "Accept Image"}
+				</Button>
+			</div>
+		</>
+	);
+}
+
+function ErrorDisplay({
+	uploadImageError,
+	generateImageError,
+	acceptImageError,
+}: {
+	uploadImageError: Error | null;
+	generateImageError: Error | null;
+	acceptImageError: Error | null;
+}) {
+	return (
+		<Alert variant="destructive">
+			<AlertDescription>
+				{uploadImageError instanceof Error && uploadImageError.message}
+				{generateImageError instanceof Error && generateImageError.message}
+				{acceptImageError instanceof Error && acceptImageError.message}
+			</AlertDescription>
+		</Alert>
 	);
 }

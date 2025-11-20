@@ -112,8 +112,12 @@ export const generateImageProcedure = os
 			});
 		}
 
+		const finalPrompt = input.customPromptAddition
+			? `${GENERATE_IMAGE_PROMPT}\n\nADDITIONAL REQUIREMENTS: ${input.customPromptAddition}`
+			: GENERATE_IMAGE_PROMPT;
+
 		const { imageUrl } = await performImageGeneration(
-			GENERATE_IMAGE_PROMPT,
+			finalPrompt,
 			input.referenceImageUrl
 		);
 		return { previewUrl: imageUrl };
@@ -299,6 +303,22 @@ export const editMoveProcedure = os
 
 		const slug = generateSlug(input.name);
 
+		if (input.comboReferences?.includes(input.id)) {
+			throw new ORPCError("BAD_REQUEST", {
+				message: "A move cannot reference itself as a combo reference.",
+			});
+		}
+
+		const uniqueReferences = new Set(input.comboReferences);
+		if (
+			input.comboReferences &&
+			uniqueReferences.size !== input.comboReferences.length
+		) {
+			throw new ORPCError("BAD_REQUEST", {
+				message: "Combo references must be unique.",
+			});
+		}
+
 		try {
 			const result = await updateMove({
 				id: input.id,
@@ -313,6 +333,7 @@ export const editMoveProcedure = os
 					descriptionEn: step.descriptionEn,
 					descriptionPl: step.descriptionPl,
 				})),
+				comboReferences: input.comboReferences,
 			});
 
 			return result;

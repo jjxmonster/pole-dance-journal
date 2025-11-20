@@ -15,7 +15,13 @@ import type { z } from "zod";
 import { getSupabaseServerClient } from "@/integrations/supabase/server";
 import { CACHE_CONTROL_SECONDS } from "@/utils/constants";
 import { db } from "../db";
-import { moves, moveTranslations, steps, stepTranslations } from "../db/schema";
+import {
+	moveComboReferences,
+	moves,
+	moveTranslations,
+	steps,
+	stepTranslations,
+} from "../db/schema";
 import type { MovesListInputSchema } from "../orpc/schema";
 
 type ListPublishedMovesInput = z.infer<typeof MovesListInputSchema>;
@@ -131,6 +137,23 @@ export async function getMoveBySlugWithTranslations(
 					},
 				},
 			},
+			comboReferences: {
+				columns: {
+					orderIndex: true,
+				},
+				orderBy: [asc(moveComboReferences.orderIndex)],
+				with: {
+					referencedMove: {
+						columns: {
+							id: true,
+							name: true,
+							slug: true,
+							level: true,
+							imageUrl: true,
+						},
+					},
+				},
+			},
 		},
 	});
 	if (!move) {
@@ -180,6 +203,23 @@ export async function getMoveBySlugWithTranslations(
 						},
 					},
 				},
+				comboReferences: {
+					columns: {
+						orderIndex: true,
+					},
+					orderBy: [asc(moveComboReferences.orderIndex)],
+					with: {
+						referencedMove: {
+							columns: {
+								id: true,
+								name: true,
+								slug: true,
+								level: true,
+								imageUrl: true,
+							},
+						},
+					},
+				},
 			},
 		});
 
@@ -199,6 +239,13 @@ export async function getMoveBySlugWithTranslations(
 					description: step.translations[0]?.description ?? "",
 				})),
 				translationFallback: usedFallback,
+				comboReferences: fallbackMove.comboReferences.map((ref) => ({
+					id: ref.referencedMove.id,
+					name: ref.referencedMove.name,
+					slug: ref.referencedMove.slug,
+					level: ref.referencedMove.level,
+					imageUrl: ref.referencedMove.imageUrl,
+				})),
 			};
 		}
 
@@ -223,6 +270,13 @@ export async function getMoveBySlugWithTranslations(
 			description: step.translations[0]?.description ?? "",
 		})),
 		translationFallback: usedFallback,
+		comboReferences: move.comboReferences.map((ref) => ({
+			id: ref.referencedMove.id,
+			name: ref.referencedMove.name,
+			slug: ref.referencedMove.slug,
+			level: ref.referencedMove.level,
+			imageUrl: ref.referencedMove.imageUrl,
+		})),
 	};
 }
 
@@ -567,6 +621,7 @@ export async function updateMove(data: {
 		descriptionEn: string;
 		descriptionPl: string;
 	}>;
+	comboReferences?: string[];
 }) {
 	const stepsWithIds = data.steps.map((step) => ({
 		id: crypto.randomUUID(),
@@ -645,6 +700,23 @@ export async function updateMove(data: {
 		]);
 
 		await tx.insert(stepTranslations).values(stepTranslationsToInsert);
+
+		await tx
+			.delete(moveComboReferences)
+			.where(eq(moveComboReferences.moveId, data.id));
+
+		if (data.comboReferences && data.comboReferences.length > 0) {
+			const comboReferencesToInsert = data.comboReferences.map(
+				(referencedMoveId, index) => ({
+					moveId: data.id,
+					referencedMoveId,
+					orderIndex: index + 1,
+					createdAt: new Date(),
+				})
+			);
+
+			await tx.insert(moveComboReferences).values(comboReferencesToInsert);
+		}
 	});
 
 	return { id: data.id, slug: data.slug };
@@ -682,6 +754,13 @@ export async function getMoveByIdForAdmin(moveId: string) {
 					},
 				},
 			},
+			comboReferences: {
+				columns: {
+					referencedMoveId: true,
+					orderIndex: true,
+				},
+				orderBy: [asc(sql`order_index`)],
+			},
 		},
 	});
 
@@ -715,5 +794,9 @@ export async function getMoveByIdForAdmin(moveId: string) {
 				descriptionPl: plStepTranslation?.description ?? "",
 			};
 		}),
+		comboReferences: move.comboReferences.map((ref) => ({
+			id: ref.referencedMoveId,
+			orderIndex: ref.orderIndex,
+		})),
 	};
 }

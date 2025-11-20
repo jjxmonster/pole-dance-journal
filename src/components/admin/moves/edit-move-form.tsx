@@ -23,6 +23,7 @@ import {
 	MOVE_NAME_MAX_LENGTH,
 	MOVE_NAME_WARNING_THRESHOLD,
 } from "@/utils/constants";
+import { ComboReferencesSelector } from "./combo-references-selector";
 import { ImageGenerator } from "./image-generator";
 import { StepEditor } from "./step-editor";
 
@@ -43,6 +44,7 @@ export function EditMoveForm({ move: moveData }: EditMoveFormProps) {
 		isSubmitting,
 		handleInputChange,
 		handleStepChange,
+		handleComboReferencesChange,
 		addStep,
 		removeStep,
 		handleSubmit,
@@ -115,6 +117,11 @@ export function EditMoveForm({ move: moveData }: EditMoveFormProps) {
 	const handleRemoveStepWithTracking = (index: number) => {
 		setHasFormChanged(true);
 		removeStep(index);
+	};
+
+	const handleComboReferencesChangeWithTracking = (references: string[]) => {
+		setHasFormChanged(true);
+		handleComboReferencesChange(references);
 	};
 
 	const handleCancel = () => {
@@ -309,6 +316,13 @@ export function EditMoveForm({ move: moveData }: EditMoveFormProps) {
 							</div>
 						)}
 					</div>
+
+					<ComboReferencesSelector
+						currentMoveId={moveData.move.id}
+						disabled={isFormDisabled}
+						onChange={handleComboReferencesChangeWithTracking}
+						value={formState.comboReferences}
+					/>
 
 					<StepEditor
 						errors={errors}
