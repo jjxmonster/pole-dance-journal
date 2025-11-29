@@ -1,5 +1,15 @@
 import { ORPCError, os } from "@orpc/server";
 import {
+	createCombo,
+	deleteCombo,
+	getComboByIdForAdmin,
+	listAdminCombos,
+	publishCombo,
+	restoreCombo,
+	unpublishCombo,
+	updateCombo,
+} from "@/data-access/combos";
+import {
 	deleteMove,
 	getAdminStats,
 	listAdminMoves,
@@ -17,17 +27,26 @@ import {
 	AdminAcceptImageInputSchema,
 	AdminAcceptImageOutputSchema,
 	AdminActionOutputSchema,
+	AdminComboIdInputSchema,
+	AdminCreateComboInputSchema,
+	AdminCreateComboOutputSchema,
 	AdminCreateMoveInputSchema,
 	AdminCreateMoveOutputSchema,
 	AdminEditMoveInputSchema,
 	AdminEditMoveOutputSchema,
+	AdminGetComboOutputSchema,
 	AdminGetMoveInputSchema,
 	AdminGetMoveOutputSchema,
 	AdminGetStatsOutputSchema,
+	AdminListCombosInputSchema,
+	AdminListCombosOutputSchema,
 	AdminListMovesInputSchema,
 	AdminListMovesOutputSchema,
 	AdminMoveIdInputSchema,
+	AdminPublishComboOutputSchema,
 	AdminPublishMoveOutputSchema,
+	AdminUpdateComboInputSchema,
+	AdminUpdateComboOutputSchema,
 	GenerateImageInputSchema,
 	GenerateImageOutputSchema,
 	UploadReferenceImageInputSchema,
@@ -403,6 +422,204 @@ export const getMoveProcedure = os
 			}
 			const errorMessage =
 				error instanceof Error ? error.message : "Failed to get move";
+			throw new ORPCError("INTERNAL_SERVER_ERROR", {
+				message: errorMessage,
+			});
+		}
+	});
+
+export const listCombosProcedure = os
+	.input(AdminListCombosInputSchema)
+	.output(AdminListCombosOutputSchema)
+	.use(authMiddleware)
+	.handler(async ({ input, context }) => {
+		const userId = context.user.id;
+
+		const isAdmin = await validateUserIsAdmin(userId);
+		if (!isAdmin) {
+			throw new ORPCError("UNAUTHORIZED", {
+				message: "User is not an administrator.",
+			});
+		}
+
+		const result = await listAdminCombos(input);
+		return result;
+	});
+
+export const createComboProcedure = os
+	.input(AdminCreateComboInputSchema)
+	.output(AdminCreateComboOutputSchema)
+	.use(authMiddleware)
+	.handler(async ({ input, context }) => {
+		const userId = context.user.id;
+
+		const isAdmin = await validateUserIsAdmin(userId);
+		if (!isAdmin) {
+			throw new ORPCError("UNAUTHORIZED", {
+				message: "User is not an administrator.",
+			});
+		}
+
+		try {
+			const result = await createCombo({
+				name: input.name,
+				level: input.level,
+				moveIds: input.moveIds,
+			});
+
+			return result;
+		} catch (error) {
+			const errorMessage =
+				error instanceof Error ? error.message : "Failed to create combo";
+
+			throw new ORPCError("BAD_REQUEST", {
+				message: errorMessage,
+			});
+		}
+	});
+
+export const updateComboProcedure = os
+	.input(AdminUpdateComboInputSchema)
+	.output(AdminUpdateComboOutputSchema)
+	.use(authMiddleware)
+	.handler(async ({ input, context }) => {
+		const userId = context.user.id;
+
+		const isAdmin = await validateUserIsAdmin(userId);
+		if (!isAdmin) {
+			throw new ORPCError("UNAUTHORIZED", {
+				message: "User is not an administrator.",
+			});
+		}
+
+		try {
+			const result = await updateCombo({
+				id: input.id,
+				name: input.name,
+				level: input.level,
+				moveIds: input.moveIds,
+			});
+
+			return result;
+		} catch (error) {
+			const errorMessage =
+				error instanceof Error ? error.message : "Failed to update combo";
+
+			throw new ORPCError("BAD_REQUEST", {
+				message: errorMessage,
+			});
+		}
+	});
+
+export const publishComboProcedure = os
+	.input(AdminComboIdInputSchema)
+	.output(AdminPublishComboOutputSchema)
+	.use(authMiddleware)
+	.handler(async ({ input, context }) => {
+		const userId = context.user.id;
+
+		const isAdmin = await validateUserIsAdmin(userId);
+		if (!isAdmin) {
+			throw new ORPCError("UNAUTHORIZED", {
+				message: "User is not an administrator.",
+			});
+		}
+
+		const result = await publishCombo(input.id);
+		if (!result) {
+			throw new ORPCError("NOT_FOUND", {
+				message: "Combo not found.",
+			});
+		}
+
+		return {
+			success: true,
+			publishedAt: result.publishedAt ?? new Date(),
+		};
+	});
+
+export const unpublishComboProcedure = os
+	.input(AdminComboIdInputSchema)
+	.output(AdminActionOutputSchema)
+	.use(authMiddleware)
+	.handler(async ({ input, context }) => {
+		const userId = context.user.id;
+
+		const isAdmin = await validateUserIsAdmin(userId);
+		if (!isAdmin) {
+			throw new ORPCError("UNAUTHORIZED", {
+				message: "User is not an administrator.",
+			});
+		}
+
+		await unpublishCombo(input.id);
+		return { success: true };
+	});
+
+export const deleteComboProcedure = os
+	.input(AdminComboIdInputSchema)
+	.output(AdminActionOutputSchema)
+	.use(authMiddleware)
+	.handler(async ({ input, context }) => {
+		const userId = context.user.id;
+
+		const isAdmin = await validateUserIsAdmin(userId);
+		if (!isAdmin) {
+			throw new ORPCError("UNAUTHORIZED", {
+				message: "User is not an administrator.",
+			});
+		}
+
+		await deleteCombo(input.id);
+		return { success: true };
+	});
+
+export const restoreComboProcedure = os
+	.input(AdminComboIdInputSchema)
+	.output(AdminActionOutputSchema)
+	.use(authMiddleware)
+	.handler(async ({ input, context }) => {
+		const userId = context.user.id;
+
+		const isAdmin = await validateUserIsAdmin(userId);
+		if (!isAdmin) {
+			throw new ORPCError("UNAUTHORIZED", {
+				message: "User is not an administrator.",
+			});
+		}
+
+		await restoreCombo(input.id);
+		return { success: true };
+	});
+
+export const getComboProcedure = os
+	.input(AdminComboIdInputSchema)
+	.output(AdminGetComboOutputSchema)
+	.use(authMiddleware)
+	.handler(async ({ input, context }) => {
+		const userId = context.user.id;
+
+		const isAdmin = await validateUserIsAdmin(userId);
+		if (!isAdmin) {
+			throw new ORPCError("UNAUTHORIZED", {
+				message: "User is not an administrator.",
+			});
+		}
+
+		try {
+			const combo = await getComboByIdForAdmin(input.id);
+			if (!combo) {
+				throw new ORPCError("NOT_FOUND", {
+					message: "Combo not found.",
+				});
+			}
+			return { combo };
+		} catch (error) {
+			if (error instanceof ORPCError) {
+				throw error;
+			}
+			const errorMessage =
+				error instanceof Error ? error.message : "Failed to get combo";
 			throw new ORPCError("INTERNAL_SERVER_ERROR", {
 				message: errorMessage,
 			});

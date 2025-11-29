@@ -2,6 +2,10 @@ import { z } from "zod";
 import { moveLevelEnum, moveStatusEnum } from "../db/schema";
 import {
 	ALLOWED_MIME_TYPES,
+	COMBO_MOVES_MAX_COUNT,
+	COMBO_MOVES_MIN_COUNT,
+	COMBO_NAME_MAX_LENGTH,
+	COMBO_NAME_MIN_LENGTH,
 	MAX_FILE_SIZE,
 	MAX_TRANSITION_REFERENCES_COUNT,
 	MOVE_DESCRIPTION_MAX_LENGTH,
@@ -715,3 +719,224 @@ export const ProfileChangePasswordOutputSchema = z.object({
 export type ProfileChangePasswordOutput = z.infer<
 	typeof ProfileChangePasswordOutputSchema
 >;
+
+const DEFAULT_COMBOS_LIMIT = 8;
+const MAX_COMBOS_LIMIT = 100;
+
+export const CombosListInputSchema = z.object({
+	limit: z
+		.number()
+		.int()
+		.positive()
+		.max(MAX_COMBOS_LIMIT)
+		.optional()
+		.default(DEFAULT_COMBOS_LIMIT),
+	offset: z.number().int().nonnegative().optional().default(DEFAULT_OFFSET),
+	level: z.enum(moveLevelEnum.enumValues).optional(),
+	moveId: z.string().uuid().optional(),
+});
+
+export type CombosListInput = z.infer<typeof CombosListInputSchema>;
+
+export const ComboMoveItemSchema = z.object({
+	id: z.string().uuid(),
+	name: z.string(),
+	imageUrl: z.string().nullable(),
+	orderIndex: z.number().int().positive(),
+});
+
+export const ComboListItemSchema = z.object({
+	id: z.string().uuid(),
+	name: z.string(),
+	level: z.enum(moveLevelEnum.enumValues),
+	slug: z.string(),
+	moves: z.array(ComboMoveItemSchema),
+	isFavorite: z.boolean(),
+});
+
+export type ComboListItem = z.infer<typeof ComboListItemSchema>;
+
+export const CombosListOutputSchema = z.object({
+	combos: z.array(ComboListItemSchema),
+	total: z.number().int().nonnegative(),
+});
+
+export type CombosListOutput = z.infer<typeof CombosListOutputSchema>;
+
+export const ComboGetBySlugInputSchema = z.object({
+	slug: z.string().trim().min(1, "Slug is required"),
+});
+
+export type ComboGetBySlugInput = z.infer<typeof ComboGetBySlugInputSchema>;
+
+export const ComboDetailSchema = z.object({
+	id: z.string().uuid(),
+	name: z.string(),
+	level: z.enum(moveLevelEnum.enumValues),
+	slug: z.string(),
+	moves: z.array(
+		z.object({
+			id: z.string().uuid(),
+			name: z.string(),
+			slug: z.string(),
+			level: z.enum(moveLevelEnum.enumValues),
+			imageUrl: z.string().nullable(),
+			orderIndex: z.number().int().positive(),
+		})
+	),
+	isFavorite: z.boolean(),
+});
+
+export type ComboDetail = z.infer<typeof ComboDetailSchema>;
+
+export const ComboGetBySlugOutputSchema = ComboDetailSchema;
+
+export const ComboFavoriteToggleInputSchema = z.object({
+	comboId: z.string().uuid(),
+});
+
+export type ComboFavoriteToggleInput = z.infer<
+	typeof ComboFavoriteToggleInputSchema
+>;
+
+export const ComboFavoriteToggleOutputSchema = z.object({
+	success: z.literal(true),
+	isFavorite: z.boolean(),
+});
+
+export type ComboFavoriteToggleOutput = z.infer<
+	typeof ComboFavoriteToggleOutputSchema
+>;
+
+export const AdminListCombosInputSchema = z.object({
+	limit: z
+		.number()
+		.int()
+		.positive()
+		.max(MAX_COMBOS_LIMIT)
+		.optional()
+		.default(DEFAULT_COMBOS_LIMIT),
+	offset: z.number().int().nonnegative().optional().default(DEFAULT_OFFSET),
+	level: z.enum(moveLevelEnum.enumValues).optional(),
+	status: z.enum(["Published", "Unpublished", "Deleted"]).optional(),
+	query: z.string().trim().optional(),
+});
+
+export type AdminListCombosInput = z.infer<typeof AdminListCombosInputSchema>;
+
+export const AdminComboItemSchema = z.object({
+	id: z.string().uuid(),
+	name: z.string(),
+	level: z.enum(moveLevelEnum.enumValues),
+	slug: z.string(),
+	status: z.enum(["Published", "Unpublished", "Deleted"]),
+	movesCount: z.number().int().nonnegative(),
+	updatedAt: z.date(),
+});
+
+export type AdminComboItem = z.infer<typeof AdminComboItemSchema>;
+
+export const AdminListCombosOutputSchema = z.object({
+	combos: z.array(AdminComboItemSchema),
+	total: z.number().int().nonnegative(),
+});
+
+export type AdminListCombosOutput = z.infer<typeof AdminListCombosOutputSchema>;
+
+export const AdminCreateComboInputSchema = z.object({
+	name: z
+		.string()
+		.min(
+			COMBO_NAME_MIN_LENGTH,
+			`Name must be at least ${COMBO_NAME_MIN_LENGTH} characters`
+		)
+		.max(
+			COMBO_NAME_MAX_LENGTH,
+			`Name must be at most ${COMBO_NAME_MAX_LENGTH} characters`
+		),
+	level: z.enum(moveLevelEnum.enumValues),
+	moveIds: z
+		.array(z.string().uuid("Invalid move ID"))
+		.min(
+			COMBO_MOVES_MIN_COUNT,
+			`At least ${COMBO_MOVES_MIN_COUNT} moves are required`
+		)
+		.max(
+			COMBO_MOVES_MAX_COUNT,
+			`Maximum ${COMBO_MOVES_MAX_COUNT} moves allowed`
+		),
+});
+
+export type AdminCreateComboInput = z.infer<typeof AdminCreateComboInputSchema>;
+
+export const AdminCreateComboOutputSchema = z.object({
+	id: z.string().uuid(),
+	slug: z.string(),
+});
+
+export type AdminCreateComboOutput = z.infer<
+	typeof AdminCreateComboOutputSchema
+>;
+
+export const AdminUpdateComboInputSchema = z.object({
+	id: z.string().uuid(),
+	name: z
+		.string()
+		.min(
+			COMBO_NAME_MIN_LENGTH,
+			`Name must be at least ${COMBO_NAME_MIN_LENGTH} characters`
+		)
+		.max(
+			COMBO_NAME_MAX_LENGTH,
+			`Name must be at most ${COMBO_NAME_MAX_LENGTH} characters`
+		),
+	level: z.enum(moveLevelEnum.enumValues),
+	moveIds: z
+		.array(z.string().uuid("Invalid move ID"))
+		.min(
+			COMBO_MOVES_MIN_COUNT,
+			`At least ${COMBO_MOVES_MIN_COUNT} moves are required`
+		)
+		.max(
+			COMBO_MOVES_MAX_COUNT,
+			`Maximum ${COMBO_MOVES_MAX_COUNT} moves allowed`
+		),
+});
+
+export type AdminUpdateComboInput = z.infer<typeof AdminUpdateComboInputSchema>;
+
+export const AdminUpdateComboOutputSchema = z.object({
+	id: z.string().uuid(),
+	slug: z.string(),
+});
+
+export type AdminUpdateComboOutput = z.infer<
+	typeof AdminUpdateComboOutputSchema
+>;
+
+export const AdminComboIdInputSchema = z.object({
+	id: z.string().uuid(),
+});
+
+export type AdminComboIdInput = z.infer<typeof AdminComboIdInputSchema>;
+
+export const AdminPublishComboOutputSchema = z.object({
+	success: z.literal(true),
+	publishedAt: z.date(),
+});
+
+export type AdminPublishComboOutput = z.infer<
+	typeof AdminPublishComboOutputSchema
+>;
+
+export const AdminGetComboOutputSchema = z.object({
+	combo: z.object({
+		id: z.string().uuid(),
+		name: z.string(),
+		level: z.enum(moveLevelEnum.enumValues),
+		slug: z.string(),
+		moveIds: z.array(z.string().uuid()),
+	}),
+});
+
+export type AdminGetComboOutput = z.infer<typeof AdminGetComboOutputSchema>;

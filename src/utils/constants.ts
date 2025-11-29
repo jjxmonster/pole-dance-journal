@@ -61,6 +61,12 @@ export const TRANSITION_NOTIFICATION_COOKIE_NAME =
 	"TRANSITION_NOTIFICATION_SEEN";
 export const ONE_YEAR_IN_DAYS = 365;
 
+export const COMBOS_PAGE_SIZE = 8;
+export const COMBO_NAME_MIN_LENGTH = 3;
+export const COMBO_NAME_MAX_LENGTH = 100;
+export const COMBO_MOVES_MIN_COUNT = 3;
+export const COMBO_MOVES_MAX_COUNT = 8;
+
 export const LEVEL_COLORS = {
 	Beginner: "bg-green-100 text-green-800 hover:bg-green-100",
 	Intermediate: "bg-blue-100 text-blue-800 hover:bg-blue-100",

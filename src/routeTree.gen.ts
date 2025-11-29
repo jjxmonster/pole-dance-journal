@@ -11,6 +11,7 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as SettingsRouteImport } from './routes/settings'
 import { Route as MyMovesRouteImport } from './routes/my-moves'
+import { Route as CombosRouteImport } from './routes/combos'
 import { Route as CatalogRouteImport } from './routes/catalog'
 import { Route as AdminRouteImport } from './routes/admin'
 import { Route as IndexRouteImport } from './routes/index'
@@ -18,6 +19,7 @@ import { Route as AdminIndexRouteImport } from './routes/admin/index'
 import { Route as PrivacyPlRouteImport } from './routes/privacy/pl'
 import { Route as PrivacyEnRouteImport } from './routes/privacy/en'
 import { Route as MovesSlugRouteImport } from './routes/moves.$slug'
+import { Route as CombosSlugRouteImport } from './routes/combos.$slug'
 import { Route as AuthSignUpRouteImport } from './routes/auth/sign-up'
 import { Route as AuthSignInRouteImport } from './routes/auth/sign-in'
 import { Route as AuthResetPasswordRouteImport } from './routes/auth/reset-password'
@@ -36,6 +38,11 @@ const SettingsRoute = SettingsRouteImport.update({
 const MyMovesRoute = MyMovesRouteImport.update({
   id: '/my-moves',
   path: '/my-moves',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CombosRoute = CombosRouteImport.update({
+  id: '/combos',
+  path: '/combos',
   getParentRoute: () => rootRouteImport,
 } as any)
 const CatalogRoute = CatalogRouteImport.update({
@@ -72,6 +79,11 @@ const MovesSlugRoute = MovesSlugRouteImport.update({
   id: '/moves/$slug',
   path: '/moves/$slug',
   getParentRoute: () => rootRouteImport,
+} as any)
+const CombosSlugRoute = CombosSlugRouteImport.update({
+  id: '/$slug',
+  path: '/$slug',
+  getParentRoute: () => CombosRoute,
 } as any)
 const AuthSignUpRoute = AuthSignUpRouteImport.update({
   id: '/auth/sign-up',
@@ -123,6 +135,7 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/admin': typeof AdminRouteWithChildren
   '/catalog': typeof CatalogRoute
+  '/combos': typeof CombosRouteWithChildren
   '/my-moves': typeof MyMovesRoute
   '/settings': typeof SettingsRoute
   '/auth/forgot-password': typeof AuthForgotPasswordRoute
@@ -130,6 +143,7 @@ export interface FileRoutesByFullPath {
   '/auth/reset-password': typeof AuthResetPasswordRoute
   '/auth/sign-in': typeof AuthSignInRoute
   '/auth/sign-up': typeof AuthSignUpRoute
+  '/combos/$slug': typeof CombosSlugRoute
   '/moves/$slug': typeof MovesSlugRoute
   '/privacy/en': typeof PrivacyEnRoute
   '/privacy/pl': typeof PrivacyPlRoute
@@ -142,6 +156,7 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/catalog': typeof CatalogRoute
+  '/combos': typeof CombosRouteWithChildren
   '/my-moves': typeof MyMovesRoute
   '/settings': typeof SettingsRoute
   '/auth/forgot-password': typeof AuthForgotPasswordRoute
@@ -149,6 +164,7 @@ export interface FileRoutesByTo {
   '/auth/reset-password': typeof AuthResetPasswordRoute
   '/auth/sign-in': typeof AuthSignInRoute
   '/auth/sign-up': typeof AuthSignUpRoute
+  '/combos/$slug': typeof CombosSlugRoute
   '/moves/$slug': typeof MovesSlugRoute
   '/privacy/en': typeof PrivacyEnRoute
   '/privacy/pl': typeof PrivacyPlRoute
@@ -163,6 +179,7 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/admin': typeof AdminRouteWithChildren
   '/catalog': typeof CatalogRoute
+  '/combos': typeof CombosRouteWithChildren
   '/my-moves': typeof MyMovesRoute
   '/settings': typeof SettingsRoute
   '/auth/forgot-password': typeof AuthForgotPasswordRoute
@@ -170,6 +187,7 @@ export interface FileRoutesById {
   '/auth/reset-password': typeof AuthResetPasswordRoute
   '/auth/sign-in': typeof AuthSignInRoute
   '/auth/sign-up': typeof AuthSignUpRoute
+  '/combos/$slug': typeof CombosSlugRoute
   '/moves/$slug': typeof MovesSlugRoute
   '/privacy/en': typeof PrivacyEnRoute
   '/privacy/pl': typeof PrivacyPlRoute
@@ -185,6 +203,7 @@ export interface FileRouteTypes {
     | '/'
     | '/admin'
     | '/catalog'
+    | '/combos'
     | '/my-moves'
     | '/settings'
     | '/auth/forgot-password'
@@ -192,6 +211,7 @@ export interface FileRouteTypes {
     | '/auth/reset-password'
     | '/auth/sign-in'
     | '/auth/sign-up'
+    | '/combos/$slug'
     | '/moves/$slug'
     | '/privacy/en'
     | '/privacy/pl'
@@ -204,6 +224,7 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/catalog'
+    | '/combos'
     | '/my-moves'
     | '/settings'
     | '/auth/forgot-password'
@@ -211,6 +232,7 @@ export interface FileRouteTypes {
     | '/auth/reset-password'
     | '/auth/sign-in'
     | '/auth/sign-up'
+    | '/combos/$slug'
     | '/moves/$slug'
     | '/privacy/en'
     | '/privacy/pl'
@@ -224,6 +246,7 @@ export interface FileRouteTypes {
     | '/'
     | '/admin'
     | '/catalog'
+    | '/combos'
     | '/my-moves'
     | '/settings'
     | '/auth/forgot-password'
@@ -231,6 +254,7 @@ export interface FileRouteTypes {
     | '/auth/reset-password'
     | '/auth/sign-in'
     | '/auth/sign-up'
+    | '/combos/$slug'
     | '/moves/$slug'
     | '/privacy/en'
     | '/privacy/pl'
@@ -245,6 +269,7 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AdminRoute: typeof AdminRouteWithChildren
   CatalogRoute: typeof CatalogRoute
+  CombosRoute: typeof CombosRouteWithChildren
   MyMovesRoute: typeof MyMovesRoute
   SettingsRoute: typeof SettingsRoute
   AuthForgotPasswordRoute: typeof AuthForgotPasswordRoute
@@ -272,6 +297,13 @@ declare module '@tanstack/react-router' {
       path: '/my-moves'
       fullPath: '/my-moves'
       preLoaderRoute: typeof MyMovesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/combos': {
+      id: '/combos'
+      path: '/combos'
+      fullPath: '/combos'
+      preLoaderRoute: typeof CombosRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/catalog': {
@@ -322,6 +354,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/moves/$slug'
       preLoaderRoute: typeof MovesSlugRouteImport
       parentRoute: typeof rootRouteImport
+    }
+    '/combos/$slug': {
+      id: '/combos/$slug'
+      path: '/$slug'
+      fullPath: '/combos/$slug'
+      preLoaderRoute: typeof CombosSlugRouteImport
+      parentRoute: typeof CombosRoute
     }
     '/auth/sign-up': {
       id: '/auth/sign-up'
@@ -405,10 +444,22 @@ const AdminRouteChildren: AdminRouteChildren = {
 
 const AdminRouteWithChildren = AdminRoute._addFileChildren(AdminRouteChildren)
 
+interface CombosRouteChildren {
+  CombosSlugRoute: typeof CombosSlugRoute
+}
+
+const CombosRouteChildren: CombosRouteChildren = {
+  CombosSlugRoute: CombosSlugRoute,
+}
+
+const CombosRouteWithChildren =
+  CombosRoute._addFileChildren(CombosRouteChildren)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AdminRoute: AdminRouteWithChildren,
   CatalogRoute: CatalogRoute,
+  CombosRoute: CombosRouteWithChildren,
   MyMovesRoute: MyMovesRoute,
   SettingsRoute: SettingsRoute,
   AuthForgotPasswordRoute: AuthForgotPasswordRoute,
