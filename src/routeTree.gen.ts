@@ -26,9 +26,12 @@ import { Route as AuthResetPasswordRouteImport } from './routes/auth/reset-passw
 import { Route as AuthOauthCallbackRouteImport } from './routes/auth/oauth-callback'
 import { Route as AuthForgotPasswordRouteImport } from './routes/auth/forgot-password'
 import { Route as AdminMovesIndexRouteImport } from './routes/admin/moves/index'
+import { Route as AdminCombosIndexRouteImport } from './routes/admin/combos/index'
 import { Route as ApiRpcSplatRouteImport } from './routes/api.rpc.$'
 import { Route as AdminMovesNewRouteImport } from './routes/admin/moves/new'
 import { Route as AdminMovesMoveIdRouteImport } from './routes/admin/moves/$moveId'
+import { Route as AdminCombosNewRouteImport } from './routes/admin/combos/new'
+import { Route as AdminCombosComboIdRouteImport } from './routes/admin/combos/$comboId'
 
 const SettingsRoute = SettingsRouteImport.update({
   id: '/settings',
@@ -115,6 +118,11 @@ const AdminMovesIndexRoute = AdminMovesIndexRouteImport.update({
   path: '/moves/',
   getParentRoute: () => AdminRoute,
 } as any)
+const AdminCombosIndexRoute = AdminCombosIndexRouteImport.update({
+  id: '/combos/',
+  path: '/combos/',
+  getParentRoute: () => AdminRoute,
+} as any)
 const ApiRpcSplatRoute = ApiRpcSplatRouteImport.update({
   id: '/api/rpc/$',
   path: '/api/rpc/$',
@@ -128,6 +136,16 @@ const AdminMovesNewRoute = AdminMovesNewRouteImport.update({
 const AdminMovesMoveIdRoute = AdminMovesMoveIdRouteImport.update({
   id: '/moves/$moveId',
   path: '/moves/$moveId',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminCombosNewRoute = AdminCombosNewRouteImport.update({
+  id: '/combos/new',
+  path: '/combos/new',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminCombosComboIdRoute = AdminCombosComboIdRouteImport.update({
+  id: '/combos/$comboId',
+  path: '/combos/$comboId',
   getParentRoute: () => AdminRoute,
 } as any)
 
@@ -148,9 +166,12 @@ export interface FileRoutesByFullPath {
   '/privacy/en': typeof PrivacyEnRoute
   '/privacy/pl': typeof PrivacyPlRoute
   '/admin/': typeof AdminIndexRoute
+  '/admin/combos/$comboId': typeof AdminCombosComboIdRoute
+  '/admin/combos/new': typeof AdminCombosNewRoute
   '/admin/moves/$moveId': typeof AdminMovesMoveIdRoute
   '/admin/moves/new': typeof AdminMovesNewRoute
   '/api/rpc/$': typeof ApiRpcSplatRoute
+  '/admin/combos': typeof AdminCombosIndexRoute
   '/admin/moves': typeof AdminMovesIndexRoute
 }
 export interface FileRoutesByTo {
@@ -169,9 +190,12 @@ export interface FileRoutesByTo {
   '/privacy/en': typeof PrivacyEnRoute
   '/privacy/pl': typeof PrivacyPlRoute
   '/admin': typeof AdminIndexRoute
+  '/admin/combos/$comboId': typeof AdminCombosComboIdRoute
+  '/admin/combos/new': typeof AdminCombosNewRoute
   '/admin/moves/$moveId': typeof AdminMovesMoveIdRoute
   '/admin/moves/new': typeof AdminMovesNewRoute
   '/api/rpc/$': typeof ApiRpcSplatRoute
+  '/admin/combos': typeof AdminCombosIndexRoute
   '/admin/moves': typeof AdminMovesIndexRoute
 }
 export interface FileRoutesById {
@@ -192,9 +216,12 @@ export interface FileRoutesById {
   '/privacy/en': typeof PrivacyEnRoute
   '/privacy/pl': typeof PrivacyPlRoute
   '/admin/': typeof AdminIndexRoute
+  '/admin/combos/$comboId': typeof AdminCombosComboIdRoute
+  '/admin/combos/new': typeof AdminCombosNewRoute
   '/admin/moves/$moveId': typeof AdminMovesMoveIdRoute
   '/admin/moves/new': typeof AdminMovesNewRoute
   '/api/rpc/$': typeof ApiRpcSplatRoute
+  '/admin/combos/': typeof AdminCombosIndexRoute
   '/admin/moves/': typeof AdminMovesIndexRoute
 }
 export interface FileRouteTypes {
@@ -216,9 +243,12 @@ export interface FileRouteTypes {
     | '/privacy/en'
     | '/privacy/pl'
     | '/admin/'
+    | '/admin/combos/$comboId'
+    | '/admin/combos/new'
     | '/admin/moves/$moveId'
     | '/admin/moves/new'
     | '/api/rpc/$'
+    | '/admin/combos'
     | '/admin/moves'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -237,9 +267,12 @@ export interface FileRouteTypes {
     | '/privacy/en'
     | '/privacy/pl'
     | '/admin'
+    | '/admin/combos/$comboId'
+    | '/admin/combos/new'
     | '/admin/moves/$moveId'
     | '/admin/moves/new'
     | '/api/rpc/$'
+    | '/admin/combos'
     | '/admin/moves'
   id:
     | '__root__'
@@ -259,9 +292,12 @@ export interface FileRouteTypes {
     | '/privacy/en'
     | '/privacy/pl'
     | '/admin/'
+    | '/admin/combos/$comboId'
+    | '/admin/combos/new'
     | '/admin/moves/$moveId'
     | '/admin/moves/new'
     | '/api/rpc/$'
+    | '/admin/combos/'
     | '/admin/moves/'
   fileRoutesById: FileRoutesById
 }
@@ -404,6 +440,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminMovesIndexRouteImport
       parentRoute: typeof AdminRoute
     }
+    '/admin/combos/': {
+      id: '/admin/combos/'
+      path: '/combos'
+      fullPath: '/admin/combos'
+      preLoaderRoute: typeof AdminCombosIndexRouteImport
+      parentRoute: typeof AdminRoute
+    }
     '/api/rpc/$': {
       id: '/api/rpc/$'
       path: '/api/rpc/$'
@@ -425,20 +468,40 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminMovesMoveIdRouteImport
       parentRoute: typeof AdminRoute
     }
+    '/admin/combos/new': {
+      id: '/admin/combos/new'
+      path: '/combos/new'
+      fullPath: '/admin/combos/new'
+      preLoaderRoute: typeof AdminCombosNewRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/combos/$comboId': {
+      id: '/admin/combos/$comboId'
+      path: '/combos/$comboId'
+      fullPath: '/admin/combos/$comboId'
+      preLoaderRoute: typeof AdminCombosComboIdRouteImport
+      parentRoute: typeof AdminRoute
+    }
   }
 }
 
 interface AdminRouteChildren {
   AdminIndexRoute: typeof AdminIndexRoute
+  AdminCombosComboIdRoute: typeof AdminCombosComboIdRoute
+  AdminCombosNewRoute: typeof AdminCombosNewRoute
   AdminMovesMoveIdRoute: typeof AdminMovesMoveIdRoute
   AdminMovesNewRoute: typeof AdminMovesNewRoute
+  AdminCombosIndexRoute: typeof AdminCombosIndexRoute
   AdminMovesIndexRoute: typeof AdminMovesIndexRoute
 }
 
 const AdminRouteChildren: AdminRouteChildren = {
   AdminIndexRoute: AdminIndexRoute,
+  AdminCombosComboIdRoute: AdminCombosComboIdRoute,
+  AdminCombosNewRoute: AdminCombosNewRoute,
   AdminMovesMoveIdRoute: AdminMovesMoveIdRoute,
   AdminMovesNewRoute: AdminMovesNewRoute,
+  AdminCombosIndexRoute: AdminCombosIndexRoute,
   AdminMovesIndexRoute: AdminMovesIndexRoute,
 }
 

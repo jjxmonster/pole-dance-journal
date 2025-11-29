@@ -1,4 +1,5 @@
 export type AdminMoveStatus = "Published" | "Unpublished" | "Deleted";
+export type AdminComboStatus = "Published" | "Unpublished" | "Deleted";
 
 export type MoveLevel = "Beginner" | "Intermediate" | "Advanced";
 
