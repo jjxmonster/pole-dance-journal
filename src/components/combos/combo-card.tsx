@@ -5,7 +5,7 @@ import type { z } from "zod";
 import { useAuth } from "@/hooks/use-auth";
 import { orpc } from "@/orpc/client";
 import { m } from "@/paraglide/messages";
-import { LEVEL_COLORS } from "@/utils/constants";
+import { COMBO_MOVES_DISPLAY_COUNT, LEVEL_COLORS } from "@/utils/constants";
 import type { ComboListItemSchema } from "../../orpc/schema";
 import { Badge } from "../ui/badge";
 import { Button } from "../ui/button";
@@ -63,7 +63,7 @@ export function ComboCard({ combo }: ComboCardProps) {
 				{isAuthenticated && (
 					<Button
 						aria-label={m.combos_favorite_toggle()}
-						className="absolute top-2 right-2 z-10 rounded-full bg-white/80 backdrop-blur-sm hover:bg-white"
+						className="absolute top-2 right-2 z-10 cursor-pointer rounded-full bg-white/80 backdrop-blur-sm hover:bg-white"
 						onClick={handleToggleFavorite}
 						size="icon-sm"
 						variant="ghost"
@@ -75,25 +75,36 @@ export function ComboCard({ combo }: ComboCardProps) {
 				)}
 
 				<div className="p-4">
-					<div className="mb-3 flex items-center gap-1.5 overflow-x-auto pb-1">
-						{combo.moves.map((move, index) => (
-							<div
-								className="relative flex-shrink-0"
-								key={move.id}
-								style={{ zIndex: combo.moves.length - index }}
-							>
-								<div className="relative h-12 w-12 overflow-hidden rounded-full border-2 border-white shadow-sm">
-									<img
-										alt={move.name}
-										className="h-full w-full object-cover"
-										src={move.imageUrl || FALLBACK_IMAGE}
-									/>
+					<div className="mb-3 flex items-center gap-1.5 pb-1">
+						{combo.moves
+							.slice(0, COMBO_MOVES_DISPLAY_COUNT)
+							.map((move, index) => (
+								<div
+									className="relative flex-shrink-0"
+									key={move.id}
+									style={{ zIndex: combo.moves.length - index }}
+								>
+									<div className="relative h-12 w-12 overflow-hidden rounded-full border-2 border-white shadow-sm">
+										<img
+											alt={move.name}
+											className="h-full w-full object-cover"
+											src={move.imageUrl || FALLBACK_IMAGE}
+										/>
+									</div>
+									<span className="-bottom-1 -right-1 absolute flex h-5 w-5 items-center justify-center rounded-full bg-primary font-medium text-primary-foreground text-xs">
+										{move.orderIndex}
+									</span>
 								</div>
-								<span className="-bottom-1 -right-1 absolute flex h-5 w-5 items-center justify-center rounded-full bg-primary font-medium text-primary-foreground text-xs">
-									{move.orderIndex}
-								</span>
+							))}
+						{combo.moves.length > COMBO_MOVES_DISPLAY_COUNT && (
+							<div className="relative flex-shrink-0" style={{ zIndex: 0 }}>
+								<div className="flex h-12 w-12 items-center justify-center rounded-full border-2 border-white bg-muted shadow-sm">
+									<span className="font-medium text-muted-foreground text-sm">
+										+{combo.moves.length - COMBO_MOVES_DISPLAY_COUNT}
+									</span>
+								</div>
 							</div>
-						))}
+						)}
 					</div>
 				</div>
 

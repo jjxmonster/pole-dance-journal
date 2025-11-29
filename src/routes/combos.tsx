@@ -70,6 +70,7 @@ function CombosView() {
 		orpc.combos.list.queryOptions({
 			input: queryInput,
 			staleTime: STALE_TIME_MS,
+			queryKey: ["combos", queryInput],
 		})
 	);
 
@@ -80,7 +81,7 @@ function CombosView() {
 		})
 	);
 
-	const { data, isLoading, error, isFetching } = combosQuery;
+	const { data, isLoading, error } = combosQuery;
 
 	const totalPages = data ? Math.ceil(data.total / COMBOS_PAGE_SIZE) : 0;
 
@@ -165,12 +166,6 @@ function CombosView() {
 						/>
 					)}
 				</>
-			)}
-
-			{isFetching && !isLoading && (
-				<div className="fixed right-4 bottom-4 rounded-lg bg-primary px-4 py-2 text-primary-foreground shadow-lg">
-					{m.combos_updating()}
-				</div>
 			)}
 		</div>
 	);
