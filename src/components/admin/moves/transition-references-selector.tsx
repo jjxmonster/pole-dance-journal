@@ -14,21 +14,21 @@ import {
 import { Label } from "@/components/ui/label";
 import { cn } from "@/lib/utils";
 import { orpc } from "@/orpc/client";
-import { MAX_COMBO_REFERENCES_COUNT } from "@/utils/constants";
+import { MAX_TRANSITION_REFERENCES_COUNT } from "@/utils/constants";
 
-type ComboReferencesSelectorProps = {
+type TransitionReferencesSelectorProps = {
 	value: string[];
 	onChange: (value: string[]) => void;
 	currentMoveId: string;
 	disabled?: boolean;
 };
 
-export function ComboReferencesSelector({
+export function TransitionReferencesSelector({
 	value,
 	onChange,
 	currentMoveId,
 	disabled = false,
-}: ComboReferencesSelectorProps) {
+}: TransitionReferencesSelectorProps) {
 	const [_, setOpen] = useState(false);
 
 	const { data: movesData, isLoading } = useQuery({
@@ -59,7 +59,7 @@ export function ComboReferencesSelector({
 		(moveId: string) => {
 			if (value.includes(moveId)) {
 				onChange(value.filter((id) => id !== moveId));
-			} else if (value.length < MAX_COMBO_REFERENCES_COUNT) {
+			} else if (value.length < MAX_TRANSITION_REFERENCES_COUNT) {
 				onChange([...value, moveId]);
 			}
 			setOpen(false);
@@ -77,11 +77,11 @@ export function ComboReferencesSelector({
 	return (
 		<div>
 			<Label className="mb-2 block font-medium text-sm">
-				Combo References (Optional)
+				Transition References (Optional)
 			</Label>
 			<p className="mb-3 text-muted-foreground text-sm">
-				Select up to 3 moves that are prerequisites or part of this combo. The
-				order matters.
+				Select up to 3 moves that are prerequisites or part of this transition.
+				The order matters.
 			</p>
 
 			<div className="space-y-3">
@@ -115,7 +115,7 @@ export function ComboReferencesSelector({
 					</div>
 				)}
 
-				{value.length < MAX_COMBO_REFERENCES_COUNT && (
+				{value.length < MAX_TRANSITION_REFERENCES_COUNT && (
 					<Command className="border">
 						<CommandInput
 							disabled={disabled || isLoading}
@@ -164,9 +164,10 @@ export function ComboReferencesSelector({
 					</Command>
 				)}
 
-				{value.length >= MAX_COMBO_REFERENCES_COUNT && (
+				{value.length >= MAX_TRANSITION_REFERENCES_COUNT && (
 					<p className="text-muted-foreground text-sm">
-						Maximum of 3 combo references reached. Remove one to add another.
+						Maximum of 3 transition references reached. Remove one to add
+						another.
 					</p>
 				)}
 			</div>

@@ -20,7 +20,7 @@ type MoveFormViewModel = {
 	descriptionPl: string;
 	level: "Beginner" | "Intermediate" | "Advanced" | "";
 	steps: StepViewModel[];
-	comboReferences: string[];
+	transitionReferences: string[];
 };
 
 type UseEditMoveFormReturn = {
@@ -36,7 +36,7 @@ type UseEditMoveFormReturn = {
 		field: "titleEn" | "titlePl" | "descriptionEn" | "descriptionPl",
 		value: string
 	) => void;
-	handleComboReferencesChange: (references: string[]) => void;
+	handleTransitionReferencesChange: (references: string[]) => void;
 	addStep: () => void;
 	removeStep: (index: number) => void;
 	handleSubmit: (
@@ -63,7 +63,7 @@ type InitialMoveData = {
 		descriptionEn: string;
 		descriptionPl: string;
 	}>;
-	comboReferences: Array<{
+	transitionReferences: Array<{
 		id: string;
 		orderIndex: number;
 	}>;
@@ -76,7 +76,7 @@ export function useEditMoveForm(
 		(a, b) => a.orderIndex - b.orderIndex
 	);
 
-	const sortedComboReferences = [...initialData.comboReferences].sort(
+	const sortedTransitionReferences = [...initialData.transitionReferences].sort(
 		(a, b) => a.orderIndex - b.orderIndex
 	);
 
@@ -93,7 +93,7 @@ export function useEditMoveForm(
 			descriptionEn: step.descriptionEn,
 			descriptionPl: step.descriptionPl,
 		})),
-		comboReferences: sortedComboReferences.map((ref) => ref.id),
+		transitionReferences: sortedTransitionReferences.map((ref) => ref.id),
 	});
 
 	const [errors, setErrors] = useState<z.ZodError | null>(null);
@@ -151,12 +151,15 @@ export function useEditMoveForm(
 		}));
 	}, []);
 
-	const handleComboReferencesChange = useCallback((references: string[]) => {
-		setFormState((prev) => ({
-			...prev,
-			comboReferences: references,
-		}));
-	}, []);
+	const handleTransitionReferencesChange = useCallback(
+		(references: string[]) => {
+			setFormState((prev) => ({
+				...prev,
+				transitionReferences: references,
+			}));
+		},
+		[]
+	);
 
 	const getStepErrors = useCallback(
 		(
@@ -222,7 +225,7 @@ export function useEditMoveForm(
 				descriptionEn: step.descriptionEn,
 				descriptionPl: step.descriptionPl,
 			})),
-			comboReferences: formState.comboReferences,
+			transitionReferences: formState.transitionReferences,
 		};
 
 		const validation = AdminEditMoveInputSchema.safeParse(submitData);
@@ -246,7 +249,7 @@ export function useEditMoveForm(
 		isSubmitting,
 		handleInputChange,
 		handleStepChange,
-		handleComboReferencesChange,
+		handleTransitionReferencesChange,
 		addStep,
 		removeStep,
 		handleSubmit,

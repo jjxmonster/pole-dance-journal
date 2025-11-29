@@ -2,8 +2,8 @@ import { z } from "zod";
 import { moveLevelEnum, moveStatusEnum } from "../db/schema";
 import {
 	ALLOWED_MIME_TYPES,
-	MAX_COMBO_REFERENCES_COUNT,
 	MAX_FILE_SIZE,
+	MAX_TRANSITION_REFERENCES_COUNT,
 	MOVE_DESCRIPTION_MAX_LENGTH,
 	MOVE_DESCRIPTION_MIN_LENGTH,
 	MOVE_NAME_MAX_LENGTH,
@@ -62,7 +62,7 @@ export const MoveStepSchema = z.object({
 	description: z.string(),
 });
 
-export const ComboMoveReferenceSchema = z.object({
+export const TransitionMoveReferenceSchema = z.object({
 	id: z.string().uuid(),
 	name: z.string(),
 	slug: z.string(),
@@ -79,7 +79,7 @@ export const MoveDetailSchema = z.object({
 	imageUrl: z.string().nullable(),
 	steps: z.array(MoveStepSchema),
 	translationFallback: z.boolean().optional(),
-	comboReferences: z.array(ComboMoveReferenceSchema),
+	transitionReferences: z.array(TransitionMoveReferenceSchema),
 });
 
 export const MoveGetBySlugOutputSchema = MoveDetailSchema;
@@ -561,11 +561,11 @@ export const AdminEditMoveInputSchema = z.object({
 			`At least ${MOVE_STEPS_MIN_COUNT} steps are required`
 		)
 		.max(MOVE_STEPS_MAX_COUNT, `Maximum ${MOVE_STEPS_MAX_COUNT} steps allowed`),
-	comboReferences: z
+	transitionReferences: z
 		.array(z.string().uuid("Invalid move ID"))
 		.max(
-			MAX_COMBO_REFERENCES_COUNT,
-			`Maximum ${MAX_COMBO_REFERENCES_COUNT} combo references allowed`
+			MAX_TRANSITION_REFERENCES_COUNT,
+			`Maximum ${MAX_TRANSITION_REFERENCES_COUNT} transition references allowed`
 		)
 		.optional()
 		.default([]),
@@ -604,10 +604,14 @@ export const AdminGetMoveOutputSchema = z.object({
 				descriptionPl: z.string(),
 			})
 		),
-		comboReferences: z.array(
+		transitionReferences: z.array(
 			z.object({
 				id: z.string().uuid(),
-				orderIndex: z.number().int().min(1).max(MAX_COMBO_REFERENCES_COUNT),
+				orderIndex: z
+					.number()
+					.int()
+					.min(1)
+					.max(MAX_TRANSITION_REFERENCES_COUNT),
 			})
 		),
 	}),

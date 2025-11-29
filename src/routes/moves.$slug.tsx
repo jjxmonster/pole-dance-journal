@@ -2,12 +2,12 @@ import { createFileRoute, notFound, redirect } from "@tanstack/react-router";
 import { useEffect } from "react";
 import { toast } from "sonner";
 import { Breadcrumbs } from "@/components/moves/breadcrumbs";
-import { ComboMovesSection } from "@/components/moves/combo-moves-section";
 import { MoveDescription } from "@/components/moves/move-description";
 import { MoveImage } from "@/components/moves/move-image";
 import { NoteEditor } from "@/components/moves/note-editor";
 import { StatusButtons } from "@/components/moves/status-buttons";
 import { StepsList } from "@/components/moves/steps-list";
+import { TransitionMovesSection } from "@/components/moves/transition-moves-section";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Badge } from "@/components/ui/badge";
 import { useAuth } from "@/hooks/use-auth";
@@ -17,8 +17,8 @@ import { m } from "@/paraglide/messages";
 import { sessionQueryOptions } from "@/query-options/auth";
 import { LEVEL_COLORS } from "@/utils/constants";
 import {
-	hasSeenComboNotification,
-	markComboNotificationAsSeen,
+	hasSeenTransitionNotification,
+	markTransitionNotificationAsSeen,
 } from "@/utils/cookie-utils";
 
 const getLevelLabel = (level: string): string => {
@@ -124,17 +124,17 @@ function MoveDetailPage() {
 
 	useEffect(() => {
 		if (
-			move.comboReferences &&
-			move.comboReferences.length > 0 &&
-			!hasSeenComboNotification()
+			move.transitionReferences &&
+			move.transitionReferences.length > 0 &&
+			!hasSeenTransitionNotification()
 		) {
-			toast.info(m.combo_moves_new_feature_toast(), {
+			toast.info(m.transition_moves_new_feature_toast(), {
 				duration: 5000,
 				position: "top-center",
 			});
-			markComboNotificationAsSeen();
+			markTransitionNotificationAsSeen();
 		}
-	}, [move.comboReferences]);
+	}, [move.transitionReferences]);
 
 	return (
 		<div
@@ -168,10 +168,10 @@ function MoveDetailPage() {
 						<MoveDescription description={move.description} />
 						<StepsList steps={move.steps} />
 						{isAuthenticated && <NoteEditor moveId={move.id} />}
-						{isAuthenticated && move.comboReferences.length > 0 && (
-							<ComboMovesSection
-								comboMoves={move.comboReferences}
+						{isAuthenticated && move.transitionReferences.length > 0 && (
+							<TransitionMovesSection
 								moveId={move.id}
+								transitionMoves={move.transitionReferences}
 							/>
 						)}
 					</div>

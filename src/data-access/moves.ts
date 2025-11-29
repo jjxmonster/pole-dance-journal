@@ -16,8 +16,8 @@ import { getSupabaseServerClient } from "@/integrations/supabase/server";
 import { CACHE_CONTROL_SECONDS } from "@/utils/constants";
 import { db } from "../db";
 import {
-	moveComboReferences,
 	moves,
+	moveTransitionReferences,
 	moveTranslations,
 	steps,
 	stepTranslations,
@@ -137,11 +137,11 @@ export async function getMoveBySlugWithTranslations(
 					},
 				},
 			},
-			comboReferences: {
+			transitionReferences: {
 				columns: {
 					orderIndex: true,
 				},
-				orderBy: [asc(moveComboReferences.orderIndex)],
+				orderBy: [asc(moveTransitionReferences.orderIndex)],
 				with: {
 					referencedMove: {
 						columns: {
@@ -203,11 +203,11 @@ export async function getMoveBySlugWithTranslations(
 						},
 					},
 				},
-				comboReferences: {
+				transitionReferences: {
 					columns: {
 						orderIndex: true,
 					},
-					orderBy: [asc(moveComboReferences.orderIndex)],
+					orderBy: [asc(moveTransitionReferences.orderIndex)],
 					with: {
 						referencedMove: {
 							columns: {
@@ -239,7 +239,7 @@ export async function getMoveBySlugWithTranslations(
 					description: step.translations[0]?.description ?? "",
 				})),
 				translationFallback: usedFallback,
-				comboReferences: fallbackMove.comboReferences.map((ref) => ({
+				transitionReferences: fallbackMove.transitionReferences.map((ref) => ({
 					id: ref.referencedMove.id,
 					name: ref.referencedMove.name,
 					slug: ref.referencedMove.slug,
@@ -270,7 +270,7 @@ export async function getMoveBySlugWithTranslations(
 			description: step.translations[0]?.description ?? "",
 		})),
 		translationFallback: usedFallback,
-		comboReferences: move.comboReferences.map((ref) => ({
+		transitionReferences: move.transitionReferences.map((ref) => ({
 			id: ref.referencedMove.id,
 			name: ref.referencedMove.name,
 			slug: ref.referencedMove.slug,
@@ -621,7 +621,7 @@ export async function updateMove(data: {
 		descriptionEn: string;
 		descriptionPl: string;
 	}>;
-	comboReferences?: string[];
+	transitionReferences?: string[];
 }) {
 	const stepsWithIds = data.steps.map((step) => ({
 		id: crypto.randomUUID(),
@@ -702,11 +702,11 @@ export async function updateMove(data: {
 		await tx.insert(stepTranslations).values(stepTranslationsToInsert);
 
 		await tx
-			.delete(moveComboReferences)
-			.where(eq(moveComboReferences.moveId, data.id));
+			.delete(moveTransitionReferences)
+			.where(eq(moveTransitionReferences.moveId, data.id));
 
-		if (data.comboReferences && data.comboReferences.length > 0) {
-			const comboReferencesToInsert = data.comboReferences.map(
+		if (data.transitionReferences && data.transitionReferences.length > 0) {
+			const transitionReferencesToInsert = data.transitionReferences.map(
 				(referencedMoveId, index) => ({
 					moveId: data.id,
 					referencedMoveId,
@@ -715,7 +715,9 @@ export async function updateMove(data: {
 				})
 			);
 
-			await tx.insert(moveComboReferences).values(comboReferencesToInsert);
+			await tx
+				.insert(moveTransitionReferences)
+				.values(transitionReferencesToInsert);
 		}
 	});
 
@@ -754,7 +756,7 @@ export async function getMoveByIdForAdmin(moveId: string) {
 					},
 				},
 			},
-			comboReferences: {
+			transitionReferences: {
 				columns: {
 					referencedMoveId: true,
 					orderIndex: true,
@@ -794,7 +796,7 @@ export async function getMoveByIdForAdmin(moveId: string) {
 				descriptionPl: plStepTranslation?.description ?? "",
 			};
 		}),
-		comboReferences: move.comboReferences.map((ref) => ({
+		transitionReferences: move.transitionReferences.map((ref) => ({
 			id: ref.referencedMoveId,
 			orderIndex: ref.orderIndex,
 		})),

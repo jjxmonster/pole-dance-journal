@@ -303,19 +303,19 @@ export const editMoveProcedure = os
 
 		const slug = generateSlug(input.name);
 
-		if (input.comboReferences?.includes(input.id)) {
+		if (input.transitionReferences?.includes(input.id)) {
 			throw new ORPCError("BAD_REQUEST", {
-				message: "A move cannot reference itself as a combo reference.",
+				message: "A move cannot reference itself as a transition reference.",
 			});
 		}
 
-		const uniqueReferences = new Set(input.comboReferences);
+		const uniqueReferences = new Set(input.transitionReferences);
 		if (
-			input.comboReferences &&
-			uniqueReferences.size !== input.comboReferences.length
+			input.transitionReferences &&
+			uniqueReferences.size !== input.transitionReferences.length
 		) {
 			throw new ORPCError("BAD_REQUEST", {
-				message: "Combo references must be unique.",
+				message: "Transition references must be unique.",
 			});
 		}
 
@@ -333,7 +333,7 @@ export const editMoveProcedure = os
 					descriptionEn: step.descriptionEn,
 					descriptionPl: step.descriptionPl,
 				})),
-				comboReferences: input.comboReferences,
+				transitionReferences: input.transitionReferences,
 			});
 
 			return result;

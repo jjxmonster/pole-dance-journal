@@ -152,8 +152,8 @@ export const moveNotes = pgTable(
 	})
 );
 
-export const moveComboReferences = pgTable(
-	"move_combo_references",
+export const moveTransitionReferences = pgTable(
+	"move_transition_references",
 	{
 		id: uuid("id").defaultRandom().primaryKey(),
 		moveId: uuid("move_id")
@@ -169,18 +169,18 @@ export const moveComboReferences = pgTable(
 	},
 	(table) => ({
 		orderIndexCheck: check(
-			"combo_order_index_check",
+			"transition_order_index_check",
 			sql`${table.orderIndex} between 1 and 3`
 		),
-		moveOrderUnique: unique("combo_move_order_unique").on(
+		moveOrderUnique: unique("transition_move_order_unique").on(
 			table.moveId,
 			table.orderIndex
 		),
 		noSelfReference: check(
-			"combo_no_self_reference",
+			"transition_no_self_reference",
 			sql`${table.moveId} != ${table.referencedMoveId}`
 		),
-		noDuplicateReference: unique("combo_no_duplicate_reference").on(
+		noDuplicateReference: unique("transition_no_duplicate_reference").on(
 			table.moveId,
 			table.referencedMoveId
 		),
@@ -191,8 +191,8 @@ export const movesRelations = relations(moves, ({ many }) => ({
 	steps: many(steps),
 	userMoveStatuses: many(userMoveStatuses),
 	translations: many(moveTranslations),
-	comboReferences: many(moveComboReferences, {
-		relationName: "moveToComboReferences",
+	transitionReferences: many(moveTransitionReferences, {
+		relationName: "moveToTransitionReferences",
 	}),
 }));
 
@@ -303,18 +303,18 @@ export const stepTranslationsRelations = relations(
 	})
 );
 
-export const moveComboReferencesRelations = relations(
-	moveComboReferences,
+export const moveTransitionReferencesRelations = relations(
+	moveTransitionReferences,
 	({ one }) => ({
 		move: one(moves, {
-			fields: [moveComboReferences.moveId],
+			fields: [moveTransitionReferences.moveId],
 			references: [moves.id],
-			relationName: "moveToComboReferences",
+			relationName: "moveToTransitionReferences",
 		}),
 		referencedMove: one(moves, {
-			fields: [moveComboReferences.referencedMoveId],
+			fields: [moveTransitionReferences.referencedMoveId],
 			references: [moves.id],
-			relationName: "referencedMoveToComboReferences",
+			relationName: "referencedMoveToTransitionReferences",
 		}),
 	})
 );
