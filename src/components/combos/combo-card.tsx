@@ -10,6 +10,7 @@ import type { ComboListItemSchema } from "../../orpc/schema";
 import { Badge } from "../ui/badge";
 import { Button } from "../ui/button";
 import { Card, CardContent } from "../ui/card";
+import { Tooltip, TooltipContent, TooltipTrigger } from "../ui/tooltip";
 
 type ComboDTO = z.infer<typeof ComboListItemSchema>;
 
@@ -79,22 +80,26 @@ export function ComboCard({ combo }: ComboCardProps) {
 						{combo.moves
 							.slice(0, COMBO_MOVES_DISPLAY_COUNT)
 							.map((move, index) => (
-								<div
-									className="relative flex-shrink-0"
-									key={move.id}
-									style={{ zIndex: combo.moves.length - index }}
-								>
-									<div className="relative h-12 w-12 overflow-hidden rounded-full border-2 border-white shadow-sm">
-										<img
-											alt={move.name}
-											className="h-full w-full object-cover"
-											src={move.imageUrl || FALLBACK_IMAGE}
-										/>
-									</div>
-									<span className="-bottom-1 -right-1 absolute flex h-5 w-5 items-center justify-center rounded-full bg-primary font-medium text-primary-foreground text-xs">
-										{move.orderIndex}
-									</span>
-								</div>
+								<Tooltip key={move.id}>
+									<TooltipTrigger asChild>
+										<div
+											className="relative flex-shrink-0"
+											style={{ zIndex: combo.moves.length - index }}
+										>
+											<div className="relative h-12 w-12 overflow-hidden rounded-full border-2 border-white shadow-sm">
+												<img
+													alt={move.name}
+													className="h-full w-full object-cover"
+													src={move.imageUrl || FALLBACK_IMAGE}
+												/>
+											</div>
+											<span className="-bottom-1 -right-1 absolute flex h-5 w-5 items-center justify-center rounded-full bg-primary font-medium text-primary-foreground text-xs">
+												{move.orderIndex}
+											</span>
+										</div>
+									</TooltipTrigger>
+									<TooltipContent side="top">{move.name}</TooltipContent>
+								</Tooltip>
 							))}
 						{combo.moves.length > COMBO_MOVES_DISPLAY_COUNT && (
 							<div className="relative flex-shrink-0" style={{ zIndex: 0 }}>
