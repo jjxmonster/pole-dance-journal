@@ -734,6 +734,7 @@ export const CombosListInputSchema = z.object({
 	offset: z.number().int().nonnegative().optional().default(DEFAULT_OFFSET),
 	level: z.enum(moveLevelEnum.enumValues).optional(),
 	moveId: z.string().uuid().optional(),
+	onlyFavorites: z.boolean().optional(),
 });
 
 export type CombosListInput = z.infer<typeof CombosListInputSchema>;

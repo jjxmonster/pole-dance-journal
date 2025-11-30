@@ -19,6 +19,7 @@ const combosSearchSchema = z.object({
 	level: z.enum(moveLevelEnum.enumValues).optional(),
 	moveId: z.string().uuid().optional(),
 	page: z.number().int().min(1).optional().default(1),
+	onlyFavorites: z.boolean().optional(),
 });
 
 export const Route = createFileRoute("/combos")({
@@ -64,6 +65,7 @@ function CombosView() {
 		offset: (filters.page - 1) * COMBOS_PAGE_SIZE,
 		level: filters.level === "All" ? undefined : filters.level,
 		moveId: filters.moveId,
+		onlyFavorites: filters.onlyFavorites || undefined,
 	};
 
 	const combosQuery = useQuery(
@@ -93,6 +95,10 @@ function CombosView() {
 		updateFilters({ moveId, page: 1 });
 	};
 
+	const handleFavoritesToggle = () => {
+		updateFilters({ onlyFavorites: !filters.onlyFavorites, page: 1 });
+	};
+
 	const handlePageChange = (page: number) => {
 		updateFilters({ page });
 	};
@@ -101,7 +107,8 @@ function CombosView() {
 		resetFilters();
 	};
 
-	const hasActiveFilters = filters.level !== "All" || !!filters.moveId;
+	const hasActiveFilters =
+		filters.level !== "All" || !!filters.moveId || !!filters.onlyFavorites;
 
 	const availableMoves =
 		movesQuery.data?.moves.map((move) => ({
@@ -131,8 +138,11 @@ function CombosView() {
 				<ComboFilters
 					activeLevel={filters.level}
 					moves={availableMoves}
+					onFavoritesToggle={handleFavoritesToggle}
 					onLevelChange={handleLevelChange}
+					onlyFavorites={filters.onlyFavorites}
 					onMoveChange={handleMoveChange}
+					onResetFilters={handleResetFilters}
 					selectedMoveId={filters.moveId}
 				/>
 			</div>

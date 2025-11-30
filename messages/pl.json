@@ -227,6 +227,8 @@
   "combos_results_item_plural": "zestawów combo",
   "combos_results_item_plural_few": "zestawy combo",
   "combos_auth_required": "Zaloguj się, aby przeglądać zestawy combo.",
+  "combos_favorites_filter_aria_label": "Pokaż tylko ulubione zestawy combo",
+  "combos_favorites_filter_tooltip": "Tylko ulubione",
   "combos_updating": "Aktualizowanie...",
   "combos_back_to_list": "Powrót do zestawów combo",
   "combos_moves_in_combo": "Figury w tym zestawie"

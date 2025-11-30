@@ -37,6 +37,15 @@ export async function listPublishedCombos(
 		conditions.push(inArray(combos.id, combosWithMove));
 	}
 
+	if (input.onlyFavorites && userId) {
+		const userFavoriteCombos = db
+			.select({ comboId: userComboFavorites.comboId })
+			.from(userComboFavorites)
+			.where(eq(userComboFavorites.userId, userId));
+
+		conditions.push(inArray(combos.id, userFavoriteCombos));
+	}
+
 	const whereClause = and(...conditions);
 
 	const [totalResult, combosResult] = await Promise.all([

@@ -1,4 +1,4 @@
-import { Check, ChevronsUpDown, X } from "lucide-react";
+import { Check, ChevronsUpDown, Heart, X } from "lucide-react";
 import { useState } from "react";
 import { cn } from "@/lib/utils";
 import { m } from "@/paraglide/messages";
@@ -21,6 +21,9 @@ type ComboFiltersProps = {
 	moves: Array<{ id: string; name: string; level: MoveLevel }>;
 	onLevelChange: (level: MoveLevel | "All") => void;
 	onMoveChange: (moveId: string | undefined) => void;
+	onResetFilters: () => void;
+	onlyFavorites: boolean;
+	onFavoritesToggle: () => void;
 };
 
 const LEVELS: Array<MoveLevel | "All"> = [
@@ -51,6 +54,9 @@ export function ComboFilters({
 	moves,
 	onLevelChange,
 	onMoveChange,
+	onResetFilters,
+	onlyFavorites,
+	onFavoritesToggle,
 }: ComboFiltersProps) {
 	const [open, setOpen] = useState(false);
 
@@ -134,12 +140,25 @@ export function ComboFilters({
 					</PopoverContent>
 				</Popover>
 
-				{selectedMoveId && (
-					<Button
-						onClick={() => onMoveChange(undefined)}
-						size="icon-sm"
-						variant="ghost"
-					>
+				<Button
+					aria-label={m.combos_favorites_filter_aria_label()}
+					aria-pressed={onlyFavorites}
+					className={cn(
+						"transition-colors",
+						onlyFavorites &&
+							"bg-red-50 text-red-600 hover:bg-red-100 hover:text-red-700"
+					)}
+					onClick={onFavoritesToggle}
+					size="default"
+					title={m.combos_favorites_filter_tooltip()}
+					variant="outline"
+				>
+					<Heart className={cn("h-4 w-4", onlyFavorites && "fill-current")} />
+					{m.combos_favorites_filter_tooltip()}
+				</Button>
+
+				{(selectedMoveId || onlyFavorites) && (
+					<Button onClick={onResetFilters} size="icon-sm" variant="ghost">
 						<X className="h-4 w-4" />
 					</Button>
 				)}

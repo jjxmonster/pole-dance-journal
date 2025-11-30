@@ -227,6 +227,8 @@
   "combos_results_item_plural": "combo sets",
   "combos_results_item_plural_few": "combo sets",
   "combos_auth_required": "Sign in to browse combo sets.",
+  "combos_favorites_filter_aria_label": "Show only favorite combos",
+  "combos_favorites_filter_tooltip": "Only favorites",
   "combos_updating": "Updating...",
   "combos_back_to_list": "Back to combo sets",
   "combos_moves_in_combo": "Moves in this combo"
