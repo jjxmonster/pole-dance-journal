@@ -23,9 +23,9 @@ import {
 	MOVE_NAME_MAX_LENGTH,
 	MOVE_NAME_WARNING_THRESHOLD,
 } from "@/utils/constants";
-import { ComboReferencesSelector } from "./combo-references-selector";
 import { ImageGenerator } from "./image-generator";
 import { StepEditor } from "./step-editor";
+import { TransitionReferencesSelector } from "./transition-references-selector";
 
 type EditMoveFormProps = {
 	move: AdminGetMoveOutput;
@@ -44,7 +44,7 @@ export function EditMoveForm({ move: moveData }: EditMoveFormProps) {
 		isSubmitting,
 		handleInputChange,
 		handleStepChange,
-		handleComboReferencesChange,
+		handleTransitionReferencesChange,
 		addStep,
 		removeStep,
 		handleSubmit,
@@ -119,9 +119,11 @@ export function EditMoveForm({ move: moveData }: EditMoveFormProps) {
 		removeStep(index);
 	};
 
-	const handleComboReferencesChangeWithTracking = (references: string[]) => {
+	const handleTransitionReferencesChangeWithTracking = (
+		references: string[]
+	) => {
 		setHasFormChanged(true);
-		handleComboReferencesChange(references);
+		handleTransitionReferencesChange(references);
 	};
 
 	const handleCancel = () => {
@@ -317,11 +319,11 @@ export function EditMoveForm({ move: moveData }: EditMoveFormProps) {
 						)}
 					</div>
 
-					<ComboReferencesSelector
+					<TransitionReferencesSelector
 						currentMoveId={moveData.move.id}
 						disabled={isFormDisabled}
-						onChange={handleComboReferencesChangeWithTracking}
-						value={formState.comboReferences}
+						onChange={handleTransitionReferencesChangeWithTracking}
+						value={formState.transitionReferences}
 					/>
 
 					<StepEditor

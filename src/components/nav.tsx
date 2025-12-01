@@ -104,6 +104,9 @@ export function Nav() {
 					</Link>
 					{isAuthenticated && (
 						<>
+							<Link className={getNavLinkClass("/combos")} to="/combos">
+								{m.nav_combos()}
+							</Link>
 							<Link className={getNavLinkClass("/my-moves")} to="/my-moves">
 								{m.nav_my_moves()}
 							</Link>
@@ -207,6 +210,14 @@ export function Nav() {
 											type="button"
 										>
 											{m.nav_catalog()}
+										</Link>
+										<Link
+											className={getNavLinkClass("/combos")}
+											onClick={() => setIsMenuOpen(false)}
+											to="/combos"
+											type="button"
+										>
+											{m.nav_combos()}
 										</Link>
 										<Link
 											className={getNavLinkClass("/my-moves")}

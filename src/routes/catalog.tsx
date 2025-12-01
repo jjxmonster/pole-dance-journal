@@ -79,12 +79,14 @@ function CatalogView() {
 		orpc.moves.list.queryOptions({
 			input: queryInput,
 			staleTime: STALE_TIME_MS,
+			queryKey: ["moves", queryInput],
 		})
 	);
 
 	const trialQuery = useQuery(
 		orpc.moves.listTrialVersion.queryOptions({
 			staleTime: STALE_TIME_MS,
+			queryKey: ["moves-trial"],
 		})
 	);
 

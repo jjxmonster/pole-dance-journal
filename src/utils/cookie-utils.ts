@@ -1,20 +1,20 @@
 import Cookies from "universal-cookie";
 import {
-	COMBO_NOTIFICATION_COOKIE_NAME,
 	ONE_YEAR_IN_DAYS,
+	TRANSITION_NOTIFICATION_COOKIE_NAME,
 } from "@/utils/constants";
 
 const cookies = new Cookies();
 
-export function hasSeenComboNotification(): boolean {
+export function hasSeenTransitionNotification(): boolean {
 	if (typeof document === "undefined") {
 		return true;
 	}
 
-	return cookies.get(COMBO_NOTIFICATION_COOKIE_NAME) !== undefined;
+	return cookies.get(TRANSITION_NOTIFICATION_COOKIE_NAME) !== undefined;
 }
 
-export function markComboNotificationAsSeen(): void {
+export function markTransitionNotificationAsSeen(): void {
 	if (typeof document === "undefined") {
 		return;
 	}
@@ -22,7 +22,7 @@ export function markComboNotificationAsSeen(): void {
 	const expiryDate = new Date();
 	expiryDate.setDate(expiryDate.getDate() + ONE_YEAR_IN_DAYS);
 
-	cookies.set(COMBO_NOTIFICATION_COOKIE_NAME, "true", {
+	cookies.set(TRANSITION_NOTIFICATION_COOKIE_NAME, "true", {
 		expires: expiryDate,
 		path: "/",
 	});

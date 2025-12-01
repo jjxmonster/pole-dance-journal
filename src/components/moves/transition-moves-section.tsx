@@ -9,14 +9,14 @@ import {
 	CarouselNext,
 	CarouselPrevious,
 } from "@/components/ui/carousel";
-import type { ComboMoveReferenceSchema } from "@/orpc/schema";
+import type { TransitionMoveReferenceSchema } from "@/orpc/schema";
 import { m } from "@/paraglide/messages";
 import { LEVEL_COLORS } from "@/utils/constants";
 
-type ComboMoveReference = z.infer<typeof ComboMoveReferenceSchema>;
+type TransitionMoveReference = z.infer<typeof TransitionMoveReferenceSchema>;
 
-type ComboMovesSectionProps = {
-	comboMoves: ComboMoveReference[];
+type TransitionMovesSectionProps = {
+	transitionMoves: TransitionMoveReference[];
 	moveId: string;
 };
 
@@ -33,7 +33,7 @@ const getLevelLabel = (level: string): string => {
 	}
 };
 
-function ComboMoveCard({ move }: { move: ComboMoveReference }) {
+function TransitionMoveCard({ move }: { move: TransitionMoveReference }) {
 	return (
 		<Link
 			className="block overflow-hidden rounded-lg border bg-card transition-shadow hover:shadow-lg"
@@ -61,33 +61,33 @@ function ComboMoveCard({ move }: { move: ComboMoveReference }) {
 					</Badge>
 				</div>
 				<Button asChild className="w-full" variant="outline">
-					<span>{m.combo_move_card_view_button()}</span>
+					<span>{m.transition_move_card_view_button()}</span>
 				</Button>
 			</div>
 		</Link>
 	);
 }
 
-export function ComboMovesSection({
-	comboMoves,
+export function TransitionMovesSection({
+	transitionMoves,
 	moveId,
-}: ComboMovesSectionProps) {
-	if (comboMoves.length === 0) {
+}: TransitionMovesSectionProps) {
+	if (transitionMoves.length === 0) {
 		return null;
 	}
 
 	return (
 		<section
-			aria-labelledby="combo-moves-title"
+			aria-labelledby="transition-moves-title"
 			className="space-y-4"
-			data-testid={`combo-moves-section-${moveId}`}
+			data-testid={`transition-moves-section-${moveId}`}
 		>
 			<div className="space-y-2">
-				<h2 className="font-bold text-2xl" id="combo-moves-title">
-					{m.combo_moves_section_title()}
+				<h2 className="font-bold text-2xl" id="transition-moves-title">
+					{m.transition_moves_section_title()}
 				</h2>
 				<p className="text-muted-foreground">
-					{m.combo_moves_section_description()}
+					{m.transition_moves_section_description()}
 				</p>
 			</div>
 
@@ -97,10 +97,10 @@ export function ComboMovesSection({
 					opts={{ loop: true, align: "center" }}
 				>
 					<CarouselContent>
-						{comboMoves.map((move) => (
+						{transitionMoves.map((move) => (
 							<CarouselItem key={move.id}>
 								<div className="px-1">
-									<ComboMoveCard move={move} />
+									<TransitionMoveCard move={move} />
 								</div>
 							</CarouselItem>
 						))}
@@ -111,8 +111,8 @@ export function ComboMovesSection({
 			</div>
 
 			<div className="hidden grid-cols-3 gap-6 md:grid">
-				{comboMoves.map((move) => (
-					<ComboMoveCard key={move.id} move={move} />
+				{transitionMoves.map((move) => (
+					<TransitionMoveCard key={move.id} move={move} />
 				))}
 			</div>
 		</section>
