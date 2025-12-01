@@ -110,7 +110,11 @@ export async function listPublishedCombos(
 	};
 }
 
-export async function getComboBySlug(slug: string, userId?: string) {
+export async function getComboBySlug(
+	slug: string,
+	userId?: string,
+	language: "en" | "pl" = "en"
+) {
 	const combo = await db.query.combos.findFirst({
 		where: and(
 			eq(sql`lower(${combos.slug})`, slug.toLowerCase()),
@@ -138,6 +142,14 @@ export async function getComboBySlug(slug: string, userId?: string) {
 							level: true,
 							imageUrl: true,
 						},
+						with: {
+							translations: {
+								columns: {
+									language: true,
+									description: true,
+								},
+							},
+						},
 					},
 				},
 			},
@@ -164,14 +176,24 @@ export async function getComboBySlug(slug: string, userId?: string) {
 		name: combo.name,
 		level: combo.level,
 		slug: combo.slug,
-		moves: combo.comboMoves.map((cm) => ({
-			id: cm.move.id,
-			name: cm.move.name,
-			slug: cm.move.slug,
-			level: cm.move.level,
-			imageUrl: cm.move.imageUrl,
-			orderIndex: cm.orderIndex,
-		})),
+		moves: combo.comboMoves.map((cm) => {
+			const translation = cm.move.translations.find(
+				(t) => t.language === language
+			);
+			const fallbackTranslation = cm.move.translations.find(
+				(t) => t.language === "en"
+			);
+			return {
+				id: cm.move.id,
+				name: cm.move.name,
+				slug: cm.move.slug,
+				level: cm.move.level,
+				imageUrl: cm.move.imageUrl,
+				orderIndex: cm.orderIndex,
+				description:
+					translation?.description ?? fallbackTranslation?.description ?? null,
+			};
+		}),
 		isFavorite,
 	};
 }

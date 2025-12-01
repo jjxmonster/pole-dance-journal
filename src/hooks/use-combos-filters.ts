@@ -11,11 +11,11 @@ type CombosFilters = {
 };
 
 export function useCombosFilters() {
-	const navigate = useNavigate({ from: "/combos" });
-	const searchParams = useSearch({ from: "/combos" });
+	const navigate = useNavigate({ from: "/combos/" });
+	const searchParams = useSearch({ from: "/combos/" });
 
 	const filters: CombosFilters = {
-		level: searchParams.level || "All",
+		level: (searchParams.level as MoveLevel | "All") || "All",
 		moveId: searchParams.moveId,
 		page: searchParams.page || 1,
 		onlyFavorites: searchParams.onlyFavorites ?? false,

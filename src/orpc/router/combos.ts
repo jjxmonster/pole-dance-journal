@@ -1,5 +1,6 @@
 import { ORPCError, os } from "@orpc/server";
 import { getSupabaseServerClient } from "@/integrations/supabase/server";
+import { getLocale } from "@/paraglide/runtime";
 import {
 	getComboBySlug,
 	listPublishedCombos,
@@ -37,7 +38,8 @@ export const getBySlug = os
 		const data = await supabase.auth.getUser();
 		const userId = data.data.user?.id;
 
-		const combo = await getComboBySlug(input.slug, userId);
+		const language = (input.language ?? getLocale()) as "en" | "pl";
+		const combo = await getComboBySlug(input.slug, userId, language);
 		if (!combo) {
 			throw new ORPCError("NOT_FOUND", {
 				message: `Combo with slug "${input.slug}" not found`,

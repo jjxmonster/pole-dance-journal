@@ -766,6 +766,7 @@ export type CombosListOutput = z.infer<typeof CombosListOutputSchema>;
 
 export const ComboGetBySlugInputSchema = z.object({
 	slug: z.string().trim().min(1, "Slug is required"),
+	language: z.enum(["en", "pl"]).optional(),
 });
 
 export type ComboGetBySlugInput = z.infer<typeof ComboGetBySlugInputSchema>;
@@ -783,6 +784,7 @@ export const ComboDetailSchema = z.object({
 			level: z.enum(moveLevelEnum.enumValues),
 			imageUrl: z.string().nullable(),
 			orderIndex: z.number().int().positive(),
+			description: z.string().nullable(),
 		})
 	),
 	isFavorite: z.boolean(),

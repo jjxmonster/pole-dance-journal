@@ -15,7 +15,7 @@ import { useMoveStatus } from "@/hooks/use-move-status";
 import { orpc } from "@/orpc/client";
 import { m } from "@/paraglide/messages";
 import { sessionQueryOptions } from "@/query-options/auth";
-import { LEVEL_COLORS } from "@/utils/constants";
+import { LEVEL_COLORS, STALE_TIME_MS } from "@/utils/constants";
 import {
 	hasSeenTransitionNotification,
 	markTransitionNotificationAsSeen,
@@ -46,6 +46,8 @@ export const Route = createFileRoute("/moves/$slug")({
 		const move = await context.queryClient.ensureQueryData(
 			orpc.moves.getBySlug.queryOptions({
 				input: { slug: params.slug },
+				queryKey: ["move", params.slug],
+				staleTime: STALE_TIME_MS,
 			})
 		);
 

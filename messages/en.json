@@ -231,5 +231,6 @@
   "combos_favorites_filter_tooltip": "Only favorites",
   "combos_updating": "Updating...",
   "combos_back_to_list": "Back to combo sets",
-  "combos_moves_in_combo": "Moves in this combo"
+  "combos_moves_in_combo": "Moves in this combo",
+  "combos_step_label": "Step {number}"
 }

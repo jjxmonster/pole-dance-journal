@@ -15,11 +15,12 @@ import { Route as CombosRouteImport } from './routes/combos'
 import { Route as CatalogRouteImport } from './routes/catalog'
 import { Route as AdminRouteImport } from './routes/admin'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as CombosIndexRouteImport } from './routes/combos/index'
 import { Route as AdminIndexRouteImport } from './routes/admin/index'
 import { Route as PrivacyPlRouteImport } from './routes/privacy/pl'
 import { Route as PrivacyEnRouteImport } from './routes/privacy/en'
 import { Route as MovesSlugRouteImport } from './routes/moves.$slug'
-import { Route as CombosSlugRouteImport } from './routes/combos.$slug'
+import { Route as CombosSlugRouteImport } from './routes/combos/$slug'
 import { Route as AuthSignUpRouteImport } from './routes/auth/sign-up'
 import { Route as AuthSignInRouteImport } from './routes/auth/sign-in'
 import { Route as AuthResetPasswordRouteImport } from './routes/auth/reset-password'
@@ -62,6 +63,11 @@ const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
+} as any)
+const CombosIndexRoute = CombosIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => CombosRoute,
 } as any)
 const AdminIndexRoute = AdminIndexRouteImport.update({
   id: '/',
@@ -166,6 +172,7 @@ export interface FileRoutesByFullPath {
   '/privacy/en': typeof PrivacyEnRoute
   '/privacy/pl': typeof PrivacyPlRoute
   '/admin/': typeof AdminIndexRoute
+  '/combos/': typeof CombosIndexRoute
   '/admin/combos/$comboId': typeof AdminCombosComboIdRoute
   '/admin/combos/new': typeof AdminCombosNewRoute
   '/admin/moves/$moveId': typeof AdminMovesMoveIdRoute
@@ -177,7 +184,6 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/catalog': typeof CatalogRoute
-  '/combos': typeof CombosRouteWithChildren
   '/my-moves': typeof MyMovesRoute
   '/settings': typeof SettingsRoute
   '/auth/forgot-password': typeof AuthForgotPasswordRoute
@@ -190,6 +196,7 @@ export interface FileRoutesByTo {
   '/privacy/en': typeof PrivacyEnRoute
   '/privacy/pl': typeof PrivacyPlRoute
   '/admin': typeof AdminIndexRoute
+  '/combos': typeof CombosIndexRoute
   '/admin/combos/$comboId': typeof AdminCombosComboIdRoute
   '/admin/combos/new': typeof AdminCombosNewRoute
   '/admin/moves/$moveId': typeof AdminMovesMoveIdRoute
@@ -216,6 +223,7 @@ export interface FileRoutesById {
   '/privacy/en': typeof PrivacyEnRoute
   '/privacy/pl': typeof PrivacyPlRoute
   '/admin/': typeof AdminIndexRoute
+  '/combos/': typeof CombosIndexRoute
   '/admin/combos/$comboId': typeof AdminCombosComboIdRoute
   '/admin/combos/new': typeof AdminCombosNewRoute
   '/admin/moves/$moveId': typeof AdminMovesMoveIdRoute
@@ -243,6 +251,7 @@ export interface FileRouteTypes {
     | '/privacy/en'
     | '/privacy/pl'
     | '/admin/'
+    | '/combos/'
     | '/admin/combos/$comboId'
     | '/admin/combos/new'
     | '/admin/moves/$moveId'
@@ -254,7 +263,6 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/catalog'
-    | '/combos'
     | '/my-moves'
     | '/settings'
     | '/auth/forgot-password'
@@ -267,6 +275,7 @@ export interface FileRouteTypes {
     | '/privacy/en'
     | '/privacy/pl'
     | '/admin'
+    | '/combos'
     | '/admin/combos/$comboId'
     | '/admin/combos/new'
     | '/admin/moves/$moveId'
@@ -292,6 +301,7 @@ export interface FileRouteTypes {
     | '/privacy/en'
     | '/privacy/pl'
     | '/admin/'
+    | '/combos/'
     | '/admin/combos/$comboId'
     | '/admin/combos/new'
     | '/admin/moves/$moveId'
@@ -362,6 +372,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
+    }
+    '/combos/': {
+      id: '/combos/'
+      path: '/'
+      fullPath: '/combos/'
+      preLoaderRoute: typeof CombosIndexRouteImport
+      parentRoute: typeof CombosRoute
     }
     '/admin/': {
       id: '/admin/'
@@ -509,10 +526,12 @@ const AdminRouteWithChildren = AdminRoute._addFileChildren(AdminRouteChildren)
 
 interface CombosRouteChildren {
   CombosSlugRoute: typeof CombosSlugRoute
+  CombosIndexRoute: typeof CombosIndexRoute
 }
 
 const CombosRouteChildren: CombosRouteChildren = {
   CombosSlugRoute: CombosSlugRoute,
+  CombosIndexRoute: CombosIndexRoute,
 }
 
 const CombosRouteWithChildren =
