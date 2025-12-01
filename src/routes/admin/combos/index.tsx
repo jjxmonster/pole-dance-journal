@@ -35,7 +35,7 @@ export const Route = createFileRoute("/admin/combos/")({
 			},
 			{
 				name: "description",
-				content: "Manage all pole dance combo sets in the catalog.",
+				content: "Manage all pole dance combos in the catalog.",
 			},
 		],
 	}),

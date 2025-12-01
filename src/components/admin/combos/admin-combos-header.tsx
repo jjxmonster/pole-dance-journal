@@ -16,9 +16,9 @@ export function AdminCombosHeader() {
 			</div>
 			<div className="flex items-center justify-between">
 				<div>
-					<h1 className="font-bold text-3xl">Manage Combos</h1>
+					<h1 className="font-bold text-3xl">Manage Combos Admin</h1>
 					<p className="mt-1 text-muted-foreground">
-						Create, edit, and manage combo sets for the catalog.
+						Create, edit, and manage combos for the catalog.
 					</p>
 				</div>
 				<Button asChild type="button">
