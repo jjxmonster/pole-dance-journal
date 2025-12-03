@@ -1,5 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import { createFileRoute, useLoaderData } from "@tanstack/react-router";
+import { useMemo } from "react";
 import { z } from "zod";
 import { ComboCard } from "../../components/combos/combo-card";
 import { ComboFilters } from "../../components/combos/combo-filters";
@@ -59,13 +60,16 @@ function CombosView() {
 	const isAuthenticated = !!session?.userId;
 	const { filters, updateFilters, resetFilters } = useCombosFilters();
 
-	const queryInput = {
-		limit: COMBOS_PAGE_SIZE,
-		offset: (filters.page - 1) * COMBOS_PAGE_SIZE,
-		level: filters.level === "All" ? undefined : filters.level,
-		moveId: filters.moveId,
-		onlyFavorites: filters.onlyFavorites || undefined,
-	};
+	const queryInput = useMemo(
+		() => ({
+			limit: COMBOS_PAGE_SIZE,
+			offset: (filters.page - 1) * COMBOS_PAGE_SIZE,
+			level: filters.level === "All" ? undefined : filters.level,
+			moveId: filters.moveId,
+			onlyFavorites: filters.onlyFavorites || undefined,
+		}),
+		[filters.page, filters.level, filters.moveId, filters.onlyFavorites]
+	);
 
 	const combosQuery = useQuery(
 		orpc.combos.list.queryOptions({

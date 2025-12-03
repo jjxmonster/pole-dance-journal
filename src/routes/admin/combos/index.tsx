@@ -1,5 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
+import { useMemo } from "react";
 import { z } from "zod";
 import { AdminCombosFilters } from "@/components/admin/combos/admin-combos-filters";
 import { AdminCombosHeader } from "@/components/admin/combos/admin-combos-header";
@@ -55,13 +56,16 @@ function AdminCombosPage() {
 	} = useAdminCombosFilters();
 
 	const offset = (page - 1) * limit;
-	const queryInput = {
-		limit,
-		offset,
-		...(level !== "All" && { level: level as MoveLevel }),
-		...(status !== "All" && { status: status as AdminComboStatus }),
-		...(query && { query }),
-	};
+	const queryInput = useMemo(
+		() => ({
+			limit,
+			offset,
+			...(level !== "All" && { level: level as MoveLevel }),
+			...(status !== "All" && { status: status as AdminComboStatus }),
+			...(query && { query }),
+		}),
+		[limit, offset, level, status, query]
+	);
 
 	const { data, isError, isLoading } = useQuery({
 		queryKey: ["admin", "combos", queryInput],
