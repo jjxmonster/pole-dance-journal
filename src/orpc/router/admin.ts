@@ -463,6 +463,8 @@ export const createComboProcedure = os
 		try {
 			const result = await createCombo({
 				name: input.name,
+				descriptionEn: input.descriptionEn,
+				descriptionPl: input.descriptionPl,
 				level: input.level,
 				moveIds: input.moveIds,
 			});
@@ -496,6 +498,8 @@ export const updateComboProcedure = os
 			const result = await updateCombo({
 				id: input.id,
 				name: input.name,
+				descriptionEn: input.descriptionEn,
+				descriptionPl: input.descriptionPl,
 				level: input.level,
 				moveIds: input.moveIds,
 			});

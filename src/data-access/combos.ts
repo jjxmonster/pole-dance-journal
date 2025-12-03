@@ -13,7 +13,13 @@ import {
 } from "drizzle-orm";
 import type { z } from "zod";
 import { db } from "../db";
-import { comboMoves, combos, moves, userComboFavorites } from "../db/schema";
+import {
+	comboMoves,
+	combos,
+	comboTranslations,
+	moves,
+	userComboFavorites,
+} from "../db/schema";
 import type { CombosListInputSchema } from "../orpc/schema";
 
 type ListPublishedCombosInput = z.infer<typeof CombosListInputSchema>;
@@ -128,6 +134,12 @@ export async function getComboBySlug(
 			slug: true,
 		},
 		with: {
+			translations: {
+				columns: {
+					language: true,
+					description: true,
+				},
+			},
 			comboMoves: {
 				columns: {
 					orderIndex: true,
@@ -171,11 +183,22 @@ export async function getComboBySlug(
 		isFavorite = !!favorite;
 	}
 
+	const comboTranslation = combo.translations.find(
+		(t) => t.language === language
+	);
+	const comboFallbackTranslation = combo.translations.find(
+		(t) => t.language === "en"
+	);
+
 	return {
 		id: combo.id,
 		name: combo.name,
 		level: combo.level,
 		slug: combo.slug,
+		description:
+			comboTranslation?.description ??
+			comboFallbackTranslation?.description ??
+			null,
 		moves: combo.comboMoves.map((cm) => {
 			const translation = cm.move.translations.find(
 				(t) => t.language === language
@@ -340,11 +363,14 @@ function generateSlug(name: string): string {
 
 export async function createCombo(data: {
 	name: string;
+	descriptionEn: string;
+	descriptionPl: string;
 	level: "Beginner" | "Intermediate" | "Advanced";
 	moveIds: string[];
 }) {
 	const comboId = crypto.randomUUID();
 	const slug = generateSlug(data.name);
+	const now = new Date();
 
 	await db.transaction(async (tx) => {
 		await tx.insert(combos).values({
@@ -352,15 +378,32 @@ export async function createCombo(data: {
 			name: data.name,
 			level: data.level,
 			slug,
-			createdAt: new Date(),
-			updatedAt: new Date(),
+			createdAt: now,
+			updatedAt: now,
 		});
+
+		await tx.insert(comboTranslations).values([
+			{
+				comboId,
+				language: "en",
+				description: data.descriptionEn,
+				createdAt: now,
+				updatedAt: now,
+			},
+			{
+				comboId,
+				language: "pl",
+				description: data.descriptionPl,
+				createdAt: now,
+				updatedAt: now,
+			},
+		]);
 
 		const comboMovesToInsert = data.moveIds.map((moveId, index) => ({
 			comboId,
 			moveId,
 			orderIndex: index + 1,
-			createdAt: new Date(),
+			createdAt: now,
 		}));
 
 		await tx.insert(comboMoves).values(comboMovesToInsert);
@@ -372,10 +415,13 @@ export async function createCombo(data: {
 export async function updateCombo(data: {
 	id: string;
 	name: string;
+	descriptionEn: string;
+	descriptionPl: string;
 	level: "Beginner" | "Intermediate" | "Advanced";
 	moveIds: string[];
 }) {
 	const slug = generateSlug(data.name);
+	const now = new Date();
 
 	await db.transaction(async (tx) => {
 		await tx
@@ -384,9 +430,30 @@ export async function updateCombo(data: {
 				name: data.name,
 				level: data.level,
 				slug,
-				updatedAt: new Date(),
+				updatedAt: now,
 			})
 			.where(eq(combos.id, data.id));
+
+		await tx
+			.delete(comboTranslations)
+			.where(eq(comboTranslations.comboId, data.id));
+
+		await tx.insert(comboTranslations).values([
+			{
+				comboId: data.id,
+				language: "en",
+				description: data.descriptionEn,
+				createdAt: now,
+				updatedAt: now,
+			},
+			{
+				comboId: data.id,
+				language: "pl",
+				description: data.descriptionPl,
+				createdAt: now,
+				updatedAt: now,
+			},
+		]);
 
 		await tx.delete(comboMoves).where(eq(comboMoves.comboId, data.id));
 
@@ -394,7 +461,7 @@ export async function updateCombo(data: {
 			comboId: data.id,
 			moveId,
 			orderIndex: index + 1,
-			createdAt: new Date(),
+			createdAt: now,
 		}));
 
 		await tx.insert(comboMoves).values(comboMovesToInsert);
@@ -448,6 +515,12 @@ export async function getComboByIdForAdmin(comboId: string) {
 			slug: true,
 		},
 		with: {
+			translations: {
+				columns: {
+					language: true,
+					description: true,
+				},
+			},
 			comboMoves: {
 				columns: {
 					moveId: true,
@@ -462,9 +535,13 @@ export async function getComboByIdForAdmin(comboId: string) {
 		return null;
 	}
 
+	const enTranslation = combo.translations.find((t) => t.language === "en");
+	const plTranslation = combo.translations.find((t) => t.language === "pl");
 	return {
 		id: combo.id,
 		name: combo.name,
+		descriptionEn: enTranslation?.description ?? "",
+		descriptionPl: plTranslation?.description ?? "",
 		level: combo.level,
 		slug: combo.slug,
 		moveIds: combo.comboMoves.map((cm) => cm.moveId),

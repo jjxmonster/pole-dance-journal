@@ -189,6 +189,11 @@ function ComboDetailView() {
 						{m.combos_moves_count({ count: combo.moves.length.toString() })}
 					</span>
 				</div>
+				{combo.description && (
+					<p className="mx-auto mt-4 max-w-2xl text-muted-foreground">
+						{combo.description}
+					</p>
+				)}
 			</div>
 
 			<div className="flex flex-col items-center">

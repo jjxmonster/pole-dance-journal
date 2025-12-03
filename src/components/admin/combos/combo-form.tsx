@@ -13,9 +13,12 @@ import {
 	SelectTrigger,
 	SelectValue,
 } from "@/components/ui/select";
+import { Textarea } from "@/components/ui/textarea";
 import { orpc } from "@/orpc/client";
 import type { AdminCreateComboInput } from "@/orpc/schema";
 import {
+	COMBO_DESCRIPTION_MAX_LENGTH,
+	COMBO_DESCRIPTION_MIN_LENGTH,
 	COMBO_MOVES_MIN_COUNT,
 	COMBO_NAME_MAX_LENGTH,
 	COMBO_NAME_MIN_LENGTH,
@@ -24,16 +27,21 @@ import { ComboMovesSelector } from "./combo-moves-selector";
 
 type ComboFormState = {
 	name: string;
+	descriptionEn: string;
+	descriptionPl: string;
 	level: "Beginner" | "Intermediate" | "Advanced" | "";
 	moveIds: string[];
 };
 
 const initialFormState: ComboFormState = {
 	name: "",
+	descriptionEn: "",
+	descriptionPl: "",
 	level: "",
 	moveIds: [],
 };
 
+// biome-ignore lint/complexity/noExcessiveCognitiveComplexity: will be fix when migrate to tanstack form
 export function ComboForm() {
 	const navigate = useNavigate();
 	const [formState, setFormState] = useState<ComboFormState>(initialFormState);
@@ -42,6 +50,8 @@ export function ComboForm() {
 	const [comboId, setComboId] = useState<string | null>(null);
 	const [validationErrors, setValidationErrors] = useState<{
 		name?: string;
+		descriptionEn?: string;
+		descriptionPl?: string;
 		level?: string;
 		moveIds?: string;
 	}>({});
@@ -73,6 +83,7 @@ export function ComboForm() {
 		},
 	});
 
+	// biome-ignore lint/complexity/noExcessiveCognitiveComplexity: will be fix when migrate to tanstack form
 	const validateForm = (): boolean => {
 		const errors: typeof validationErrors = {};
 
@@ -80,6 +91,18 @@ export function ComboForm() {
 			errors.name = "Name is required";
 		} else if (formState.name.length < COMBO_NAME_MIN_LENGTH) {
 			errors.name = `Name must be at least ${COMBO_NAME_MIN_LENGTH} characters`;
+		}
+
+		if (!formState.descriptionEn.trim()) {
+			errors.descriptionEn = "English description is required";
+		} else if (formState.descriptionEn.length < COMBO_DESCRIPTION_MIN_LENGTH) {
+			errors.descriptionEn = `English description must be at least ${COMBO_DESCRIPTION_MIN_LENGTH} characters`;
+		}
+
+		if (!formState.descriptionPl.trim()) {
+			errors.descriptionPl = "Polish description is required";
+		} else if (formState.descriptionPl.length < COMBO_DESCRIPTION_MIN_LENGTH) {
+			errors.descriptionPl = `Polish description must be at least ${COMBO_DESCRIPTION_MIN_LENGTH} characters`;
 		}
 
 		if (!formState.level) {
@@ -104,6 +127,8 @@ export function ComboForm() {
 
 		await createComboMutation.mutateAsync({
 			name: formState.name,
+			descriptionEn: formState.descriptionEn,
+			descriptionPl: formState.descriptionPl,
 			level: formState.level as "Beginner" | "Intermediate" | "Advanced",
 			moveIds: formState.moveIds,
 		});
@@ -145,6 +170,8 @@ export function ComboForm() {
 		publishComboMutation.isPending ||
 		!!comboId;
 	const nameLength = formState.name.length;
+	const descriptionEnLength = formState.descriptionEn.length;
+	const descriptionPlLength = formState.descriptionPl.length;
 
 	return (
 		<>
@@ -203,6 +230,80 @@ export function ComboForm() {
 								{validationErrors.level}
 							</div>
 						)}
+					</div>
+
+					<div>
+						<Label
+							className="mb-2 block font-medium text-sm"
+							htmlFor="descriptionEn"
+						>
+							English Description <span className="text-destructive">*</span>
+						</Label>
+						<Textarea
+							aria-describedby={
+								validationErrors.descriptionEn
+									? "descriptionEn-error"
+									: undefined
+							}
+							id="descriptionEn"
+							maxLength={COMBO_DESCRIPTION_MAX_LENGTH}
+							onChange={(e) =>
+								handleInputChange("descriptionEn", e.target.value)
+							}
+							placeholder="Describe the combo in English..."
+							rows={4}
+							value={formState.descriptionEn}
+						/>
+						<div className="mt-1 flex items-center justify-between">
+							{validationErrors.descriptionEn && (
+								<div
+									className="text-destructive text-sm"
+									id="descriptionEn-error"
+								>
+									{validationErrors.descriptionEn}
+								</div>
+							)}
+							<span className="ml-auto text-muted-foreground text-xs">
+								{descriptionEnLength}/{COMBO_DESCRIPTION_MAX_LENGTH}
+							</span>
+						</div>
+					</div>
+
+					<div>
+						<Label
+							className="mb-2 block font-medium text-sm"
+							htmlFor="descriptionPl"
+						>
+							Polish Description <span className="text-destructive">*</span>
+						</Label>
+						<Textarea
+							aria-describedby={
+								validationErrors.descriptionPl
+									? "descriptionPl-error"
+									: undefined
+							}
+							id="descriptionPl"
+							maxLength={COMBO_DESCRIPTION_MAX_LENGTH}
+							onChange={(e) =>
+								handleInputChange("descriptionPl", e.target.value)
+							}
+							placeholder="Opisz combo po polsku..."
+							rows={4}
+							value={formState.descriptionPl}
+						/>
+						<div className="mt-1 flex items-center justify-between">
+							{validationErrors.descriptionPl && (
+								<div
+									className="text-destructive text-sm"
+									id="descriptionPl-error"
+								>
+									{validationErrors.descriptionPl}
+								</div>
+							)}
+							<span className="ml-auto text-muted-foreground text-xs">
+								{descriptionPlLength}/{COMBO_DESCRIPTION_MAX_LENGTH}
+							</span>
+						</div>
 					</div>
 
 					<ComboMovesSelector

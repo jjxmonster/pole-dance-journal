@@ -67,6 +67,8 @@ export const COMBO_NAME_MAX_LENGTH = 100;
 export const COMBO_MOVES_MIN_COUNT = 3;
 export const COMBO_MOVES_MAX_COUNT = 8;
 export const COMBO_MOVES_DISPLAY_COUNT = 3;
+export const COMBO_DESCRIPTION_MIN_LENGTH = 10;
+export const COMBO_DESCRIPTION_MAX_LENGTH = 1000;
 
 export const LEVEL_COLORS = {
 	Beginner: "bg-green-100 text-green-800 hover:bg-green-100",

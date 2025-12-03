@@ -389,9 +389,48 @@ export const userComboFavorites = pgTable(
 	})
 );
 
+export const comboTranslations = pgTable(
+	"combo_translations",
+	{
+		id: uuid("id").defaultRandom().primaryKey(),
+		comboId: uuid("combo_id")
+			.notNull()
+			.references(() => combos.id, { onDelete: "cascade" }),
+		language: languageEnum("language").notNull(),
+		description: text("description").notNull(),
+		createdAt: timestamp("created_at", { withTimezone: true })
+			.defaultNow()
+			.notNull(),
+		updatedAt: timestamp("updated_at", { withTimezone: true })
+			.defaultNow()
+			.notNull(),
+	},
+	(table) => ({
+		comboLanguageUnique: unique("combo_language_unique").on(
+			table.comboId,
+			table.language
+		),
+		descriptionLengthCheck: check(
+			"combo_trans_description_length_check",
+			sql`char_length(${table.description}) between 10 and 1000`
+		),
+	})
+);
+
+export const comboTranslationsRelations = relations(
+	comboTranslations,
+	({ one }) => ({
+		combo: one(combos, {
+			fields: [comboTranslations.comboId],
+			references: [combos.id],
+		}),
+	})
+);
+
 export const combosRelations = relations(combos, ({ many }) => ({
 	comboMoves: many(comboMoves),
 	userFavorites: many(userComboFavorites),
+	translations: many(comboTranslations),
 }));
 
 export const comboMovesRelations = relations(comboMoves, ({ one }) => ({

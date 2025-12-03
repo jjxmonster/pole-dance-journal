@@ -2,6 +2,8 @@ import { z } from "zod";
 import { moveLevelEnum, moveStatusEnum } from "../db/schema";
 import {
 	ALLOWED_MIME_TYPES,
+	COMBO_DESCRIPTION_MAX_LENGTH,
+	COMBO_DESCRIPTION_MIN_LENGTH,
 	COMBO_MOVES_MAX_COUNT,
 	COMBO_MOVES_MIN_COUNT,
 	COMBO_NAME_MAX_LENGTH,
@@ -776,6 +778,7 @@ export const ComboDetailSchema = z.object({
 	name: z.string(),
 	level: z.enum(moveLevelEnum.enumValues),
 	slug: z.string(),
+	description: z.string().nullable(),
 	moves: z.array(
 		z.object({
 			id: z.string().uuid(),
@@ -857,6 +860,26 @@ export const AdminCreateComboInputSchema = z.object({
 			COMBO_NAME_MAX_LENGTH,
 			`Name must be at most ${COMBO_NAME_MAX_LENGTH} characters`
 		),
+	descriptionEn: z
+		.string()
+		.min(
+			COMBO_DESCRIPTION_MIN_LENGTH,
+			`English description must be at least ${COMBO_DESCRIPTION_MIN_LENGTH} characters`
+		)
+		.max(
+			COMBO_DESCRIPTION_MAX_LENGTH,
+			`English description must be at most ${COMBO_DESCRIPTION_MAX_LENGTH} characters`
+		),
+	descriptionPl: z
+		.string()
+		.min(
+			COMBO_DESCRIPTION_MIN_LENGTH,
+			`Polish description must be at least ${COMBO_DESCRIPTION_MIN_LENGTH} characters`
+		)
+		.max(
+			COMBO_DESCRIPTION_MAX_LENGTH,
+			`Polish description must be at most ${COMBO_DESCRIPTION_MAX_LENGTH} characters`
+		),
 	level: z.enum(moveLevelEnum.enumValues),
 	moveIds: z
 		.array(z.string().uuid("Invalid move ID"))
@@ -892,6 +915,26 @@ export const AdminUpdateComboInputSchema = z.object({
 		.max(
 			COMBO_NAME_MAX_LENGTH,
 			`Name must be at most ${COMBO_NAME_MAX_LENGTH} characters`
+		),
+	descriptionEn: z
+		.string()
+		.min(
+			COMBO_DESCRIPTION_MIN_LENGTH,
+			`English description must be at least ${COMBO_DESCRIPTION_MIN_LENGTH} characters`
+		)
+		.max(
+			COMBO_DESCRIPTION_MAX_LENGTH,
+			`English description must be at most ${COMBO_DESCRIPTION_MAX_LENGTH} characters`
+		),
+	descriptionPl: z
+		.string()
+		.min(
+			COMBO_DESCRIPTION_MIN_LENGTH,
+			`Polish description must be at least ${COMBO_DESCRIPTION_MIN_LENGTH} characters`
+		)
+		.max(
+			COMBO_DESCRIPTION_MAX_LENGTH,
+			`Polish description must be at most ${COMBO_DESCRIPTION_MAX_LENGTH} characters`
 		),
 	level: z.enum(moveLevelEnum.enumValues),
 	moveIds: z
@@ -936,6 +979,8 @@ export const AdminGetComboOutputSchema = z.object({
 	combo: z.object({
 		id: z.string().uuid(),
 		name: z.string(),
+		descriptionEn: z.string(),
+		descriptionPl: z.string(),
 		level: z.enum(moveLevelEnum.enumValues),
 		slug: z.string(),
 		moveIds: z.array(z.string().uuid()),
