@@ -1,23 +1,25 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { useOptimistic, useTransition } from "react";
 import { toast } from "sonner";
 import { client, orpc } from "@/orpc/client";
 import { m } from "@/paraglide/messages";
 import type { MoveStatus } from "@/types/move";
 import { useAuth } from "./use-auth";
 
+type UserMoveStatusData = {
+	status: MoveStatus;
+} | null;
+
 export function useMoveStatus(moveId: string) {
 	const { isAuthenticated, userId } = useAuth();
-	const [, startTransition] = useTransition();
 	const queryClient = useQueryClient();
+	const queryKey = ["userMoveStatus", moveId, userId];
 
 	const {
 		data,
 		isLoading: isStatusLoading,
 		isError: isStatusError,
-		refetch,
 	} = useQuery({
-		queryKey: ["userMoveStatus", moveId, userId],
+		queryKey,
 		queryFn: async () => {
 			if (!(isAuthenticated && userId)) {
 				return null;
@@ -28,16 +30,11 @@ export function useMoveStatus(moveId: string) {
 					moveId,
 				});
 			} catch (_) {
-				// Error is not displayed to user
 				return null;
 			}
 		},
 		enabled: !!moveId && isAuthenticated && !!userId,
 	});
-
-	const [optimisticStatus, setOptimisticStatus] = useOptimistic(
-		data?.status || null
-	);
 
 	const { mutate, isPending } = useMutation({
 		mutationFn: async (status: MoveStatus) => {
@@ -47,13 +44,28 @@ export function useMoveStatus(moveId: string) {
 			});
 			return result;
 		},
+		onMutate: async (newStatus) => {
+			await queryClient.cancelQueries({ queryKey });
+			const previousData =
+				queryClient.getQueryData<UserMoveStatusData>(queryKey);
+			queryClient.setQueryData<UserMoveStatusData>(queryKey, (old) => ({
+				...old,
+				status: newStatus,
+			}));
+			return { previousData };
+		},
+		onError: (_err, _variables, context) => {
+			if (context?.previousData !== undefined) {
+				queryClient.setQueryData(queryKey, context.previousData);
+			}
+			toast.error(m.move_status_update_error());
+		},
 		onSuccess: () => {
 			toast.success(m.move_status_update_success());
 			queryClient.invalidateQueries({ queryKey: ["my-moves"] });
-			refetch();
 		},
-		onError: () => {
-			toast.error(m.move_status_update_error());
+		onSettled: () => {
+			queryClient.invalidateQueries({ queryKey });
 		},
 	});
 
@@ -62,15 +74,11 @@ export function useMoveStatus(moveId: string) {
 			toast.error(m.move_status_auth_required());
 			return;
 		}
-
-		startTransition(() => {
-			setOptimisticStatus(status);
-		});
 		mutate(status);
 	};
 
 	return {
-		status: optimisticStatus,
+		status: data?.status ?? null,
 		updateStatus,
 		isLoading: isStatusLoading || isPending,
 		isError: isStatusError,

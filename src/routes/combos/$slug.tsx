@@ -83,7 +83,26 @@ function ComboDetailView() {
 	const toggleFavoriteMutation = useMutation({
 		mutationFn: async (comboId: string) =>
 			await orpc.combos.toggleFavorite.call({ comboId }),
-		onSuccess: () => {
+		onMutate: async () => {
+			await queryClient.cancelQueries({ queryKey: ["combo", slug] });
+			const previousCombo = queryClient.getQueryData<typeof combo>([
+				"combo",
+				slug,
+			]);
+			queryClient.setQueryData<typeof combo>(["combo", slug], (old) => {
+				if (!old) {
+					return old;
+				}
+				return { ...old, isFavorite: !old.isFavorite };
+			});
+			return { previousCombo };
+		},
+		onError: (_err, _variables, context) => {
+			if (context?.previousCombo) {
+				queryClient.setQueryData(["combo", slug], context.previousCombo);
+			}
+		},
+		onSettled: () => {
 			queryClient.invalidateQueries({ queryKey: ["combo", slug] });
 		},
 	});
