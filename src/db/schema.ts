@@ -152,8 +152,8 @@ export const moveNotes = pgTable(
 	})
 );
 
-export const moveComboReferences = pgTable(
-	"move_combo_references",
+export const moveTransitionReferences = pgTable(
+	"move_transition_references",
 	{
 		id: uuid("id").defaultRandom().primaryKey(),
 		moveId: uuid("move_id")
@@ -169,18 +169,18 @@ export const moveComboReferences = pgTable(
 	},
 	(table) => ({
 		orderIndexCheck: check(
-			"combo_order_index_check",
+			"transition_order_index_check",
 			sql`${table.orderIndex} between 1 and 3`
 		),
-		moveOrderUnique: unique("combo_move_order_unique").on(
+		moveOrderUnique: unique("transition_move_order_unique").on(
 			table.moveId,
 			table.orderIndex
 		),
 		noSelfReference: check(
-			"combo_no_self_reference",
+			"transition_no_self_reference",
 			sql`${table.moveId} != ${table.referencedMoveId}`
 		),
-		noDuplicateReference: unique("combo_no_duplicate_reference").on(
+		noDuplicateReference: unique("transition_no_duplicate_reference").on(
 			table.moveId,
 			table.referencedMoveId
 		),
@@ -191,8 +191,8 @@ export const movesRelations = relations(moves, ({ many }) => ({
 	steps: many(steps),
 	userMoveStatuses: many(userMoveStatuses),
 	translations: many(moveTranslations),
-	comboReferences: many(moveComboReferences, {
-		relationName: "moveToComboReferences",
+	transitionReferences: many(moveTransitionReferences, {
+		relationName: "moveToTransitionReferences",
 	}),
 }));
 
@@ -303,18 +303,153 @@ export const stepTranslationsRelations = relations(
 	})
 );
 
-export const moveComboReferencesRelations = relations(
-	moveComboReferences,
+export const moveTransitionReferencesRelations = relations(
+	moveTransitionReferences,
 	({ one }) => ({
 		move: one(moves, {
-			fields: [moveComboReferences.moveId],
+			fields: [moveTransitionReferences.moveId],
 			references: [moves.id],
-			relationName: "moveToComboReferences",
+			relationName: "moveToTransitionReferences",
 		}),
 		referencedMove: one(moves, {
-			fields: [moveComboReferences.referencedMoveId],
+			fields: [moveTransitionReferences.referencedMoveId],
 			references: [moves.id],
-			relationName: "referencedMoveToComboReferences",
+			relationName: "referencedMoveToTransitionReferences",
+		}),
+	})
+);
+
+export const combos = pgTable(
+	"combos",
+	{
+		id: uuid("id").defaultRandom().primaryKey(),
+		name: text("name").notNull(),
+		level: moveLevelEnum("level").notNull(),
+		slug: text("slug").notNull(),
+		publishedAt: timestamp("published_at", { withTimezone: true }),
+		deletedAt: timestamp("deleted_at", { withTimezone: true }),
+		createdAt: timestamp("created_at", { withTimezone: true })
+			.defaultNow()
+			.notNull(),
+		updatedAt: timestamp("updated_at", { withTimezone: true })
+			.defaultNow()
+			.notNull(),
+	},
+	(table) => ({
+		nameLengthCheck: check(
+			"combo_name_length_check",
+			sql`char_length(${table.name}) between 3 and 100`
+		),
+		slugUniqueIdx: uniqueIndex("idx_combos_slug_unique").on(
+			sql`lower(${table.slug})`
+		),
+	})
+);
+
+export const comboMoves = pgTable(
+	"combo_moves",
+	{
+		id: uuid("id").defaultRandom().primaryKey(),
+		comboId: uuid("combo_id")
+			.notNull()
+			.references(() => combos.id, { onDelete: "cascade" }),
+		moveId: uuid("move_id")
+			.notNull()
+			.references(() => moves.id, { onDelete: "cascade" }),
+		orderIndex: integer("order_index").notNull(),
+		createdAt: timestamp("created_at", { withTimezone: true })
+			.defaultNow()
+			.notNull(),
+	},
+	(table) => ({
+		orderIndexCheck: check(
+			"combo_order_index_check",
+			sql`${table.orderIndex} between 1 and 8`
+		),
+		comboOrderUnique: unique("combo_move_order_unique").on(
+			table.comboId,
+			table.orderIndex
+		),
+	})
+);
+
+export const userComboFavorites = pgTable(
+	"user_combo_favorites",
+	{
+		userId: uuid("user_id").notNull(),
+		comboId: uuid("combo_id")
+			.notNull()
+			.references(() => combos.id, { onDelete: "cascade" }),
+		createdAt: timestamp("created_at", { withTimezone: true })
+			.defaultNow()
+			.notNull(),
+	},
+	(table) => ({
+		pk: primaryKey({ columns: [table.userId, table.comboId] }),
+	})
+);
+
+export const comboTranslations = pgTable(
+	"combo_translations",
+	{
+		id: uuid("id").defaultRandom().primaryKey(),
+		comboId: uuid("combo_id")
+			.notNull()
+			.references(() => combos.id, { onDelete: "cascade" }),
+		language: languageEnum("language").notNull(),
+		description: text("description").notNull(),
+		createdAt: timestamp("created_at", { withTimezone: true })
+			.defaultNow()
+			.notNull(),
+		updatedAt: timestamp("updated_at", { withTimezone: true })
+			.defaultNow()
+			.notNull(),
+	},
+	(table) => ({
+		comboLanguageUnique: unique("combo_language_unique").on(
+			table.comboId,
+			table.language
+		),
+		descriptionLengthCheck: check(
+			"combo_trans_description_length_check",
+			sql`char_length(${table.description}) between 10 and 1000`
+		),
+	})
+);
+
+export const comboTranslationsRelations = relations(
+	comboTranslations,
+	({ one }) => ({
+		combo: one(combos, {
+			fields: [comboTranslations.comboId],
+			references: [combos.id],
+		}),
+	})
+);
+
+export const combosRelations = relations(combos, ({ many }) => ({
+	comboMoves: many(comboMoves),
+	userFavorites: many(userComboFavorites),
+	translations: many(comboTranslations),
+}));
+
+export const comboMovesRelations = relations(comboMoves, ({ one }) => ({
+	combo: one(combos, {
+		fields: [comboMoves.comboId],
+		references: [combos.id],
+	}),
+	move: one(moves, {
+		fields: [comboMoves.moveId],
+		references: [moves.id],
+	}),
+}));
+
+export const userComboFavoritesRelations = relations(
+	userComboFavorites,
+	({ one }) => ({
+		combo: one(combos, {
+			fields: [userComboFavorites.comboId],
+			references: [combos.id],
 		}),
 	})
 );

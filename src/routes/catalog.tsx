@@ -1,5 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import { createFileRoute, useLoaderData } from "@tanstack/react-router";
+import { useMemo } from "react";
 import { z } from "zod";
 import { CatalogAuthPrompt } from "../components/catalog/catalog-auth-prompt";
 import { CatalogEmptyState } from "../components/catalog/catalog-empty-state";
@@ -68,23 +69,28 @@ function CatalogView() {
 	const { filters, updateFilters } = useCatalogFilters();
 	const debouncedQuery = useDebouncedValue(filters.query, DEBOUNCE_DELAY_MS);
 
-	const queryInput = {
-		limit: PAGE_SIZE,
-		offset: (filters.page - 1) * PAGE_SIZE,
-		level: filters.level === "All" ? undefined : filters.level,
-		query: debouncedQuery.trim() || undefined,
-	};
+	const queryInput = useMemo(
+		() => ({
+			limit: PAGE_SIZE,
+			offset: (filters.page - 1) * PAGE_SIZE,
+			level: filters.level === "All" ? undefined : filters.level,
+			query: debouncedQuery.trim() || undefined,
+		}),
+		[filters.page, filters.level, debouncedQuery]
+	);
 
 	const authenticatedQuery = useQuery(
 		orpc.moves.list.queryOptions({
 			input: queryInput,
 			staleTime: STALE_TIME_MS,
+			queryKey: ["moves", queryInput],
 		})
 	);
 
 	const trialQuery = useQuery(
 		orpc.moves.listTrialVersion.queryOptions({
 			staleTime: STALE_TIME_MS,
+			queryKey: ["moves-trial"],
 		})
 	);
 

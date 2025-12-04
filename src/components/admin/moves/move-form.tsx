@@ -1,6 +1,9 @@
+import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation } from "@tanstack/react-query";
 import { useNavigate } from "@tanstack/react-router";
+import { type MoveFormValues, moveFormSchema } from "form/schema";
 import { useState } from "react";
+import { Controller, useFieldArray, useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
@@ -14,7 +17,6 @@ import {
 	SelectValue,
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
-import { useMoveForm } from "@/hooks/use-move-form";
 import { orpc } from "@/orpc/client";
 import type { AdminCreateMoveInput } from "@/orpc/schema";
 import {
@@ -26,23 +28,43 @@ import {
 import { ImageGenerator } from "./image-generator";
 import { StepEditor } from "./step-editor";
 
-// biome-ignore lint/complexity/noExcessiveCognitiveComplexity: move form is complex
+function createDefaultStep() {
+	return {
+		id: crypto.randomUUID(),
+		titleEn: "",
+		titlePl: "",
+		descriptionEn: "",
+		descriptionPl: "",
+	};
+}
+
+// biome-ignore lint/complexity/noExcessiveCognitiveComplexity: form is complex
 export function MoveForm() {
 	const navigate = useNavigate();
+
 	const {
-		formState,
-		errors,
-		isSubmitting,
-		handleInputChange,
-		handleStepChange,
-		addStep,
-		removeStep,
+		register,
+		control,
 		handleSubmit,
-		getStepErrors,
-	} = useMoveForm();
+		watch,
+		formState: { errors, isSubmitting, isDirty },
+	} = useForm<MoveFormValues>({
+		resolver: zodResolver(moveFormSchema),
+		defaultValues: {
+			name: "",
+			descriptionEn: "",
+			descriptionPl: "",
+			level: undefined,
+			steps: [createDefaultStep(), createDefaultStep()],
+		},
+	});
+
+	const { fields, append, remove } = useFieldArray({
+		control,
+		name: "steps",
+	});
 
 	const [showUnsavedWarning, setShowUnsavedWarning] = useState(false);
-	const [hasFormChanged, setHasFormChanged] = useState(false);
 	const [moveId, setMoveId] = useState<string | null>(null);
 	const [imageAccepted, setImageAccepted] = useState(false);
 
@@ -73,13 +95,20 @@ export function MoveForm() {
 		},
 	});
 
-	const handleFormSubmit = async (e: React.FormEvent) => {
-		e.preventDefault();
-		e.stopPropagation();
-
-		await handleSubmit(async (data) => {
-			await createMoveMutation.mutateAsync(data);
-		});
+	const onSubmit = async (data: MoveFormValues) => {
+		const submitData: AdminCreateMoveInput = {
+			name: data.name,
+			descriptionEn: data.descriptionEn,
+			descriptionPl: data.descriptionPl,
+			level: data.level,
+			steps: data.steps.map((step) => ({
+				titleEn: step.titleEn,
+				titlePl: step.titlePl,
+				descriptionEn: step.descriptionEn,
+				descriptionPl: step.descriptionPl,
+			})),
+		};
+		await createMoveMutation.mutateAsync(submitData);
 	};
 
 	const handlePublish = async () => {
@@ -89,35 +118,8 @@ export function MoveForm() {
 		await publishMoveMutation.mutateAsync(moveId);
 	};
 
-	const handleInputChangeWithTracking = (
-		field: "name" | "descriptionEn" | "descriptionPl" | "level",
-		value: string
-	) => {
-		setHasFormChanged(true);
-		handleInputChange(field, value);
-	};
-
-	const handleStepChangeWithTracking = (
-		index: number,
-		field: "titleEn" | "titlePl" | "descriptionEn" | "descriptionPl",
-		value: string
-	) => {
-		setHasFormChanged(true);
-		handleStepChange(index, field, value);
-	};
-
-	const handleAddStepWithTracking = () => {
-		setHasFormChanged(true);
-		addStep();
-	};
-
-	const handleRemoveStepWithTracking = (index: number) => {
-		setHasFormChanged(true);
-		removeStep(index);
-	};
-
 	const handleCancel = () => {
-		if (hasFormChanged || moveId) {
+		if (isDirty || moveId) {
 			setShowUnsavedWarning(true);
 		} else {
 			navigate({ to: "/admin/moves" });
@@ -129,65 +131,52 @@ export function MoveForm() {
 		toast.success("Image finalized!");
 	};
 
-	const nameLength = formState.name.length;
-	const descriptionEnLength = formState.descriptionEn.length;
-	const descriptionPlLength = formState.descriptionPl.length;
+	const handleAddStep = () => {
+		append(createDefaultStep());
+	};
 
-	const nameError = errors?.issues.find(
-		(issue) => Array.isArray(issue.path) && issue.path[0] === "name"
-	)?.message;
+	const watchedName = watch("name");
+	const watchedDescriptionEn = watch("descriptionEn");
+	const watchedDescriptionPl = watch("descriptionPl");
 
-	const descriptionEnError = errors?.issues.find(
-		(issue) => Array.isArray(issue.path) && issue.path[0] === "descriptionEn"
-	)?.message;
-
-	const descriptionPlError = errors?.issues.find(
-		(issue) => Array.isArray(issue.path) && issue.path[0] === "descriptionPl"
-	)?.message;
-
-	const levelError = errors?.issues.find(
-		(issue) => Array.isArray(issue.path) && issue.path[0] === "level"
-	)?.message;
-
-	const stepsError = errors?.issues.find(
-		(issue) => Array.isArray(issue.path) && issue.path[0] === "steps"
-	)?.message;
+	const nameLength = watchedName?.length ?? 0;
+	const descriptionEnLength = watchedDescriptionEn?.length ?? 0;
+	const descriptionPlLength = watchedDescriptionPl?.length ?? 0;
 
 	const isFormDisabled =
 		isSubmitting || createMoveMutation.isPending || !!moveId;
-	const isLoadingName = nameLength > MOVE_NAME_WARNING_THRESHOLD;
-	const isLoadingDescriptionEn =
+	const isWarningName = nameLength > MOVE_NAME_WARNING_THRESHOLD;
+	const isWarningDescriptionEn =
 		descriptionEnLength > MOVE_DESCRIPTION_WARNING_THRESHOLD;
-	const isLoadingDescriptionPl =
+	const isWarningDescriptionPl =
 		descriptionPlLength > MOVE_DESCRIPTION_WARNING_THRESHOLD;
+
+	const stepsError = errors.steps?.message ?? errors.steps?.root?.message;
 
 	return (
 		<>
-			<form className="space-y-6" onSubmit={handleFormSubmit}>
+			<form className="space-y-6" onSubmit={handleSubmit(onSubmit)}>
 				<fieldset className="space-y-6" disabled={isFormDisabled}>
 					<div>
 						<Label className="mb-2 block font-medium text-sm" htmlFor="name">
 							Move Name
 						</Label>
 						<Input
-							aria-describedby={nameError ? "name-error" : undefined}
+							aria-describedby={errors.name ? "name-error" : undefined}
 							id="name"
-							maxLength={100}
-							onChange={(e) =>
-								handleInputChangeWithTracking("name", e.target.value)
-							}
+							maxLength={MOVE_NAME_MAX_LENGTH}
 							placeholder="e.g., Butterfly"
-							value={formState.name}
+							{...register("name")}
 						/>
 						<div className="mt-1 flex items-center justify-between">
-							{nameError && (
+							{errors.name && (
 								<div className="text-destructive text-sm" id="name-error">
-									{nameError}
+									{errors.name.message}
 								</div>
 							)}
 							<span
 								className={
-									isLoadingName
+									isWarningName
 										? "text-amber-600 text-xs"
 										: "text-muted-foreground text-xs"
 								}
@@ -206,30 +195,27 @@ export function MoveForm() {
 						</Label>
 						<Textarea
 							aria-describedby={
-								descriptionEnError ? "description-en-error" : undefined
+								errors.descriptionEn ? "description-en-error" : undefined
 							}
 							className="max-w-2xl"
 							id="description-en"
 							maxLength={MOVE_DESCRIPTION_MAX_LENGTH}
-							onChange={(e) =>
-								handleInputChangeWithTracking("descriptionEn", e.target.value)
-							}
 							placeholder="Describe the move and its key characteristics..."
 							rows={4}
-							value={formState.descriptionEn}
+							{...register("descriptionEn")}
 						/>
 						<div className="mt-1 flex items-center justify-between">
-							{descriptionEnError && (
+							{errors.descriptionEn && (
 								<div
 									className="text-destructive text-sm"
 									id="description-en-error"
 								>
-									{descriptionEnError}
+									{errors.descriptionEn.message}
 								</div>
 							)}
 							<span
 								className={
-									isLoadingDescriptionEn
+									isWarningDescriptionEn
 										? "text-amber-600 text-xs"
 										: "text-muted-foreground text-xs"
 								}
@@ -248,30 +234,27 @@ export function MoveForm() {
 						</Label>
 						<Textarea
 							aria-describedby={
-								descriptionPlError ? "description-pl-error" : undefined
+								errors.descriptionPl ? "description-pl-error" : undefined
 							}
 							className="max-w-2xl"
 							id="description-pl"
 							maxLength={MOVE_DESCRIPTION_MAX_LENGTH}
-							onChange={(e) =>
-								handleInputChangeWithTracking("descriptionPl", e.target.value)
-							}
 							placeholder="Opisz ruch i jego kluczowe cechy..."
 							rows={4}
-							value={formState.descriptionPl}
+							{...register("descriptionPl")}
 						/>
 						<div className="mt-1 flex items-center justify-between">
-							{descriptionPlError && (
+							{errors.descriptionPl && (
 								<div
 									className="text-destructive text-sm"
 									id="description-pl-error"
 								>
-									{descriptionPlError}
+									{errors.descriptionPl.message}
 								</div>
 							)}
 							<span
 								className={
-									isLoadingDescriptionPl
+									isWarningDescriptionPl
 										? "text-amber-600 text-xs"
 										: "text-muted-foreground text-xs"
 								}
@@ -285,38 +268,38 @@ export function MoveForm() {
 						<Label className="mb-2 block font-medium text-sm" htmlFor="level">
 							Difficulty Level
 						</Label>
-						<Select
-							onValueChange={(value) =>
-								handleInputChangeWithTracking("level", value)
-							}
-							value={formState.level}
-						>
-							<SelectTrigger
-								aria-describedby={levelError ? "level-error" : undefined}
-								id="level"
-							>
-								<SelectValue placeholder="Select a level" />
-							</SelectTrigger>
-							<SelectContent>
-								<SelectItem value="Beginner">Beginner</SelectItem>
-								<SelectItem value="Intermediate">Intermediate</SelectItem>
-								<SelectItem value="Advanced">Advanced</SelectItem>
-							</SelectContent>
-						</Select>
-						{levelError && (
+						<Controller
+							control={control}
+							name="level"
+							render={({ field }) => (
+								<Select onValueChange={field.onChange} value={field.value}>
+									<SelectTrigger
+										aria-describedby={errors.level ? "level-error" : undefined}
+										id="level"
+									>
+										<SelectValue placeholder="Select a level" />
+									</SelectTrigger>
+									<SelectContent>
+										<SelectItem value="Beginner">Beginner</SelectItem>
+										<SelectItem value="Intermediate">Intermediate</SelectItem>
+										<SelectItem value="Advanced">Advanced</SelectItem>
+									</SelectContent>
+								</Select>
+							)}
+						/>
+						{errors.level && (
 							<div className="mt-1 text-destructive text-sm" id="level-error">
-								{levelError}
+								{errors.level.message}
 							</div>
 						)}
 					</div>
 
 					<StepEditor
 						errors={errors}
-						getStepErrors={getStepErrors}
-						onAddStep={handleAddStepWithTracking}
-						onRemoveStep={handleRemoveStepWithTracking}
-						onStepChange={handleStepChangeWithTracking}
-						steps={formState.steps}
+						fields={fields}
+						onAddStep={handleAddStep}
+						onRemoveStep={remove}
+						register={register}
 					/>
 
 					{stepsError && (

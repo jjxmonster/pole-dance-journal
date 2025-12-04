@@ -60,10 +60,22 @@ function QuickActions() {
 					Manage Moves
 				</Link>
 			</Button>
+			<Button asChild type="button" variant="default">
+				<Link to="/admin/combos">
+					<Settings className="mr-2 size-4" />
+					Manage Combos
+				</Link>
+			</Button>
 			<Button asChild type="button" variant="outline">
 				<Link to="/admin/moves/new">
 					<PlusIcon className="mr-2 size-4" />
 					Create New Move
+				</Link>
+			</Button>
+			<Button asChild type="button" variant="outline">
+				<Link to="/admin/combos/new">
+					<PlusIcon className="mr-2 size-4" />
+					Create New Combo
 				</Link>
 			</Button>
 		</div>

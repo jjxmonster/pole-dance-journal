@@ -1,3 +1,5 @@
+import type { MoveFormValues, MoveStepValues } from "form/schema";
+import type { FieldErrors, UseFormRegister } from "react-hook-form";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -7,40 +9,19 @@ import {
 } from "@/utils/constants";
 
 type StepInputGroupProps = {
-	step: {
-		id: string;
-		titleEn: string;
-		titlePl: string;
-		descriptionEn: string;
-		descriptionPl: string;
-	};
 	index: number;
 	onRemove: (index: number) => void;
-	onChange: (
-		index: number,
-		field: "titleEn" | "titlePl" | "descriptionEn" | "descriptionPl",
-		value: string
-	) => void;
-	error: {
-		titleEn?: string;
-		titlePl?: string;
-		descriptionEn?: string;
-		descriptionPl?: string;
-	} | null;
+	register: UseFormRegister<MoveFormValues>;
+	errors: FieldErrors<MoveStepValues> | undefined;
 };
 
 export function StepInputGroup({
-	step,
 	index,
 	onRemove,
-	onChange,
-	error,
+	register,
+	errors,
 }: StepInputGroupProps) {
 	const stepNumber = index + 1;
-	const titleEnLength = step.titleEn.length;
-	const titlePlLength = step.titlePl.length;
-	const descriptionEnLength = step.descriptionEn.length;
-	const descriptionPlLength = step.descriptionPl.length;
 
 	return (
 		<div className="space-y-4 rounded-lg border border-input bg-card p-4">
@@ -66,32 +47,25 @@ export function StepInputGroup({
 				</label>
 				<Input
 					aria-describedby={
-						error?.titleEn ? `step-title-en-${index}-error` : undefined
+						errors?.titleEn ? `step-title-en-${index}-error` : undefined
 					}
 					className="max-w-2xl"
 					id={`step-title-en-${index}`}
 					maxLength={MOVE_STEP_TITLE_MAX_LENGTH}
-					onChange={(e) => onChange(index, "titleEn", e.target.value)}
 					placeholder="e.g., Mount the pole"
-					value={step.titleEn}
+					{...register(`steps.${index}.titleEn`)}
 				/>
 				<div className="mt-1 flex items-center justify-between">
-					{error?.titleEn && (
+					{errors?.titleEn && (
 						<div
 							className="text-destructive text-sm"
 							id={`step-title-en-${index}-error`}
 						>
-							{error.titleEn}
+							{errors.titleEn.message}
 						</div>
 					)}
-					<span
-						className={`text-xs ${
-							titleEnLength > MOVE_STEP_TITLE_MAX_LENGTH
-								? "text-amber-600"
-								: "text-muted-foreground"
-						}`}
-					>
-						{titleEnLength}/{MOVE_STEP_TITLE_MAX_LENGTH}
+					<span className="text-muted-foreground text-xs">
+						/{MOVE_STEP_TITLE_MAX_LENGTH}
 					</span>
 				</div>
 			</div>
@@ -105,32 +79,25 @@ export function StepInputGroup({
 				</label>
 				<Input
 					aria-describedby={
-						error?.titlePl ? `step-title-pl-${index}-error` : undefined
+						errors?.titlePl ? `step-title-pl-${index}-error` : undefined
 					}
 					className="max-w-2xl"
 					id={`step-title-pl-${index}`}
 					maxLength={MOVE_STEP_TITLE_MAX_LENGTH}
-					onChange={(e) => onChange(index, "titlePl", e.target.value)}
 					placeholder="np., Wejdź na drążek"
-					value={step.titlePl}
+					{...register(`steps.${index}.titlePl`)}
 				/>
 				<div className="mt-1 flex items-center justify-between">
-					{error?.titlePl && (
+					{errors?.titlePl && (
 						<div
 							className="text-destructive text-sm"
 							id={`step-title-pl-${index}-error`}
 						>
-							{error.titlePl}
+							{errors.titlePl.message}
 						</div>
 					)}
-					<span
-						className={`text-xs ${
-							titlePlLength > MOVE_STEP_TITLE_MAX_LENGTH
-								? "text-amber-600"
-								: "text-muted-foreground"
-						}`}
-					>
-						{titlePlLength}/{MOVE_STEP_TITLE_MAX_LENGTH}
+					<span className="text-muted-foreground text-xs">
+						/{MOVE_STEP_TITLE_MAX_LENGTH}
 					</span>
 				</div>
 			</div>
@@ -144,35 +111,28 @@ export function StepInputGroup({
 				</label>
 				<Textarea
 					aria-describedby={
-						error?.descriptionEn
+						errors?.descriptionEn
 							? `step-description-en-${index}-error`
 							: undefined
 					}
 					className="max-w-2xl"
 					id={`step-description-en-${index}`}
 					maxLength={MOVE_STEP_DESCRIPTION_MAX_LENGTH}
-					onChange={(e) => onChange(index, "descriptionEn", e.target.value)}
 					placeholder="Describe how to perform this step..."
 					rows={3}
-					value={step.descriptionEn}
+					{...register(`steps.${index}.descriptionEn`)}
 				/>
 				<div className="mt-1 flex items-center justify-between">
-					{error?.descriptionEn && (
+					{errors?.descriptionEn && (
 						<div
 							className="text-destructive text-sm"
 							id={`step-description-en-${index}-error`}
 						>
-							{error.descriptionEn}
+							{errors.descriptionEn.message}
 						</div>
 					)}
-					<span
-						className={`text-xs ${
-							descriptionEnLength > MOVE_STEP_DESCRIPTION_MAX_LENGTH
-								? "text-amber-600"
-								: "text-muted-foreground"
-						}`}
-					>
-						{descriptionEnLength}/{MOVE_STEP_DESCRIPTION_MAX_LENGTH}
+					<span className="text-muted-foreground text-xs">
+						/{MOVE_STEP_DESCRIPTION_MAX_LENGTH}
 					</span>
 				</div>
 			</div>
@@ -186,35 +146,28 @@ export function StepInputGroup({
 				</label>
 				<Textarea
 					aria-describedby={
-						error?.descriptionPl
+						errors?.descriptionPl
 							? `step-description-pl-${index}-error`
 							: undefined
 					}
 					className="max-w-2xl"
 					id={`step-description-pl-${index}`}
 					maxLength={MOVE_STEP_DESCRIPTION_MAX_LENGTH}
-					onChange={(e) => onChange(index, "descriptionPl", e.target.value)}
 					placeholder="Opisz, jak wykonać ten krok..."
 					rows={3}
-					value={step.descriptionPl}
+					{...register(`steps.${index}.descriptionPl`)}
 				/>
 				<div className="mt-1 flex items-center justify-between">
-					{error?.descriptionPl && (
+					{errors?.descriptionPl && (
 						<div
 							className="text-destructive text-sm"
 							id={`step-description-pl-${index}-error`}
 						>
-							{error.descriptionPl}
+							{errors.descriptionPl.message}
 						</div>
 					)}
-					<span
-						className={`text-xs ${
-							descriptionPlLength > MOVE_STEP_DESCRIPTION_MAX_LENGTH
-								? "text-amber-600"
-								: "text-muted-foreground"
-						}`}
-					>
-						{descriptionPlLength}/{MOVE_STEP_DESCRIPTION_MAX_LENGTH}
+					<span className="text-muted-foreground text-xs">
+						/{MOVE_STEP_DESCRIPTION_MAX_LENGTH}
 					</span>
 				</div>
 			</div>

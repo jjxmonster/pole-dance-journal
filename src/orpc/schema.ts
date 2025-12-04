@@ -2,8 +2,14 @@ import { z } from "zod";
 import { moveLevelEnum, moveStatusEnum } from "../db/schema";
 import {
 	ALLOWED_MIME_TYPES,
-	MAX_COMBO_REFERENCES_COUNT,
+	COMBO_DESCRIPTION_MAX_LENGTH,
+	COMBO_DESCRIPTION_MIN_LENGTH,
+	COMBO_MOVES_MAX_COUNT,
+	COMBO_MOVES_MIN_COUNT,
+	COMBO_NAME_MAX_LENGTH,
+	COMBO_NAME_MIN_LENGTH,
 	MAX_FILE_SIZE,
+	MAX_TRANSITION_REFERENCES_COUNT,
 	MOVE_DESCRIPTION_MAX_LENGTH,
 	MOVE_DESCRIPTION_MIN_LENGTH,
 	MOVE_NAME_MAX_LENGTH,
@@ -62,7 +68,7 @@ export const MoveStepSchema = z.object({
 	description: z.string(),
 });
 
-export const ComboMoveReferenceSchema = z.object({
+export const TransitionMoveReferenceSchema = z.object({
 	id: z.string().uuid(),
 	name: z.string(),
 	slug: z.string(),
@@ -79,7 +85,7 @@ export const MoveDetailSchema = z.object({
 	imageUrl: z.string().nullable(),
 	steps: z.array(MoveStepSchema),
 	translationFallback: z.boolean().optional(),
-	comboReferences: z.array(ComboMoveReferenceSchema),
+	transitionReferences: z.array(TransitionMoveReferenceSchema),
 });
 
 export const MoveGetBySlugOutputSchema = MoveDetailSchema;
@@ -561,11 +567,11 @@ export const AdminEditMoveInputSchema = z.object({
 			`At least ${MOVE_STEPS_MIN_COUNT} steps are required`
 		)
 		.max(MOVE_STEPS_MAX_COUNT, `Maximum ${MOVE_STEPS_MAX_COUNT} steps allowed`),
-	comboReferences: z
+	transitionReferences: z
 		.array(z.string().uuid("Invalid move ID"))
 		.max(
-			MAX_COMBO_REFERENCES_COUNT,
-			`Maximum ${MAX_COMBO_REFERENCES_COUNT} combo references allowed`
+			MAX_TRANSITION_REFERENCES_COUNT,
+			`Maximum ${MAX_TRANSITION_REFERENCES_COUNT} transition references allowed`
 		)
 		.optional()
 		.default([]),
@@ -604,10 +610,14 @@ export const AdminGetMoveOutputSchema = z.object({
 				descriptionPl: z.string(),
 			})
 		),
-		comboReferences: z.array(
+		transitionReferences: z.array(
 			z.object({
 				id: z.string().uuid(),
-				orderIndex: z.number().int().min(1).max(MAX_COMBO_REFERENCES_COUNT),
+				orderIndex: z
+					.number()
+					.int()
+					.min(1)
+					.max(MAX_TRANSITION_REFERENCES_COUNT),
 			})
 		),
 	}),
@@ -711,3 +721,270 @@ export const ProfileChangePasswordOutputSchema = z.object({
 export type ProfileChangePasswordOutput = z.infer<
 	typeof ProfileChangePasswordOutputSchema
 >;
+
+const DEFAULT_COMBOS_LIMIT = 8;
+const MAX_COMBOS_LIMIT = 100;
+
+export const CombosListInputSchema = z.object({
+	limit: z
+		.number()
+		.int()
+		.positive()
+		.max(MAX_COMBOS_LIMIT)
+		.optional()
+		.default(DEFAULT_COMBOS_LIMIT),
+	offset: z.number().int().nonnegative().optional().default(DEFAULT_OFFSET),
+	level: z.enum(moveLevelEnum.enumValues).optional(),
+	moveId: z.string().uuid().optional(),
+	onlyFavorites: z.boolean().optional(),
+});
+
+export type CombosListInput = z.infer<typeof CombosListInputSchema>;
+
+export const ComboMoveItemSchema = z.object({
+	id: z.string().uuid(),
+	name: z.string(),
+	imageUrl: z.string().nullable(),
+	orderIndex: z.number().int().positive(),
+});
+
+export const ComboListItemSchema = z.object({
+	id: z.string().uuid(),
+	name: z.string(),
+	level: z.enum(moveLevelEnum.enumValues),
+	slug: z.string(),
+	moves: z.array(ComboMoveItemSchema),
+	isFavorite: z.boolean(),
+});
+
+export type ComboListItem = z.infer<typeof ComboListItemSchema>;
+
+export const CombosListOutputSchema = z.object({
+	combos: z.array(ComboListItemSchema),
+	total: z.number().int().nonnegative(),
+});
+
+export type CombosListOutput = z.infer<typeof CombosListOutputSchema>;
+
+export const ComboGetBySlugInputSchema = z.object({
+	slug: z.string().trim().min(1, "Slug is required"),
+	language: z.enum(["en", "pl"]).optional(),
+});
+
+export type ComboGetBySlugInput = z.infer<typeof ComboGetBySlugInputSchema>;
+
+export const ComboDetailSchema = z.object({
+	id: z.string().uuid(),
+	name: z.string(),
+	level: z.enum(moveLevelEnum.enumValues),
+	slug: z.string(),
+	description: z.string().nullable(),
+	moves: z.array(
+		z.object({
+			id: z.string().uuid(),
+			name: z.string(),
+			slug: z.string(),
+			level: z.enum(moveLevelEnum.enumValues),
+			imageUrl: z.string().nullable(),
+			orderIndex: z.number().int().positive(),
+			description: z.string().nullable(),
+		})
+	),
+	isFavorite: z.boolean(),
+});
+
+export type ComboDetail = z.infer<typeof ComboDetailSchema>;
+
+export const ComboGetBySlugOutputSchema = ComboDetailSchema;
+
+export const ComboFavoriteToggleInputSchema = z.object({
+	comboId: z.string().uuid(),
+});
+
+export type ComboFavoriteToggleInput = z.infer<
+	typeof ComboFavoriteToggleInputSchema
+>;
+
+export const ComboFavoriteToggleOutputSchema = z.object({
+	success: z.literal(true),
+	isFavorite: z.boolean(),
+});
+
+export type ComboFavoriteToggleOutput = z.infer<
+	typeof ComboFavoriteToggleOutputSchema
+>;
+
+export const AdminListCombosInputSchema = z.object({
+	limit: z
+		.number()
+		.int()
+		.positive()
+		.max(MAX_COMBOS_LIMIT)
+		.optional()
+		.default(DEFAULT_COMBOS_LIMIT),
+	offset: z.number().int().nonnegative().optional().default(DEFAULT_OFFSET),
+	level: z.enum(moveLevelEnum.enumValues).optional(),
+	status: z.enum(["Published", "Unpublished", "Deleted"]).optional(),
+	query: z.string().trim().optional(),
+});
+
+export type AdminListCombosInput = z.infer<typeof AdminListCombosInputSchema>;
+
+export const AdminComboItemSchema = z.object({
+	id: z.string().uuid(),
+	name: z.string(),
+	level: z.enum(moveLevelEnum.enumValues),
+	slug: z.string(),
+	status: z.enum(["Published", "Unpublished", "Deleted"]),
+	movesCount: z.number().int().nonnegative(),
+	updatedAt: z.date(),
+});
+
+export type AdminComboItem = z.infer<typeof AdminComboItemSchema>;
+
+export const AdminListCombosOutputSchema = z.object({
+	combos: z.array(AdminComboItemSchema),
+	total: z.number().int().nonnegative(),
+});
+
+export type AdminListCombosOutput = z.infer<typeof AdminListCombosOutputSchema>;
+
+export const AdminCreateComboInputSchema = z.object({
+	name: z
+		.string()
+		.min(
+			COMBO_NAME_MIN_LENGTH,
+			`Name must be at least ${COMBO_NAME_MIN_LENGTH} characters`
+		)
+		.max(
+			COMBO_NAME_MAX_LENGTH,
+			`Name must be at most ${COMBO_NAME_MAX_LENGTH} characters`
+		),
+	descriptionEn: z
+		.string()
+		.min(
+			COMBO_DESCRIPTION_MIN_LENGTH,
+			`English description must be at least ${COMBO_DESCRIPTION_MIN_LENGTH} characters`
+		)
+		.max(
+			COMBO_DESCRIPTION_MAX_LENGTH,
+			`English description must be at most ${COMBO_DESCRIPTION_MAX_LENGTH} characters`
+		),
+	descriptionPl: z
+		.string()
+		.min(
+			COMBO_DESCRIPTION_MIN_LENGTH,
+			`Polish description must be at least ${COMBO_DESCRIPTION_MIN_LENGTH} characters`
+		)
+		.max(
+			COMBO_DESCRIPTION_MAX_LENGTH,
+			`Polish description must be at most ${COMBO_DESCRIPTION_MAX_LENGTH} characters`
+		),
+	level: z.enum(moveLevelEnum.enumValues),
+	moveIds: z
+		.array(z.string().uuid("Invalid move ID"))
+		.min(
+			COMBO_MOVES_MIN_COUNT,
+			`At least ${COMBO_MOVES_MIN_COUNT} moves are required`
+		)
+		.max(
+			COMBO_MOVES_MAX_COUNT,
+			`Maximum ${COMBO_MOVES_MAX_COUNT} moves allowed`
+		),
+});
+
+export type AdminCreateComboInput = z.infer<typeof AdminCreateComboInputSchema>;
+
+export const AdminCreateComboOutputSchema = z.object({
+	id: z.string().uuid(),
+	slug: z.string(),
+});
+
+export type AdminCreateComboOutput = z.infer<
+	typeof AdminCreateComboOutputSchema
+>;
+
+export const AdminUpdateComboInputSchema = z.object({
+	id: z.string().uuid(),
+	name: z
+		.string()
+		.min(
+			COMBO_NAME_MIN_LENGTH,
+			`Name must be at least ${COMBO_NAME_MIN_LENGTH} characters`
+		)
+		.max(
+			COMBO_NAME_MAX_LENGTH,
+			`Name must be at most ${COMBO_NAME_MAX_LENGTH} characters`
+		),
+	descriptionEn: z
+		.string()
+		.min(
+			COMBO_DESCRIPTION_MIN_LENGTH,
+			`English description must be at least ${COMBO_DESCRIPTION_MIN_LENGTH} characters`
+		)
+		.max(
+			COMBO_DESCRIPTION_MAX_LENGTH,
+			`English description must be at most ${COMBO_DESCRIPTION_MAX_LENGTH} characters`
+		),
+	descriptionPl: z
+		.string()
+		.min(
+			COMBO_DESCRIPTION_MIN_LENGTH,
+			`Polish description must be at least ${COMBO_DESCRIPTION_MIN_LENGTH} characters`
+		)
+		.max(
+			COMBO_DESCRIPTION_MAX_LENGTH,
+			`Polish description must be at most ${COMBO_DESCRIPTION_MAX_LENGTH} characters`
+		),
+	level: z.enum(moveLevelEnum.enumValues),
+	moveIds: z
+		.array(z.string().uuid("Invalid move ID"))
+		.min(
+			COMBO_MOVES_MIN_COUNT,
+			`At least ${COMBO_MOVES_MIN_COUNT} moves are required`
+		)
+		.max(
+			COMBO_MOVES_MAX_COUNT,
+			`Maximum ${COMBO_MOVES_MAX_COUNT} moves allowed`
+		),
+});
+
+export type AdminUpdateComboInput = z.infer<typeof AdminUpdateComboInputSchema>;
+
+export const AdminUpdateComboOutputSchema = z.object({
+	id: z.string().uuid(),
+	slug: z.string(),
+});
+
+export type AdminUpdateComboOutput = z.infer<
+	typeof AdminUpdateComboOutputSchema
+>;
+
+export const AdminComboIdInputSchema = z.object({
+	id: z.string().uuid(),
+});
+
+export type AdminComboIdInput = z.infer<typeof AdminComboIdInputSchema>;
+
+export const AdminPublishComboOutputSchema = z.object({
+	success: z.literal(true),
+	publishedAt: z.date(),
+});
+
+export type AdminPublishComboOutput = z.infer<
+	typeof AdminPublishComboOutputSchema
+>;
+
+export const AdminGetComboOutputSchema = z.object({
+	combo: z.object({
+		id: z.string().uuid(),
+		name: z.string(),
+		descriptionEn: z.string(),
+		descriptionPl: z.string(),
+		level: z.enum(moveLevelEnum.enumValues),
+		slug: z.string(),
+		moveIds: z.array(z.string().uuid()),
+	}),
+});
+
+export type AdminGetComboOutput = z.infer<typeof AdminGetComboOutputSchema>;

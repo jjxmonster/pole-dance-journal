@@ -1,6 +1,9 @@
+import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation } from "@tanstack/react-query";
 import { useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
+import type { FieldErrors, UseFormRegister } from "react-hook-form";
+import { Controller, useFieldArray, useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
@@ -14,7 +17,6 @@ import {
 	SelectValue,
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
-import { useEditMoveForm } from "@/hooks/use-edit-move-form";
 import { orpc } from "@/orpc/client";
 import type { AdminEditMoveInput, AdminGetMoveOutput } from "@/orpc/schema";
 import {
@@ -23,40 +25,68 @@ import {
 	MOVE_NAME_MAX_LENGTH,
 	MOVE_NAME_WARNING_THRESHOLD,
 } from "@/utils/constants";
-import { ComboReferencesSelector } from "./combo-references-selector";
+import {
+	type EditMoveFormValues,
+	editMoveFormSchema,
+	type MoveFormValues,
+} from "../../../../form/schema";
 import { ImageGenerator } from "./image-generator";
 import { StepEditor } from "./step-editor";
+import { TransitionReferencesSelector } from "./transition-references-selector";
 
 type EditMoveFormProps = {
 	move: AdminGetMoveOutput;
 };
 
-// biome-ignore lint/complexity/noExcessiveCognitiveComplexity: move form is complex
+// biome-ignore lint/complexity/noExcessiveCognitiveComplexity: form is complex
 export function EditMoveForm({ move: moveData }: EditMoveFormProps) {
 	const navigate = useNavigate();
 	const [showUnsavedWarning, setShowUnsavedWarning] = useState(false);
-	const [hasFormChanged, setHasFormChanged] = useState(false);
 	const [imageAccepted, setImageAccepted] = useState(false);
 
+	const sortedSteps = [...moveData.move.steps].sort(
+		(a, b) => a.orderIndex - b.orderIndex
+	);
+	const sortedTransitionReferences = [
+		...moveData.move.transitionReferences,
+	].sort((a, b) => a.orderIndex - b.orderIndex);
+
 	const {
-		formState,
-		errors,
-		isSubmitting,
-		handleInputChange,
-		handleStepChange,
-		handleComboReferencesChange,
-		addStep,
-		removeStep,
+		register,
+		control,
 		handleSubmit,
-		getStepErrors,
-	} = useEditMoveForm(moveData.move);
+		watch,
+		reset,
+		formState: { errors, isDirty, isSubmitting },
+	} = useForm<EditMoveFormValues>({
+		resolver: zodResolver(editMoveFormSchema),
+		defaultValues: {
+			id: moveData.move.id,
+			name: moveData.move.name,
+			descriptionEn: moveData.move.descriptionEn,
+			descriptionPl: moveData.move.descriptionPl,
+			level: moveData.move.level,
+			steps: sortedSteps.map((step) => ({
+				titleEn: step.titleEn,
+				titlePl: step.titlePl,
+				descriptionEn: step.descriptionEn,
+				descriptionPl: step.descriptionPl,
+			})),
+			transitionReferences: sortedTransitionReferences.map((ref) => ref.id),
+		},
+	});
+
+	const { fields, append, remove } = useFieldArray({
+		control,
+		name: "steps",
+	});
 
 	const editMoveMutation = useMutation({
 		mutationFn: (data: AdminEditMoveInput) =>
 			orpc.admin.moves.editMove.call(data),
 		onSuccess: () => {
 			toast.success("Move draft updated successfully!");
-			setHasFormChanged(false);
+			reset(undefined, { keepValues: true });
 		},
 		onError: (error) => {
 			const errorMessage =
@@ -79,53 +109,29 @@ export function EditMoveForm({ move: moveData }: EditMoveFormProps) {
 		},
 	});
 
-	const handleFormSubmit = async (e: React.FormEvent) => {
-		e.preventDefault();
-		e.stopPropagation();
-
-		await handleSubmit(async (data) => {
-			await editMoveMutation.mutateAsync(data);
-		});
+	const onSubmit = async (data: EditMoveFormValues) => {
+		await editMoveMutation.mutateAsync(data);
 	};
 
 	const handlePublish = async () => {
 		await publishMoveMutation.mutateAsync();
 	};
 
-	const handleInputChangeWithTracking = (
-		field: "name" | "descriptionEn" | "descriptionPl" | "level",
-		value: string
-	) => {
-		setHasFormChanged(true);
-		handleInputChange(field, value);
+	const handleAddStep = () => {
+		append({
+			titleEn: "",
+			titlePl: "",
+			descriptionEn: "",
+			descriptionPl: "",
+		});
 	};
 
-	const handleStepChangeWithTracking = (
-		index: number,
-		field: "titleEn" | "titlePl" | "descriptionEn" | "descriptionPl",
-		value: string
-	) => {
-		setHasFormChanged(true);
-		handleStepChange(index, field, value);
-	};
-
-	const handleAddStepWithTracking = () => {
-		setHasFormChanged(true);
-		addStep();
-	};
-
-	const handleRemoveStepWithTracking = (index: number) => {
-		setHasFormChanged(true);
-		removeStep(index);
-	};
-
-	const handleComboReferencesChangeWithTracking = (references: string[]) => {
-		setHasFormChanged(true);
-		handleComboReferencesChange(references);
+	const handleRemoveStep = (index: number) => {
+		remove(index);
 	};
 
 	const handleCancel = () => {
-		if (hasFormChanged) {
+		if (isDirty) {
 			setShowUnsavedWarning(true);
 		} else {
 			navigate({ to: "/admin/moves" });
@@ -137,66 +143,43 @@ export function EditMoveForm({ move: moveData }: EditMoveFormProps) {
 		toast.success("Image finalized!");
 	};
 
-	const nameLength = formState.name.length;
-	const descriptionEnLength = formState.descriptionEn.length;
-	const descriptionPlLength = formState.descriptionPl.length;
-
-	const nameError = errors?.issues.find(
-		(issue) => Array.isArray(issue.path) && issue.path[0] === "name"
-	)?.message;
-
-	const descriptionEnError = errors?.issues.find(
-		(issue) => Array.isArray(issue.path) && issue.path[0] === "descriptionEn"
-	)?.message;
-
-	const descriptionPlError = errors?.issues.find(
-		(issue) => Array.isArray(issue.path) && issue.path[0] === "descriptionPl"
-	)?.message;
-
-	const levelError = errors?.issues.find(
-		(issue) => Array.isArray(issue.path) && issue.path[0] === "level"
-	)?.message;
-
-	const stepsError = errors?.issues.find(
-		(issue) => Array.isArray(issue.path) && issue.path[0] === "steps"
-	)?.message;
+	const nameLength = watch("name").length;
+	const descriptionEnLength = watch("descriptionEn").length;
+	const descriptionPlLength = watch("descriptionPl").length;
 
 	const isFormDisabled = isSubmitting || editMoveMutation.isPending;
-	const isLoadingName = nameLength > MOVE_NAME_WARNING_THRESHOLD;
-	const isLoadingDescriptionEn =
+	const isWarningName = nameLength > MOVE_NAME_WARNING_THRESHOLD;
+	const isWarningDescriptionEn =
 		descriptionEnLength > MOVE_DESCRIPTION_WARNING_THRESHOLD;
-	const isLoadingDescriptionPl =
+	const isWarningDescriptionPl =
 		descriptionPlLength > MOVE_DESCRIPTION_WARNING_THRESHOLD;
 
 	return (
 		<>
-			<form className="space-y-6" onSubmit={handleFormSubmit}>
+			<form className="space-y-6" onSubmit={handleSubmit(onSubmit)}>
 				<fieldset className="space-y-6" disabled={isFormDisabled}>
 					<div>
 						<Label className="mb-2 block font-medium text-sm" htmlFor="name">
 							Move Name
 						</Label>
 						<Input
-							aria-describedby={nameError ? "name-error" : undefined}
+							aria-describedby={errors.name ? "name-error" : undefined}
 							id="name"
-							maxLength={100}
-							onChange={(e) =>
-								handleInputChangeWithTracking("name", e.target.value)
-							}
+							maxLength={MOVE_NAME_MAX_LENGTH}
 							placeholder="e.g., Butterfly"
-							value={formState.name}
+							{...register("name")}
 						/>
 						<div className="mt-1 flex items-center justify-between">
-							{nameError && (
+							{errors.name && (
 								<div className="text-destructive text-sm" id="name-error">
-									{nameError}
+									{errors.name.message}
 								</div>
 							)}
 							<span
 								className={
-									isLoadingName
-										? "text-amber-600 text-xs"
-										: "text-muted-foreground text-xs"
+									isWarningName
+										? "ml-auto text-amber-600 text-xs"
+										: "ml-auto text-muted-foreground text-xs"
 								}
 							>
 								{nameLength}/{MOVE_NAME_MAX_LENGTH}
@@ -207,38 +190,35 @@ export function EditMoveForm({ move: moveData }: EditMoveFormProps) {
 					<div>
 						<Label
 							className="mb-2 block font-medium text-sm"
-							htmlFor="description-en"
+							htmlFor="descriptionEn"
 						>
 							Description (English)
 						</Label>
 						<Textarea
 							aria-describedby={
-								descriptionEnError ? "description-en-error" : undefined
+								errors.descriptionEn ? "descriptionEn-error" : undefined
 							}
 							className="max-w-2xl"
-							id="description-en"
+							id="descriptionEn"
 							maxLength={MOVE_DESCRIPTION_MAX_LENGTH}
-							onChange={(e) =>
-								handleInputChangeWithTracking("descriptionEn", e.target.value)
-							}
 							placeholder="Describe the move and its key characteristics..."
 							rows={4}
-							value={formState.descriptionEn}
+							{...register("descriptionEn")}
 						/>
 						<div className="mt-1 flex items-center justify-between">
-							{descriptionEnError && (
+							{errors.descriptionEn && (
 								<div
 									className="text-destructive text-sm"
-									id="description-en-error"
+									id="descriptionEn-error"
 								>
-									{descriptionEnError}
+									{errors.descriptionEn.message}
 								</div>
 							)}
 							<span
 								className={
-									isLoadingDescriptionEn
-										? "text-amber-600 text-xs"
-										: "text-muted-foreground text-xs"
+									isWarningDescriptionEn
+										? "ml-auto text-amber-600 text-xs"
+										: "ml-auto text-muted-foreground text-xs"
 								}
 							>
 								{descriptionEnLength}/{MOVE_DESCRIPTION_MAX_LENGTH}
@@ -249,38 +229,35 @@ export function EditMoveForm({ move: moveData }: EditMoveFormProps) {
 					<div>
 						<Label
 							className="mb-2 block font-medium text-sm"
-							htmlFor="description-pl"
+							htmlFor="descriptionPl"
 						>
 							Description (Polish)
 						</Label>
 						<Textarea
 							aria-describedby={
-								descriptionPlError ? "description-pl-error" : undefined
+								errors.descriptionPl ? "descriptionPl-error" : undefined
 							}
 							className="max-w-2xl"
-							id="description-pl"
+							id="descriptionPl"
 							maxLength={MOVE_DESCRIPTION_MAX_LENGTH}
-							onChange={(e) =>
-								handleInputChangeWithTracking("descriptionPl", e.target.value)
-							}
 							placeholder="Opisz ruch i jego kluczowe cechy..."
 							rows={4}
-							value={formState.descriptionPl}
+							{...register("descriptionPl")}
 						/>
 						<div className="mt-1 flex items-center justify-between">
-							{descriptionPlError && (
+							{errors.descriptionPl && (
 								<div
 									className="text-destructive text-sm"
-									id="description-pl-error"
+									id="descriptionPl-error"
 								>
-									{descriptionPlError}
+									{errors.descriptionPl.message}
 								</div>
 							)}
 							<span
 								className={
-									isLoadingDescriptionPl
-										? "text-amber-600 text-xs"
-										: "text-muted-foreground text-xs"
+									isWarningDescriptionPl
+										? "ml-auto text-amber-600 text-xs"
+										: "ml-auto text-muted-foreground text-xs"
 								}
 							>
 								{descriptionPlLength}/{MOVE_DESCRIPTION_MAX_LENGTH}
@@ -292,50 +269,56 @@ export function EditMoveForm({ move: moveData }: EditMoveFormProps) {
 						<Label className="mb-2 block font-medium text-sm" htmlFor="level">
 							Difficulty Level
 						</Label>
-						<Select
-							onValueChange={(value) =>
-								handleInputChangeWithTracking("level", value)
-							}
-							value={formState.level}
-						>
-							<SelectTrigger
-								aria-describedby={levelError ? "level-error" : undefined}
-								id="level"
-							>
-								<SelectValue placeholder="Select a level" />
-							</SelectTrigger>
-							<SelectContent>
-								<SelectItem value="Beginner">Beginner</SelectItem>
-								<SelectItem value="Intermediate">Intermediate</SelectItem>
-								<SelectItem value="Advanced">Advanced</SelectItem>
-							</SelectContent>
-						</Select>
-						{levelError && (
+						<Controller
+							control={control}
+							name="level"
+							render={({ field }) => (
+								<Select onValueChange={field.onChange} value={field.value}>
+									<SelectTrigger
+										aria-describedby={errors.level ? "level-error" : undefined}
+										id="level"
+									>
+										<SelectValue placeholder="Select a level" />
+									</SelectTrigger>
+									<SelectContent>
+										<SelectItem value="Beginner">Beginner</SelectItem>
+										<SelectItem value="Intermediate">Intermediate</SelectItem>
+										<SelectItem value="Advanced">Advanced</SelectItem>
+									</SelectContent>
+								</Select>
+							)}
+						/>
+						{errors.level && (
 							<div className="mt-1 text-destructive text-sm" id="level-error">
-								{levelError}
+								{errors.level.message}
 							</div>
 						)}
 					</div>
 
-					<ComboReferencesSelector
-						currentMoveId={moveData.move.id}
-						disabled={isFormDisabled}
-						onChange={handleComboReferencesChangeWithTracking}
-						value={formState.comboReferences}
+					<Controller
+						control={control}
+						name="transitionReferences"
+						render={({ field }) => (
+							<TransitionReferencesSelector
+								currentMoveId={moveData.move.id}
+								disabled={isFormDisabled}
+								onChange={field.onChange}
+								value={field.value ?? []}
+							/>
+						)}
 					/>
 
 					<StepEditor
-						errors={errors}
-						getStepErrors={getStepErrors}
-						onAddStep={handleAddStepWithTracking}
-						onRemoveStep={handleRemoveStepWithTracking}
-						onStepChange={handleStepChangeWithTracking}
-						steps={formState.steps}
+						errors={errors as FieldErrors<MoveFormValues>}
+						fields={fields}
+						onAddStep={handleAddStep}
+						onRemoveStep={handleRemoveStep}
+						register={register as unknown as UseFormRegister<MoveFormValues>}
 					/>
 
-					{stepsError && (
+					{errors.steps?.message && (
 						<Alert variant="destructive">
-							<AlertDescription>{stepsError}</AlertDescription>
+							<AlertDescription>{errors.steps.message}</AlertDescription>
 						</Alert>
 					)}
 
@@ -352,15 +335,13 @@ export function EditMoveForm({ move: moveData }: EditMoveFormProps) {
 					<div className="flex gap-3">
 						<Button
 							className="flex-1"
-							disabled={isSubmitting || editMoveMutation.isPending}
+							disabled={editMoveMutation.isPending}
 							type="submit"
 						>
-							{isSubmitting || editMoveMutation.isPending
-								? "Updating..."
-								: "Save Changes"}
+							{editMoveMutation.isPending ? "Updating..." : "Save Changes"}
 						</Button>
 						<Button
-							disabled={isSubmitting || editMoveMutation.isPending}
+							disabled={editMoveMutation.isPending}
 							onClick={handleCancel}
 							type="button"
 							variant="outline"
