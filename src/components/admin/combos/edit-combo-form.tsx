@@ -1,6 +1,8 @@
+import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
+import { Controller, useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
@@ -19,44 +21,37 @@ import { orpc } from "@/orpc/client";
 import type { AdminUpdateComboInput } from "@/orpc/schema";
 import {
 	COMBO_DESCRIPTION_MAX_LENGTH,
-	COMBO_DESCRIPTION_MIN_LENGTH,
-	COMBO_MOVES_MIN_COUNT,
 	COMBO_NAME_MAX_LENGTH,
-	COMBO_NAME_MIN_LENGTH,
 } from "@/utils/constants";
+import { type ComboFormValues, comboFormSchema } from "../../../../form/schema";
 import { ComboMovesSelector } from "./combo-moves-selector";
 
 type EditComboFormProps = {
 	comboId: string;
 };
 
-type ComboFormState = {
-	name: string;
-	descriptionEn: string;
-	descriptionPl: string;
-	level: "Beginner" | "Intermediate" | "Advanced" | "";
-	moveIds: string[];
-};
-
 export function EditComboForm({ comboId }: EditComboFormProps) {
 	const navigate = useNavigate();
 	const queryClient = useQueryClient();
-	const [formState, setFormState] = useState<ComboFormState>({
-		name: "",
-		descriptionEn: "",
-		descriptionPl: "",
-		level: "",
-		moveIds: [],
-	});
 	const [showUnsavedWarning, setShowUnsavedWarning] = useState(false);
-	const [hasFormChanged, setHasFormChanged] = useState(false);
-	const [validationErrors, setValidationErrors] = useState<{
-		name?: string;
-		descriptionEn?: string;
-		descriptionPl?: string;
-		level?: string;
-		moveIds?: string;
-	}>({});
+
+	const {
+		register,
+		control,
+		handleSubmit,
+		watch,
+		reset,
+		formState: { errors, isDirty },
+	} = useForm<ComboFormValues>({
+		resolver: zodResolver(comboFormSchema),
+		defaultValues: {
+			name: "",
+			descriptionEn: "",
+			descriptionPl: "",
+			level: undefined,
+			moveIds: [],
+		},
+	});
 
 	const comboQuery = useQuery({
 		queryKey: ["admin", "combo", comboId],
@@ -66,7 +61,7 @@ export function EditComboForm({ comboId }: EditComboFormProps) {
 	useEffect(() => {
 		if (comboQuery.data?.combo) {
 			const combo = comboQuery.data.combo;
-			setFormState({
+			reset({
 				name: combo.name,
 				descriptionEn: combo.descriptionEn,
 				descriptionPl: combo.descriptionPl,
@@ -74,7 +69,7 @@ export function EditComboForm({ comboId }: EditComboFormProps) {
 				moveIds: combo.moveIds,
 			});
 		}
-	}, [comboQuery.data]);
+	}, [comboQuery.data, reset]);
 
 	const updateComboMutation = useMutation({
 		mutationFn: (data: AdminUpdateComboInput) =>
@@ -92,76 +87,15 @@ export function EditComboForm({ comboId }: EditComboFormProps) {
 		},
 	});
 
-	// biome-ignore lint/complexity/noExcessiveCognitiveComplexity: will be fix when migrate to tanstack form
-	const validateForm = (): boolean => {
-		const errors: typeof validationErrors = {};
-
-		if (!formState.name.trim()) {
-			errors.name = "Name is required";
-		} else if (formState.name.length < COMBO_NAME_MIN_LENGTH) {
-			errors.name = `Name must be at least ${COMBO_NAME_MIN_LENGTH} characters`;
-		}
-
-		if (!formState.descriptionEn.trim()) {
-			errors.descriptionEn = "English description is required";
-		} else if (formState.descriptionEn.length < COMBO_DESCRIPTION_MIN_LENGTH) {
-			errors.descriptionEn = `English description must be at least ${COMBO_DESCRIPTION_MIN_LENGTH} characters`;
-		}
-
-		if (!formState.descriptionPl.trim()) {
-			errors.descriptionPl = "Polish description is required";
-		} else if (formState.descriptionPl.length < COMBO_DESCRIPTION_MIN_LENGTH) {
-			errors.descriptionPl = `Polish description must be at least ${COMBO_DESCRIPTION_MIN_LENGTH} characters`;
-		}
-
-		if (!formState.level) {
-			errors.level = "Level is required";
-		}
-
-		if (formState.moveIds.length < COMBO_MOVES_MIN_COUNT) {
-			errors.moveIds = `At least ${COMBO_MOVES_MIN_COUNT} moves are required`;
-		}
-
-		setValidationErrors(errors);
-		return Object.keys(errors).length === 0;
-	};
-
-	const handleFormSubmit = async (e: React.FormEvent) => {
-		e.preventDefault();
-		e.stopPropagation();
-
-		if (!validateForm()) {
-			return;
-		}
-
+	const onSubmit = async (data: ComboFormValues) => {
 		await updateComboMutation.mutateAsync({
 			id: comboId,
-			name: formState.name,
-			descriptionEn: formState.descriptionEn,
-			descriptionPl: formState.descriptionPl,
-			level: formState.level as "Beginner" | "Intermediate" | "Advanced",
-			moveIds: formState.moveIds,
+			...data,
 		});
 	};
 
-	const handleInputChange = (field: keyof ComboFormState, value: string) => {
-		setHasFormChanged(true);
-		setFormState((prev) => ({ ...prev, [field]: value }));
-		if (validationErrors[field as keyof typeof validationErrors]) {
-			setValidationErrors((prev) => ({ ...prev, [field]: undefined }));
-		}
-	};
-
-	const handleMoveIdsChange = (moveIds: string[]) => {
-		setHasFormChanged(true);
-		setFormState((prev) => ({ ...prev, moveIds }));
-		if (validationErrors.moveIds) {
-			setValidationErrors((prev) => ({ ...prev, moveIds: undefined }));
-		}
-	};
-
 	const handleCancel = () => {
-		if (hasFormChanged) {
+		if (isDirty) {
 			setShowUnsavedWarning(true);
 		} else {
 			navigate({ to: "/admin/combos" });
@@ -198,32 +132,29 @@ export function EditComboForm({ comboId }: EditComboFormProps) {
 	}
 
 	const isFormDisabled = updateComboMutation.isPending;
-	const nameLength = formState.name.length;
-	const descriptionEnLength = formState.descriptionEn.length;
-	const descriptionPlLength = formState.descriptionPl.length;
+	const nameLength = watch("name").length;
+	const descriptionEnLength = watch("descriptionEn").length;
+	const descriptionPlLength = watch("descriptionPl").length;
 
 	return (
 		<>
-			<form className="space-y-6" onSubmit={handleFormSubmit}>
+			<form className="space-y-6" onSubmit={handleSubmit(onSubmit)}>
 				<fieldset className="space-y-6" disabled={isFormDisabled}>
 					<div>
 						<Label className="mb-2 block font-medium text-sm" htmlFor="name">
 							Combo Name <span className="text-destructive">*</span>
 						</Label>
 						<Input
-							aria-describedby={
-								validationErrors.name ? "name-error" : undefined
-							}
+							aria-describedby={errors.name ? "name-error" : undefined}
 							id="name"
 							maxLength={COMBO_NAME_MAX_LENGTH}
-							onChange={(e) => handleInputChange("name", e.target.value)}
 							placeholder="e.g., Beginner Flow Combo"
-							value={formState.name}
+							{...register("name")}
 						/>
 						<div className="mt-1 flex items-center justify-between">
-							{validationErrors.name && (
+							{errors.name && (
 								<div className="text-destructive text-sm" id="name-error">
-									{validationErrors.name}
+									{errors.name.message}
 								</div>
 							)}
 							<span className="ml-auto text-muted-foreground text-xs">
@@ -236,27 +167,28 @@ export function EditComboForm({ comboId }: EditComboFormProps) {
 						<Label className="mb-2 block font-medium text-sm" htmlFor="level">
 							Difficulty Level <span className="text-destructive">*</span>
 						</Label>
-						<Select
-							onValueChange={(value) => handleInputChange("level", value)}
-							value={formState.level}
-						>
-							<SelectTrigger
-								aria-describedby={
-									validationErrors.level ? "level-error" : undefined
-								}
-								id="level"
-							>
-								<SelectValue placeholder="Select a level" />
-							</SelectTrigger>
-							<SelectContent>
-								<SelectItem value="Beginner">Beginner</SelectItem>
-								<SelectItem value="Intermediate">Intermediate</SelectItem>
-								<SelectItem value="Advanced">Advanced</SelectItem>
-							</SelectContent>
-						</Select>
-						{validationErrors.level && (
+						<Controller
+							control={control}
+							name="level"
+							render={({ field }) => (
+								<Select onValueChange={field.onChange} value={field.value}>
+									<SelectTrigger
+										aria-describedby={errors.level ? "level-error" : undefined}
+										id="level"
+									>
+										<SelectValue placeholder="Select a level" />
+									</SelectTrigger>
+									<SelectContent>
+										<SelectItem value="Beginner">Beginner</SelectItem>
+										<SelectItem value="Intermediate">Intermediate</SelectItem>
+										<SelectItem value="Advanced">Advanced</SelectItem>
+									</SelectContent>
+								</Select>
+							)}
+						/>
+						{errors.level && (
 							<div className="mt-1 text-destructive text-sm" id="level-error">
-								{validationErrors.level}
+								{errors.level.message}
 							</div>
 						)}
 					</div>
@@ -270,26 +202,21 @@ export function EditComboForm({ comboId }: EditComboFormProps) {
 						</Label>
 						<Textarea
 							aria-describedby={
-								validationErrors.descriptionEn
-									? "descriptionEn-error"
-									: undefined
+								errors.descriptionEn ? "descriptionEn-error" : undefined
 							}
 							id="descriptionEn"
 							maxLength={COMBO_DESCRIPTION_MAX_LENGTH}
-							onChange={(e) =>
-								handleInputChange("descriptionEn", e.target.value)
-							}
 							placeholder="Describe the combo in English..."
 							rows={4}
-							value={formState.descriptionEn}
+							{...register("descriptionEn")}
 						/>
 						<div className="mt-1 flex items-center justify-between">
-							{validationErrors.descriptionEn && (
+							{errors.descriptionEn && (
 								<div
 									className="text-destructive text-sm"
 									id="descriptionEn-error"
 								>
-									{validationErrors.descriptionEn}
+									{errors.descriptionEn.message}
 								</div>
 							)}
 							<span className="ml-auto text-muted-foreground text-xs">
@@ -307,26 +234,21 @@ export function EditComboForm({ comboId }: EditComboFormProps) {
 						</Label>
 						<Textarea
 							aria-describedby={
-								validationErrors.descriptionPl
-									? "descriptionPl-error"
-									: undefined
+								errors.descriptionPl ? "descriptionPl-error" : undefined
 							}
 							id="descriptionPl"
 							maxLength={COMBO_DESCRIPTION_MAX_LENGTH}
-							onChange={(e) =>
-								handleInputChange("descriptionPl", e.target.value)
-							}
 							placeholder="Opisz combo po polsku..."
 							rows={4}
-							value={formState.descriptionPl}
+							{...register("descriptionPl")}
 						/>
 						<div className="mt-1 flex items-center justify-between">
-							{validationErrors.descriptionPl && (
+							{errors.descriptionPl && (
 								<div
 									className="text-destructive text-sm"
 									id="descriptionPl-error"
 								>
-									{validationErrors.descriptionPl}
+									{errors.descriptionPl.message}
 								</div>
 							)}
 							<span className="ml-auto text-muted-foreground text-xs">
@@ -335,11 +257,17 @@ export function EditComboForm({ comboId }: EditComboFormProps) {
 						</div>
 					</div>
 
-					<ComboMovesSelector
-						disabled={isFormDisabled}
-						error={validationErrors.moveIds}
-						onChange={handleMoveIdsChange}
-						value={formState.moveIds}
+					<Controller
+						control={control}
+						name="moveIds"
+						render={({ field }) => (
+							<ComboMovesSelector
+								disabled={isFormDisabled}
+								error={errors.moveIds?.message}
+								onChange={field.onChange}
+								value={field.value}
+							/>
+						)}
 					/>
 
 					{updateComboMutation.isError && (
